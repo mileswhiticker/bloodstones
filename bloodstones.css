@@ -1,0 +1,1343 @@
+/**
+ *------
+ * BGA framework: Gregory Isabelli & Emmanuel Colin & BoardGameArena
+ * bloodstones implementation : © <Your name here> <Your email address here>
+ *
+ * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
+ * See http://en.boardgamearena.com/#!doc/Studio for more information.
+ * -----
+ *
+ * bloodstones.css
+ *
+ * bloodstones stylesheet
+ *
+ */
+
+/*
+    This is the CSS stylesheet of your game User Interface.
+    
+    Styles defined on this file will be applied to the HTML elements you define in your
+    HTML template (bloodstones_bloodstones.tpl), and to HTML elements you create dynamically
+    (in bloodstones.js).
+    
+    Usually, you are using CSS to:
+    
+    1°) define the overall layout of your game
+        (ex: place the board on the top left, place player's hand beside, place the deck on the right, ...).
+
+    2°) create your CSS-sprites:
+        All images of your games should be gathered into a small number of image files. Then, using
+        background-image and background-position CSS properties, you create HTML blocks that can 
+        display these images correctly (see example below).
+    
+    3°) ... anything else:
+        It is really easy to add and remove CSS classes dynamically from your Javascript with
+        dojo.addClass and dojo.removeClass. It is also easy to check if an element has a class
+        (dojo.hasClass) or to get all elements with a specific class (dojo.query). This is why,
+        very often, using CSS classes for the logic of your user interface allow you to do complex
+        thing easily.
+        
+        
+     Note: on the production platform, this file will be compressed and comments will be removed.
+           Consequently, don't hesitate to put as many comments as necessary.
+*/
+
+
+/* Note: you must not use any @import directive */
+
+
+/********* You can start writing your CSS below this line: **********/
+
+
+/*
+    Example of CSS sprites (a black token and a white token, 20x20px each, embedded in the same "tokens.png" 40x20px image):
+
+    .white_token {
+        background-image: url('img/tokens.png');
+        background-position: 0px 0px;
+    }
+    .black_token {
+        background-image: url('img/tokens.png');
+        background-position: -20px 0px;
+    }
+    .token {
+        width: 20px;
+        height: 20px;
+        background-repeat: none;
+    }
+*/
+
+@font-face {
+  font-family: 'Playfair';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  src: url(fonts/Playfair-VariableFont_opsz,wdth,wght.ttf) format('ttf');
+}
+
+@font-face {
+  font-family: 'Playfair';
+  font-style: italic;
+  font-weight: 400;
+  font-stretch: 100%;
+  src: url(Playfair-Italic-VariableFont_opsz,wdth,wght.ttf) format('ttf');
+}
+
+#gamewindow {
+	width: 100%;
+	height: 1185px;
+	font-family: Playfair;
+}
+
+#leftpanel {
+	position: absolute;
+	width: 480px;
+	height: 100%;
+	background-image: url('img/texture-left.png');
+	/*height: 1185px;*/ /*this is the max height*/
+	filter: box-shadow(rgb(0,0,0) 0px 0px 4px);
+	/*z-index: 1;*/
+	border-radius: 0px 5px 5px 0px;
+	padding: 4px;
+}
+
+#centrepanel {
+	position: absolute;
+	left: 480px;
+	width: 1039px;
+	height: 100%;
+	/*filter: box-shadow(rgb(0,0,0) 0px 0px 4px);*/
+}
+
+#toppanel {
+	width: 100%;
+	height: 70px;
+	display: flex;
+}
+
+@keyframes fadeout {
+  0% {opacity: 1}
+  100% {opacity: 0}
+}
+
+@keyframes fadein {
+  0% {opacity: 0}
+  100% {opacity: 1}
+}
+
+#bottompanel {
+	color: rgba(255,255,255,1);
+	animation-name: fadein;
+	animation-duration: 3s;
+	animation-iteration-count: 1;
+	width: 900px;
+	/*max-width: 600px;*/
+	display: flex;
+	justify-content: space-evenly;
+	/*align-items: center;*/
+	height: 125px;
+	bottom: 0px;
+	left: 0px;
+	position: absolute;
+	font-size: large;
+	padding-top: 0px;
+	padding-left: 50px;
+	padding-right: 50px;
+	padding-bottom: 50px;
+}
+
+#phasecontainer{
+	width: 100%;
+	display: grid;
+	/*animation-duration: 2s;*/
+	grid-template-columns: repeat(6, 1fr);
+	grid-template-rows: 1fr;
+	background-image: url('img/background.jpg');
+	background-size: 150% auto;
+	background-repeat: no-repeat;
+	border-radius: 10px;
+	gap: 15px;
+	padding: 15px;
+}
+
+#end_phase_button{
+}
+
+/*#end_turn_text {
+	height: 0px;
+	animation-name: end_turn_fadeout;
+	animation-duration: 3s;
+}*/
+
+#end_turn_popup {
+	/*animation-name: fadeout;
+	animation-duration: 3s;*/
+	
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-image: url('img/texture-left.jpg');
+	opacity: 1;
+	border-radius: 25px;
+	background-size: cover;
+	width: 200px;
+	height: 200px;
+	position: absolute;
+	top: 400px;
+	left: 400px;
+}
+
+.head_warning {
+   background-color: #e6c66e;
+}
+
+.active_phase{
+	color: rgba(255,255,255,1);
+    /*background-image: url('img/next_phase.png');
+	background-size: 100% auto;
+	background-repeat: no-repeat;*/
+}
+
+.inactive_phase{
+	color: rgba(211,211,211,0.7);
+}
+
+.disabled_phase{
+	color: rgba(211,211,211,0.3);
+}
+
+.phase_large
+{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 95px;
+}
+
+.blst_button{
+	border: 2px solid #000000;
+	box-shadow: 1px 2px 4px 0px #000000;
+	color: rgba(255,255,255,1);
+	background-color: #A67B5B;
+    border-radius: 6px;
+    box-shadow: 0 1px 0 #000;
+    cursor: pointer;
+    text-shadow: rgba(0,0,0,.4) 0 1px 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.small_phase
+{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 45px;
+}
+
+.blst_button:hover {
+  color: red;
+}
+.blst_button_disabled{
+	pointer-events: none;
+	filter: grayscale(50%);
+}
+
+#toppanel {
+	position: absolute;
+	justify-content: center;
+}
+
+.topbutton{
+	width: 34px;
+	height: 34px;
+	background-repeat: no-repeat;
+	background-size: contain;
+	padding: 6px;
+	margin-left: 3px;
+	margin-right: 3px;
+}
+
+#button_spawnbattle
+{
+	background-image: url('img/spawn_battle.jpg');
+}
+
+#button_debug
+{
+	background-image: url('img/debug.png');
+}
+
+#button_spawn
+{
+	background-image: url('img/spawn_army.jpg');
+}
+
+#button_cycle_hand
+{
+	background-image: url('img/cards_button.png');
+}
+
+#button_zoomin
+{
+	background-image: url('img/plus.jpg');
+}
+
+#button_zoomout
+{
+	background-image: url('img/minus.jpg');
+}
+
+#button_left
+{
+	background-image: url('img/arrow_left.jpg');
+}
+
+#button_right
+{
+	background-image: url('img/arrow_right.jpg');
+}
+
+#button_up
+{
+	background-image: url('img/arrow_up.jpg');
+}
+
+#button_down
+{
+	background-image: url('img/arrow_down.jpg');
+}
+
+.battle_circle
+{
+	/*note the width and height get scaled in the code if the player zooms in or out*/
+    background-image: url('img/loupe-mag.png');
+	background-size: contain;
+	position: absolute;
+	width: 200px;
+	height: 200px;
+	
+	background-repeat: no-repeat;
+	animation-name: battle_circle_anim_pulse;
+	animation-duration: 0.75s;
+	animation-iteration-count: infinite;
+	animation-timing-function: ease-in;
+}
+
+.button_preview_battle_inner
+{
+	/*note the width and height get scaled in the code if the player zooms in or out*/
+	background-image: url('img/battle_trans.png');
+	background-size: cover;
+	width: 100%;
+	height: 100%;
+}
+
+.button_preview_battle_inner:hover {
+  /*filter: invert(100%);*/
+  background-color: red;
+  background-blend-mode: multiply;
+  mask-image: url('img/battle_trans.png');
+  mask-size: cover;
+}
+
+.button_preview_battle_outer
+{
+	background-size: 100% 100%;
+	width: 40px;
+	height: 40px;
+	position: absolute;
+}
+
+.ui_stack
+{
+	/*height: 200px;*/
+}
+
+.ui_stack_title
+{
+	height: 34px;
+}
+
+.ui_stack_tile
+{
+	/*height: 140px;*/
+	position: absolute;
+	left: 10px;
+	/*margin-top: 10px*/
+}
+
+.ui_stack_tile_image {
+	cursor: pointer;
+	width: 144px;
+	height: 72px;
+}
+/*
+.ui_stack_tile_selected {
+	border: 12px outset white;
+	border-radius: 12px;
+	position: relative;
+	left: -12px;
+	top: -12px;
+	width: 100%;
+	height: 100%;
+}
+*/
+.ui_stack_tile_disabled {
+	pointer-events: none;
+	filter: grayscale(100%);
+}
+
+#phasecontainer_small{
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	grid-template-rows: 1fr 1fr;
+    grid-column-end: span 2;
+	gap: 5px;
+}
+
+#title_main
+{
+	grid-row-start: 1;
+    grid-column-start: 1;
+    grid-column-end: span 3;
+    justify-self: center;
+    align-self: center;
+    width: 33%;
+}
+
+#button_build
+{
+    grid-row-start: 2;
+    grid-column-start: 1;
+}
+
+#button_move
+{
+    grid-row-start: 2;
+    grid-column-start: 2;
+}
+
+#button_battle
+{
+    grid-row-start: 2;
+    grid-column-start: 3;
+}
+
+.phase_small{
+	/*border-style: dashed;*/
+}
+
+#province_overlay_canvas {
+	position: absolute;
+	/*box-shadow: none|h-offset v-offset blur spread color |inset|initial|inherit;*/
+	box-shadow: 0px 0px 20px 5px inset;
+}
+
+#provinceclickareas {
+	/*position: absolute;*/
+	width: 100%;
+	height: 100%;
+}
+
+#droppable_map {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+
+#playercards {
+	width: 284px;
+	margin-right: 4px;
+}
+
+#player_hand
+{
+	margin-left: 11px;
+	top: 80px;
+	width: 240px;
+}
+
+.playercard {
+	filter: box-shadow(rgb(0,0,0) 0px 0px 4px);
+	border-radius: 15px;
+	/*margin: 4px;*/
+	padding: 10px;
+	position: relative;
+	margin-bottom: 8px;
+	height: 400px;
+}
+
+.playercard_title
+{
+	height: 30px;
+	margin-bottom: 5px;
+}
+
+.playercard_faction_name
+{
+	position: absolute;
+	font-size: 23px;
+}
+
+.playercard_element
+{
+	height: 22px;
+	padding: 5px;
+	font-size: 16px;
+	position: absolute;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: right;
+}
+
+.regroups_left
+{
+	width: 44px;
+	right: 75px;
+}
+
+.player_score
+{
+	width: 60px;
+	right: 5px;
+}
+
+.player_villages_text
+{
+	width: 30px;
+	right: 43px;
+}
+
+.player_villages_icon
+{
+	width: 30px;
+	right: 27px;
+}
+
+.player_captured_village
+{
+	height: 30px;
+	width: 30px;
+	position: absolute;
+	background-size: contain;
+}
+
+.player_captured_villages
+{
+	width: 90px;
+	right: 5px;
+	bottom: 5px;
+}
+
+.captured_villages_container
+{
+	position: absolute;
+	left: 20px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+}
+
+.player_name
+{
+	font-size: 20px;
+	position: absolute;
+	bottom: 5px;
+}
+
+.blanktile
+{
+	background-size: cover;
+	height: 18px;
+	width: 36px;
+}
+
+.enemy_tiles
+{
+	display: flex;
+	flex-wrap: wrap;
+	width: 150px;
+	height: 100px;
+	position: absolute;
+	margin-left: 10px;
+	align-content: flex-start;
+	gap: 10px;
+}
+
+#selected_army {
+	position: absolute;
+	left: 290px;
+	/*width: 180px;*/
+	top: 0px;
+	background-image: none;
+	padding: 10px;
+}
+.selected_army_bg
+{
+	position: absolute;
+	opacity: 0;
+	background-image: url('img/BS-BGA-Unit_selection_Frame.png');
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+}
+
+#bag
+{
+	width: 300px;
+	height: 300px;
+    /*background-image: url( 'img/bag.png' );*/
+	background-repeat: no-repeat;
+	overflow: hidden;
+}
+
+#gamemap {
+    background-image: url('img/bloodstones_testmap.jpg');
+	background-repeat: no-repeat;
+	background-size: 100%;
+	height: 100%;
+	width: 100%;
+	/*left:500px;*/
+	position:absolute;
+}
+
+#battlewindow {
+    background-image: url('img/texture-paybucket.jpg');
+	background-repeat: no-repeat;
+	background-size: cover;
+	width: 600px;
+	height: 800px;
+	position: absolute;
+	left: 900px;
+	top: 50px;
+	padding: 20px;
+	filter: box-shadow(rgb(0,0,0) 0px 0px 4px);
+	border-radius: 10px;
+	display: grid;
+	grid-template-columns: 1fr 0.2fr 1fr;
+	grid-template-rows: 1fr 3fr 1fr 1fr 1fr 0.5fr 0.5fr;
+	gap: 5px;
+}
+
+.battle_title_vs
+{
+    background-image: url('img/battle_trans.png');
+	background-size: contain;
+	background-repeat: no-repeat;
+    grid-row-start: 1;
+    grid-column-start: 2;
+}
+
+.battle_attacker
+{
+    grid-column-start: 1;
+	justify-self: start;
+}
+
+.battle_defender
+{
+    grid-column-start: 3;
+	justify-self: end;
+}
+
+.battle_title
+{
+	font-size: 2em;
+    grid-row-start: 1;
+}
+
+.battle_display
+{
+    grid-row-start: 2;
+	display: flex;
+	width: 115px;
+}
+
+.battle_display_tilebonus_container
+{
+	display: flex;
+	flex-direction: column;
+	position: absolute;
+}
+
+.battle_display_tilebonus
+{
+	position: absolute;
+	font-size: 1.5em;
+	height: 57px;
+}
+
+#battle_title_result
+{
+    grid-row: 2;
+    grid-column-start: 1;
+    grid-column-end: span 3;
+	justify-self: center;
+}
+
+#battle_title_preview
+{
+	font-size: 4em;
+    grid-row-start: 5;
+    grid-column: 1;
+    grid-column-end: span 3;
+	justify-self: center;
+}
+
+#battle_title_wait
+{
+	font-size: 2em;
+    grid-row-start: 5;
+    grid-column: 1;
+    grid-column-end: span 3;
+	justify-self: center;
+}
+
+#battle_title_playtile
+{
+	font-size: 3em;
+    grid-row-start: 5;
+    grid-column: 1;
+    grid-column-end: span 3;
+	justify-self: center;
+}
+
+#paycontainer_battle
+{
+    grid-row-start: 4;
+    grid-column-start: 1;
+	grid-row-end: span 2;
+}
+
+#paybucket_battle
+{
+    grid-row-start: 5;
+}
+
+.battle_reject
+{
+	grid-row-start: 3;
+	width: 250px;
+	height: 40px;
+}
+
+.battle_tiles
+{
+    grid-row-start: 4;
+	width: 250px;
+	height: 40px;
+}
+
+.battle_temp
+{
+	grid-row-start: 5;
+	align-self: center;
+	justify-self: center;
+	width: 0px;
+	height: 0px;
+}
+
+.battle_score
+{
+	font-size: 2em;
+    grid-row-start: 6;
+	font-weight: bold;
+	color: darkslategrey;
+}
+
+#battle_score_attacker
+{
+	text-align: left;
+    grid-column-start: 1;
+}
+
+#battle_score_defender
+{
+	text-align: right;
+    grid-column-start: 3;
+}
+
+#battle_proceed
+{
+    grid-row-start: 7;
+    grid-column-start: 3;
+}
+
+#battle_withdraw
+{
+    grid-row-start: 7;
+    grid-column-start: 1;
+}
+
+.sacrifice1
+{
+	animation-name: highlight1;
+	animation-duration: 0.75s;
+	animation-iteration-count: infinite;
+	animation-timing-function: ease-in;
+}
+
+@keyframes highlight1 {
+  0% {
+	  scale: 1;
+	  opacity:1;
+	  }
+  100% {
+	  scale: 1.5;
+	  opacity:0.5;
+	  }
+}
+
+@keyframes battle_circle_anim_pulse {
+  0%   {opacity:0.5;}
+  100%  {opacity:1;}
+}
+
+#paywindow {
+    background-image: url('img/texture-paybucket.jpg');
+	background-repeat: no-repeat;
+	width: 457px;
+	height: 300px;
+	position: absolute;
+	left: 480px;
+	top: 500px;
+	padding: 20px;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	grid-template-rows: repeat(3, 1fr) 0.5fr;
+	gap: 15px;
+	filter: box-shadow(rgb(0,0,0) 0px 0px 4px);
+	border-radius: 0px 10px 10px 0px;
+	border-style: dashed dashed dashed none;
+}
+
+.transparent
+{
+	opacity: 0.5;
+}
+
+#paywindow_info
+{
+	grid-row-start: 2;
+	grid-column-start: 2;
+}
+
+#paystack {
+	justify-self: left;
+    grid-row-start: 1;
+    grid-column-start: 1;
+	margin: 6px;
+}
+
+.payment_container
+{
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: 1fr 1fr;
+}
+
+#action_payment_bucket {
+	grid-row-start: 2;
+	grid-column-start: 1;
+	
+	border-style: dashed;
+	border-color: grey;
+	border-radius: 10px;
+	padding: 15px;
+}
+
+#paycontainer_default
+{
+    grid-row-start: 2;
+    grid-column-start: 1;
+	grid-row-end: span 2;
+	grid-column-end: span 2;
+}
+
+.action_payment_bucket_dragover {
+	background-color: rgba(0, 0, 0, 0.3);
+}
+
+.tile_dragging {
+	opacity: 0.5;
+}
+
+#action_cost {
+	grid-row-start: 1;
+	grid-column-start: 1;
+}
+
+#action_paid {
+	grid-row-start: 1;
+	grid-column-start: 2;
+}
+
+.action_pips_container {
+	/*settings for parent's grid*/
+	justify-self: center;
+	align-self: center;
+	
+	/*settings for grid owned by this container*/
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: 1fr 1fr;
+	gap: 5px;
+}
+
+.action_pips_title {
+	grid-column-start: 1;
+	grid-column-end: span 2;
+	grid-row-start: 1;
+	justify-self: center;
+	align-self: center;
+	font-size: 1.5em;
+}
+
+.action_pips_amount {
+	grid-column-start: 1;
+	grid-row-start: 2;
+	justify-self: end;
+	align-self: center;
+	font-size: 2em;
+}
+
+.action_currency_icon{
+	grid-column-start: 2;
+	grid-row-start: 2;
+	justify-self: start;
+	align-self: center;
+	
+	width: 25px;
+	height: 25px;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: left center;
+}
+
+.action_currency_icon_pip {
+    background-image: url('img/pip.png');
+}
+
+.action_currency_icon_tile {
+    background-image: url('img/tile token.png');
+}
+
+.action_currency_icon_army {
+    background-image: url('img/spawn_army.jpg');
+}
+
+.action_cancel{
+	grid-column-start: 1;
+	grid-row-start: 4;
+	margin: 0px;
+}
+
+.action_approve{
+	grid-column-start: 2;
+	grid-row-start: 4;
+	margin: 0px;
+}
+
+#action_undead
+{
+	grid-row-start: 1;
+	grid-column-start: 1;
+	grid-column-end: span 2;
+	justify-self: center;
+	align-self: center;
+	font-size: 1.5em;
+}
+
+.display_none
+{
+	display: none;
+}
+
+.province_move_cost {
+	position: absolute;
+	height: 25px;
+	width: 35px;
+	font-size: 1.5em;
+	font-weight: bold;
+    background-image: url('img/pip.png');
+	background-repeat: no-repeat;
+	background-position: right;
+	/*background-size: auto 100%;*/
+}
+
+.captured_village_placeholder {
+    background-image: url('img/captured_towns_placeholder.png');
+}
+
+.playercard_0 {
+    background-image: url('img/texture-horselords.jpg');
+}
+
+.playercard_1 {
+    background-image: url('img/texture-hillfolk.jpg');
+}
+
+.playercard_2 {
+    background-image: url('img/texture-dragonriders.jpg');
+}
+
+.playercard_3 {
+    background-image: url('img/texture-corsairs.jpg');
+}
+
+.playercard_4 {
+    background-image: url('img/texture-necromancers.jpg');
+}
+
+.playercard_5 {
+    background-image: url('img/texture-chaoshorde.jpg');
+}
+
+@keyframes fading_loop
+{
+  0% {opacity: 1;}
+  50% {opacity: 0.4;}
+  100% {opacity: 1;}
+}
+
+.capturing_village
+{
+	transform: skewY(160deg);
+	animation-name: fading_loop;
+	animation-duration: 1s;
+	animation-iteration-count: infinite;
+	animation-timing-function: step-start;
+}
+
+.village0 {
+    background-image: url('img/village0.png');
+}	
+
+.regroup0 {
+    background-image: url('img/Horse-Lords-Regroup.png');
+}	
+
+.score0 {
+    background-image: url('img/Horse-Lords-VP-.png');
+}	
+
+.blanktile0 {
+    background-image: url('img/HorseLords-Blank-back.png');
+	box-shadow: 1px 2px 4px 0px #00008B;
+}
+
+.village1 {
+    background-image: url('img/village1.png');
+}	
+
+.regroup1 {
+    background-image: url('img/Hill-Folk-Regroup.png');
+}	
+
+.score1 {
+    background-image: url('img/Hill-Folk-VP.png');
+}	
+
+.blanktile1 {
+    background-image: url('img/HillFolk-Blank-back.png');
+	box-shadow: 1px 2px 4px 0px #66FF00;
+}
+
+.village2 {
+    background-image: url('img/village2.png');
+}	
+
+.regroup2 {
+    background-image: url('img/Dragon-Riders-Regroup.png');
+}	
+
+.score2 {
+    background-image: url('img/Dragon-Rider-VP.png');
+}	
+
+.blanktile2 {
+    background-image: url('img/DragonRider-Blank-back.png');
+	box-shadow: 1px 2px 4px 0px #FFFF00;
+}
+
+.village3 {
+    background-image: url('img/village3.png');
+}	
+
+.regroup3 {
+    background-image: url('img/Corsairs-Regroup.png');
+}	
+
+.score3 {
+    background-image: url('img/Corsairs-VP.png');
+}	
+
+.blanktile3 {
+    background-image: url('img/Corsairs-Blank-back.png');
+	box-shadow: 1px 2px 4px 0px #3299CC;
+}
+
+.village4 {
+    background-image: url('img/village4.png');
+}	
+
+.regroup4 {
+    background-image: url('img/Necromancer-Regroup.png');
+}	
+
+.score4 {
+    background-image: url('img/Necromancer-VP.png');
+}	
+
+.blanktile4 {
+    background-image: url('img/Necromancer-Blank-back.png');
+	box-shadow: 1px 2px 4px 0px #B695C0;
+}
+
+.village5 {
+    background-image: url('img/village5.png');
+}	
+
+.regroup5 {
+    background-image: url('img/Chaos-Horde-Regroup.png');
+}	
+
+.score5 {
+    background-image: url('img/Chaos-Horde-VP.png');
+}	
+
+.blanktile5 {
+    background-image: url('img/ChaosHorde-Blank-back.png');
+	box-shadow: 1px 2px 4px 0px #000000;
+}
+
+#factionselect
+{
+	background-image: url('img/background.jpg');
+	background-size: cover;
+	display: grid;
+	grid-template-rows: 0.2fr 0.8fr 1fr;
+	height: 760px;
+	justify-items: center;
+	align-items: center;
+}
+
+#bigtitle
+{
+	background-image: url('img/bigtitle.png');
+	background-size: contain;
+	background-repeat: no-repeat;
+	width: 754px;
+	height: 130px;
+	/*width: 754px;
+	height: 130px;*/
+	grid-row-start: 1;
+}
+
+#factions
+{
+	grid-row-start: 2;
+	width: 1000px;
+	height: 230px;
+	display: flex;
+	gap: 10px;
+}
+
+.faction
+{
+	width: 166px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	border-radius: 20px;
+	border-width: 5px;
+}
+
+#faction0
+{
+	border-color: #004588;
+}
+
+#faction1
+{
+	border-color: #54B064;
+}
+
+#faction2
+{
+	border-color: #F9ED7A;
+}
+
+#faction3
+{
+	border-color: #F0EDD7;
+}
+
+#faction4
+{
+	border-color: #D2BEDC;
+}
+
+#faction5
+{
+	border-color: #101111;
+}
+
+.faction0buttonselect
+{
+	background-color: #004588;
+}
+
+.faction1buttonselect
+{
+	background-color: #54B064;
+}
+
+.faction2buttonselect
+{
+	background-color: #F9ED7A;
+}
+
+.faction3buttonselect
+{
+	background-color: #F0EDD7;
+}
+
+.faction4buttonselect
+{
+	background-color: #D2BEDC;
+}
+
+.faction5buttonselect
+{
+	background-color: #101111;
+}
+
+.faction_chosen
+{
+	border-style: solid;
+}
+
+.factionlogo
+{
+	background-size: contain;
+	background-repeat: no-repeat;
+	height: 158px;
+	border-radius: 20px;
+	border-width: 5px;
+	cursor: pointer;
+}
+
+.factionlogo:hover
+{
+	border-style: solid;
+}
+
+.faction_logo_selected
+{
+	border-style: solid;
+}
+
+.factionlogo_disabled
+{
+	pointer-events: none;
+	filter: grayscale(50%);
+}
+
+#factionlogo0
+{
+	background-image: url('img/factionlogo0.png');
+	background-color: #FFF9DD;
+	border-color: #004588;
+}
+
+#factionlogo1
+{
+	background-image: url('img/factionlogo1.png');
+	background-color: #593727;
+	border-color: #54B064;
+}
+
+#factionlogo2
+{
+	background-image: url('img/factionlogo2.png');
+	background-color: #BD1A2B;
+	border-color: #F9ED7A;
+}
+
+#factionlogo3
+{
+	background-image: url('img/factionlogo3.png');
+	background-color: #0074A2;
+	border-color: #F0EDD7;
+}
+
+#factionlogo4
+{
+	background-image: url('img/factionlogo4.png');
+	background-color: #3C2D66;
+	border-color: #D2BEDC;
+}
+
+#factionlogo5
+{
+	background-image: url('img/factionlogo5.png');
+	background-color: #C3A643;
+	border-color: #101111;
+}
+
+.faction_title
+{
+	height: 44px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: rgba(255,255,255,1);
+	margin-bottom: 2px;
+}
+
+#faction_info_holder
+{
+	width: 450px;
+	height: 350px;
+	grid-row-start: 3;
+}
+
+#info
+{
+	width: 100%;
+	height: 100%;
+	background-size: contain;
+	background-repeat: no-repeat;
+}
+
+.info0
+{
+	background-image: url('img/intro0.jpg');
+}
+
+.info1
+{
+	background-image: url('img/intro1.jpg');
+}
+
+.info2
+{
+	background-image: url('img/intro2.jpg');
+}
+
+.info3
+{
+	background-image: url('img/intro3.jpg');
+}
+
+.info4
+{
+	background-image: url('img/intro4.jpg');
+}
+
+.info5
+{
+	background-image: url('img/intro5.jpg');
+}

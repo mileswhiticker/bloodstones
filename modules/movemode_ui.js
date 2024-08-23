@@ -1,0 +1,259 @@
+/*
+ * ------
+ * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
+ * bloodstones implementation : © Miles Whiticker <miles.whiticker@gmail.com>
+ *
+ * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
+ * See http://en.boardgamearena.com/#!doc/Studio for more information.
+ * -----
+ */
+ 
+const LABEL_NONE = -1;
+const LABEL_MOVECOST = 0;
+
+define(
+	[
+		"dojo",
+		"dojo/_base/declare"
+	],
+	function (dojo, declare){
+		
+		var instance = declare("_movemode_ui", null, {
+			//put your functions here
+			
+			AddProvinceMoveLink : function(start_province_info, dest_province_info, overlay_type)
+			{
+				//console.log("page::AddProvinceMoveLink(" + start_province_info.name + ", " + dest_province_info.name + ", " + overlay_type + ")");
+				for(var i in start_province_info.movement_link_paths)
+				{
+					var move_link = start_province_info.movement_link_paths[i];
+					if(move_link.target_prov.name == dest_province_info.name)
+					{
+						this.AddProvinceMoveLinkPath(move_link.path_segments, overlay_type, false);
+						return;
+					}
+				}
+				
+				
+				/* OLD CODE */
+				console.log("WARNING: page::AddProvinceMoveLink(" + start_province_info.name + "," + dest_province_info.name + "," + overlay_type + ") reverting to old movement link rendering");
+				
+				//draw a movement link between the provinces
+				//link colour is  string that can be hex, rbg or colour name 
+				
+				const canvas = dojo.byId("province_overlay_canvas");
+				const context = canvas.getContext("2d");
+				var scale_factor = this.svg_scale_factor;
+				
+				context.beginPath();
+				var start_coords_canvas = this.WorldToCanvasCoords(start_province_info.centre.x * scale_factor, start_province_info.centre.y * scale_factor);
+				context.moveTo(start_coords_canvas.x, start_coords_canvas.y);
+				var dest_coords_canvas = this.WorldToCanvasCoords(dest_province_info.centre.x * scale_factor, dest_province_info.centre.y * scale_factor);
+				context.lineTo(dest_coords_canvas.x, dest_coords_canvas.y);
+
+				if(overlay_type != PROV_QUEUED)
+				{
+					//just make it grey for now, this is easier to see
+					//var start_link_colour = "RGBA(128, 128, 128, 0.7)";
+					//var dest_link_colour = "RGBA(128, 128, 128, 0.7)";
+					var transparent_colour = "RGBA(256, 256, 256, 0)";
+					
+					//nice gradual colour fade
+					//note: turns out this is actually hard to see
+					var start_link_colour = this.GetProvinceOverlayColour(overlay_type);
+					var dest_link_colour = start_link_colour;//transparent_colour;//this.GetProvinceOverlayColour(overlay_type);
+					
+					// Create gradient
+					const gradient = context.createLinearGradient(start_coords_canvas.x, start_coords_canvas.y, dest_coords_canvas.x, dest_coords_canvas.y);
+					gradient.addColorStop(0, start_link_colour.rgba());
+					gradient.addColorStop(0.7, start_link_colour.rgba());
+					gradient.addColorStop(0.8, dest_link_colour.rgba());
+					gradient.addColorStop(1, dest_link_colour.rgba());
+					
+					// Fill with gradient
+					context.strokeStyle = gradient;
+				}
+				else
+				{
+					//solid colour
+					context.strokeStyle = this.GetProvinceOverlayColour(overlay_type);
+				}
+
+				// Draw the Path
+				context.lineWidth = this.province_link_width * this.map_view_scale;
+				context.stroke();
+			},
+			
+			GetNextColourCycle : function()
+			{
+				var retval = Colour(this.colour_cycle.r, this.colour_cycle.g, this.colour_cycle.b, 255);
+				this.colour_cycle.addRGB(this.colour_progression);
+				return retval;
+			},
+			
+			DrawNewTestMoveLinks : function()
+			{
+				console.log("page::DrawNewTestMoveLinks()");
+				
+				console.log("this.move_links_filtered:");
+				console.log(this.move_links_filtered);
+				console.log("this.provinces:");
+				console.log(this.provinces);
+				
+				//for testing: render all movement links
+				var max = 9999;
+				for(var i in this.move_links_filtered)
+				{
+					if(i >= max)
+					{
+						break;
+					}
+					var move_link = this.move_links_filtered[i];
+					this.AddProvinceMoveLinkPath(move_link.path_segments, PROV_MOVE1);
+				}
+			},
+			
+			AddProvinceMoveLinkPath : function(path_segments, overlay_type, do_debug = false)
+			{
+				if(do_debug)	console.log("page::AddProvinceMoveLinkPath(path_segments, " + overlay_type + ")");
+				//if(do_debug)	console.log(path_segments);
+				
+				const canvas = dojo.byId("province_overlay_canvas");
+				const context = canvas.getContext("2d");
+				var scale_factor = this.svg_scale_factor;
+				
+				//draw the polygon that will form the province overlay
+				context.beginPath();
+				context.moveTo(0,0);
+				
+				//new method of doing province outlines
+				var current_coords = {x:0,y:0};
+				var scale_factor = this.svg_scale_factor;
+				
+				//iterate over the loaded path segments and draw them
+				for (let j in path_segments)
+				{
+					var pathseg = path_segments[j];
+					
+					switch(pathseg.type)
+					{
+						case 'm':
+						{
+							current_coords.x += pathseg.points[0].x * scale_factor;
+							current_coords.y += pathseg.points[0].y * scale_factor;
+							
+							var current_coords_canvas = this.WorldToCanvasCoords(current_coords.x,current_coords.y);
+							context.moveTo(current_coords_canvas.x, current_coords_canvas.y);
+							break;
+						}
+						case 'M':
+						{
+							current_coords.x = pathseg.points[0].x * scale_factor;
+							current_coords.y = pathseg.points[0].y * scale_factor;
+							
+							var current_coords_canvas = this.WorldToCanvasCoords(current_coords.x,current_coords.y);
+							context.moveTo(current_coords_canvas.x, current_coords_canvas.y);
+							break;
+						}
+						case 'c':
+						{
+							//console.log(pathseg.points);
+							var control_point1 = {x:current_coords.x + pathseg.points[0].x * scale_factor, y:current_coords.y + pathseg.points[0].y * scale_factor};
+							var control_point2 = {x:current_coords.x + pathseg.points[1].x * scale_factor, y:current_coords.y + pathseg.points[1].y * scale_factor};
+							var end_point = {x:current_coords.x + pathseg.points[2].x * scale_factor, y:current_coords.y + pathseg.points[2].y * scale_factor};
+							
+							var control_point1_canvas = this.WorldToCanvasCoords(control_point1.x,control_point1.y);
+							var control_point2_canvas = this.WorldToCanvasCoords(control_point2.x,control_point2.y);
+							var end_point_canvas = this.WorldToCanvasCoords(end_point.x,end_point.y);
+							
+							context.bezierCurveTo(control_point1_canvas.x, control_point1_canvas.y, control_point2_canvas.x, control_point2_canvas.y, end_point_canvas.x, end_point_canvas.y);
+							
+							//update the current position of the draw cursor
+							current_coords = end_point;
+							break;
+						}
+						case 'C':
+						{
+							var control_point1 = {x:pathseg.points[0].x * scale_factor, y:pathseg.points[0].y * scale_factor};
+							var control_point2 = {x:pathseg.points[1].x * scale_factor, y:pathseg.points[1].y * scale_factor};
+							var end_point = {x:pathseg.points[2].x * scale_factor, y:pathseg.points[2].y * scale_factor};
+							
+							var control_point1_canvas = this.WorldToCanvasCoords(control_point1.x,control_point1.y);
+							var control_point2_canvas = this.WorldToCanvasCoords(control_point2.x,control_point2.y);
+							var end_point_canvas = this.WorldToCanvasCoords(end_point.x,end_point.y);
+							
+							context.bezierCurveTo(control_point1_canvas.x, control_point1_canvas.y, control_point2_canvas.x, control_point2_canvas.y, end_point_canvas.x, end_point_canvas.y);
+							
+							//update the current position of the draw cursor
+							current_coords = end_point;
+							break;
+						}
+					}
+				}
+				
+				context.lineWidth = this.province_link_width * this.map_view_scale;
+				//var overlay_colour = this.GetNextColourCycle().rgba();
+				var overlay_colour = this.GetProvinceOverlayColour(overlay_type);
+				if(do_debug)	console.log(overlay_colour);
+				context.strokeStyle = overlay_colour.rgba();
+				context.stroke();
+			},
+			
+			HandleMovemodeArmyClicked : function(clicked_army)
+			{
+				//is this our army?
+				if(clicked_army.player_id == this.getCurrentPlayer())
+				{
+					//do we already have an army selected?
+					if(this.selected_army == null)
+					{
+						//select this army
+						this.SelectArmyStack(clicked_army);
+						this.RefreshMoveModeUI();
+					}
+					else if(this.selected_army == clicked_army)
+					{
+						//unselect this army
+						this.UnselectArmyStack();
+						this.RefreshMoveModeUI();
+					}
+					else if(this.selected_army.province_id == clicked_army.province_id)
+					{
+						//does the other army have queued moves?
+						if(!clicked_army.IsMoving())
+						{
+							//does this army have queued moves?
+							if(!this.selected_army.IsMoving())
+							{
+								//merge the selected units into the target army
+								var selected_tile_ids = this.selected_army.getSelectedTileIds();
+								this.ServerArmyMerge(this.selected_army, clicked_army, selected_tile_ids);
+								
+								this.RefreshMoveModeUI();
+							}
+							else
+							{
+								this.showMessage(_('You must finish moving this army before merging it.'), 'error');
+							}
+						}
+						else
+						{
+							this.showMessage(_('That army must finish its move before merging.'), 'error');
+						}
+					}
+					else
+					{
+						//this.showMessage(_('Finish planning your current move before selecting another army.'), 'error');
+						
+						//change selection to the other army
+						this.UnselectArmyStack();
+						this.SelectArmyStack(clicked_army);
+						this.RefreshMoveModeUI();
+					}
+				}
+			},
+		});
+			
+		return instance;
+	}
+);

@@ -1,0 +1,218 @@
+{
+	"table":
+	{
+		"winning_faction":
+		{
+			"id": 10,
+			"name": "Game winner",
+			"type": "int"
+			},
+
+		"turns_number":
+		{
+			"id": 11,
+			"name": "Length of game in turns taken",
+			"type": "int"
+			},
+		
+		"battles_plains":
+		{
+			"id": 12,
+			"name": "Number of battles in Plains terrain",
+			"type": "int"
+			},
+
+		"battles_forest":
+		{
+			"id": 13,
+			"name": "Number of battles in Forest terrain",
+			"type": "int"
+			},
+
+		"battles_hills":
+		{
+			"id": 14,
+			"name": "Number of battles in Hills terrain",
+			"type": "int"
+			},
+
+		"battles_mountains":
+		{
+			"id": 15,
+			"name": "Number of battles in Mountains terrain",
+			"type": "int"
+			},
+
+		"battles_desert":
+		{
+			"id": 16,
+			"name": "Number of battles in Desert terrain",
+			"type": "int"
+			},
+
+		"battles_sea":
+		{
+			"id": 17,
+			"name": "Number of battles in Sea terrain",
+			"type": "int"
+			}
+	},
+	
+	"player":
+	{
+
+		"player_faction":
+		{
+			"id": 10,
+			"name": "Player chosen faction",
+			"type": "int"
+			},
+
+		"turns_number":
+		{
+			"id": 11,
+			"name": "Number of player turns turn",
+			"type": "int",
+			"display": "limited"
+			},
+			
+		"battles_won":
+		{
+			"id": 12,
+			"name": "Number of battles won",
+			"type": "int"
+			},
+
+		"battles_lost":
+		{
+			"id": 13,
+			"name": "Number of battles lost",
+			"type": "int"
+			},
+
+		"battles_withdraw":
+		{
+			"id": 14,
+			"name": "Number of battles withdrawn from",
+			"type": "int"
+			},
+
+		"battles_attack":
+		{
+			"id": 15,
+			"name": "Number of battles attacked",
+			"type": "int"
+			},
+
+		"battles_defend":
+		{
+			"id": 16,
+			"name": "Number of battles defended",
+			"type": "int"
+			},
+
+
+
+
+
+
+		"villages_built":
+		{
+			"id": 18,
+			"name": "Number of villages built",
+			"type": "int"
+			},
+
+		"villages_captured":
+		{
+			"id": 19,
+			"name": "Number of villages captured",
+			"type": "int"
+			},
+
+		"tiles_built":
+		{
+			"id": 20,
+			"name": "Number of army tiles built",
+			"type": "int"
+			},
+
+		"pips_move":
+		{
+			"id": 21,
+			"name": "Number of pips spent moving",
+			"type": "int"
+			},
+
+		"pips_built":
+		{
+			"id": 22,
+			"name": "Number of pips spent building",
+			"type": "int"
+			},
+
+		"longest_move":
+		{
+			"id": 23,
+			"name": "Longest single move by any army",
+			"type": "int"
+			},
+
+		"terrain_losses":
+		{
+			"id": 24,
+			"name": "Number of tiles lost to dangerous terrain, including during retreats",
+			"type": "int"
+			},
+
+		"castle_defences":
+		{
+			"id": 25,
+			"name": "Number of defending battles with a castle or citadel",
+			"type": "int"
+			},
+
+		"ship_crossings":
+		{
+			"id": 26,
+			"name": "Number of times an army travels across the sea",
+			"type": "int"
+			},
+
+		"vp_villages":
+		{
+			"id": 27,
+			"name": "Number of victory points scored from built villages",
+			"type": "int"
+			},
+
+		"vp_captures":
+		{
+			"id": 28,
+			"name": "Number of victory points scored from capturing villages",
+			"type": "int"
+			},
+
+		"vp_battles":
+		{
+			"id": 29,
+			"name": "Number of victory points scored from winning battles",
+			"type": "int"
+			}
+
+	},
+	
+	"value_labels":
+	{
+		"10":
+		[
+			"Horselords",
+			"Hill Folk",
+			"Dragonriders",
+			"Corsairs",
+			"Necromancers",
+			"Chaos Horde"
+		]
+	}
+	
+}

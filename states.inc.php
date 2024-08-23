@@ -143,14 +143,14 @@ $machinestates = array(
         "action" => "st_freeBuild",
 		"args" => "args_freeBuild",
 		"possibleactions" => array("action_skip","action_tryPayAction","action_playerDebug"),
-		"transitions" => array("freeBuild_finish" => STATE_FREEBUILD_FINISH, "freeBuild_chaosHorde_setup" => STATE_FREEBUILD_CHAOSHORDE_SETUP)
+		"transitions" => array("freeBuild_chaosHorde_setup" => STATE_FREEBUILD_CHAOSHORDE_SETUP)
 	),
 	
 	STATE_FREEBUILD_CHAOSHORDE_SETUP => array(
 		"name" => "freeBuild_chaosHorde_setup",
 		"type" => "game",
         "action" => "st_freeBuild_chaosHorde_setup",
-		"transitions" => array("freeBuild_chaosHorde" => STATE_FREEBUILD_CHAOSHORDE)
+		"transitions" => array("freeBuild_chaosHorde" => STATE_FREEBUILD_CHAOSHORDE, "freeBuild_finish" => STATE_FREEBUILD_FINISH)
 	),
 	
 	STATE_FREEBUILD_CHAOSHORDE => array(

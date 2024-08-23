@@ -1571,17 +1571,47 @@ class bloodstones extends Table
 	function st_freeBuild()
 	{
 		//players can simultaneously make choices
-		//todo: dont set the chaoshorde active here
-		$this->gamestate->setAllPlayersMultiactive();
+		$players = self::getCollectionFromDB( "SELECT player_id, player_factionid FROM player" );
+		$player_ids = [];
+		foreach($players as $player_id => $player)
+		{
+			//dont set the chaoshorde active here, they will do their freebuild after all other players
+			if($player["player_factionid"] != self::FACTION_CHAOSHORDE)
+			{
+				$player_ids[] = $player_id;
+			}
+		}
+		$this->gamestate->setPlayersMultiactive($player_ids, null, true);
 	}
 	
 	function st_freeBuild_chaosHorde_setup()
 	{
-		//todo: make the chaos horde player active here
-		//
-		throw new BgaSystemException("Error! The chaos horde player needs to be set to active here");
+		//first, work out if we have a chaos horde player
+		$players = self::getCollectionFromDB("SELECT player_id, player_factionid FROM player");
+		self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($players, true)));
+		$success = false;
+		foreach($players as $player_id => $player)
+		{
+			self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($player, true)));
+			$faction_id = $this->GetPlayerFaction($player_id);
+			if($player["player_factionid"] == self::FACTION_CHAOSHORDE)
+			{
+				$multiactive_players = [$player_id];
+				$success = true;
+				self::notifyAllPlayers("debug", "", array('debugmessage' => "server::st_freeBuild_chaosHorde_setup() player $player_id is chaos horde, starting chaos horde freebuild mode..."));
+				self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($multiactive_players, true)));
+				//$this->gamestate->setPlayersMultiactive($multiactive_players, null, true);
+				$this->gamestate->changeActivePlayer($player_id);
+				$this->gamestate->nextState('freeBuild_chaosHorde');
+				break;
+			}
+		}
 		
-		$this->gamestate->nextState('freeBuild_chaosHorde_setup');
+		if(!$success)
+		{
+			self::notifyAllPlayers("debug", "", array('debugmessage' => "server::st_freeBuild_chaosHorde_setup() no chaos horde players found, finishing freebuild"));
+			$this->gamestate->nextState('freeBuild_finish');
+		}
 	}
 	
 	function st_freeBuild_finish()

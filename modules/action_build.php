@@ -7,7 +7,7 @@ trait action_build
 		$c1 = count($action_info);
 		$c2 = count($paid_tile_infos);
 		$c3 = count($paid_tile_ids);
-		self::notifyAllPlayers("debug", "", array('debugmessage' => "server::HandleBuildAction(action_info($c1), paid_tile_infos($c2), paid_tile_ids($c3))"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::HandleBuildAction(action_info($c1), paid_tile_infos($c2), paid_tile_ids($c3))"));
 		
 		$outcome_info = ["failure_reason" => self::ACTION_FAIL_UNKNOWN];
 		$current_player_id = $this->getCurrentPlayerId();
@@ -82,6 +82,11 @@ trait action_build
 			
 			//special handling for freebuild mode
 			if($this->getStateName() == "freeBuild")
+			{
+				self::DbQuery("UPDATE player SET player_freebuildpoints=0 WHERE player_id='$current_player_id'");
+				$this->gamestate->setPlayerNonMultiactive($current_player_id, "freeBuild_chaosHorde_setup");
+			}
+			else if($this->getStateName() == "freeBuild_chaosHorde")
 			{
 				self::DbQuery("UPDATE player SET player_freebuildpoints=0 WHERE player_id='$current_player_id'");
 				$this->gamestate->setPlayerNonMultiactive($current_player_id, "freeBuild_finish");

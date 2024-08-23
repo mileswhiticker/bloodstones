@@ -294,7 +294,7 @@ trait player_utils
 			$this->gamestate->setPlayerNonMultiactive($current_player_id, 'initNewGame');
 			
 			//this is not the correct way to do player notifications but i can fix it up later when i do a pass on translations
-			self::notifyAllPlayers("playerChooseFaction", '${player_name} has chosen faction $faction_name', array('player_id' => $current_player_id, 'player_name' => $player_name, 'faction_id' => $faction_id, 'old_faction_id' => $old_faction_id));
+			self::notifyAllPlayers("playerChooseFaction", '${player_name} has chosen faction ${faction_name}', array('player_id' => $current_player_id, 'player_name' => $player_name, 'faction_name' => $faction_name, 'faction_id' => $faction_id, 'old_faction_id' => $old_faction_id));
 		}
 		else
 		{

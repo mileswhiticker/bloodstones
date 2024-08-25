@@ -1320,11 +1320,20 @@ class bloodstones extends Table
 	
 	function args_freeBuild_chaosHorde()
 	{
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::args_freeBuild_chaosHorde()"));
 		//todo: get the buildable provinces for chaos horde starting army (everywhere at least 2 tiles away from a citadel)
-		$args = [];
+		$players = self::getCollectionFromDb("SELECT player_id, player_factionid FROM player ");
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($players,true)));
+		$player_id = $this->getActivePlayerId();
+		$buildable_provs[$player_id] = $this->GetPossibleCitadelProvinces($player_id, false);
+		
+		$args = array(
+			"buildable_provinces" => $buildable_provs
+		);
+		
 		return $args;
 	}
-		
+	
 	function args_initNewGame()
 	{
 		$args = [];
@@ -1588,18 +1597,18 @@ class bloodstones extends Table
 	{
 		//first, work out if we have a chaos horde player
 		$players = self::getCollectionFromDB("SELECT player_id, player_factionid FROM player");
-		self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($players, true)));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($players, true)));
 		$success = false;
 		foreach($players as $player_id => $player)
 		{
-			self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($player, true)));
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($player, true)));
 			$faction_id = $this->GetPlayerFaction($player_id);
 			if($player["player_factionid"] == self::FACTION_CHAOSHORDE)
 			{
 				$multiactive_players = [$player_id];
 				$success = true;
-				self::notifyAllPlayers("debug", "", array('debugmessage' => "server::st_freeBuild_chaosHorde_setup() player $player_id is chaos horde, starting chaos horde freebuild mode..."));
-				self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($multiactive_players, true)));
+				//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::st_freeBuild_chaosHorde_setup() player $player_id is chaos horde, starting chaos horde freebuild mode..."));
+				//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($multiactive_players, true)));
 				//$this->gamestate->setPlayersMultiactive($multiactive_players, null, true);
 				$this->gamestate->changeActivePlayer($player_id);
 				$this->gamestate->nextState('freeBuild_chaosHorde');
@@ -1609,7 +1618,7 @@ class bloodstones extends Table
 		
 		if(!$success)
 		{
-			self::notifyAllPlayers("debug", "", array('debugmessage' => "server::st_freeBuild_chaosHorde_setup() no chaos horde players found, finishing freebuild"));
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::st_freeBuild_chaosHorde_setup() no chaos horde players found, finishing freebuild"));
 			$this->gamestate->nextState('freeBuild_finish');
 		}
 	}

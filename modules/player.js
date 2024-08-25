@@ -65,7 +65,7 @@ define(
 			
 			isCurrentPlayerBuildMode : function()
 			{
-				return (this.isCurrentPlayerActive() && this.current_phase_id == PHASE_BUILD) || this.isCurrentPlayerActiveState("freeBuild");
+				return (this.isCurrentPlayerActive() && this.current_phase_id == PHASE_BUILD) || this.isCurrentPlayerActiveState("freeBuild") || this.isCurrentPlayerActiveState("freeBuild_chaosHorde");
 			},
 			
 			isCurrentPlayerFreeBuildMode : function()

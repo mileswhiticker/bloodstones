@@ -336,6 +336,7 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			this.queued_build_armies_by_province = [];
 			this.queued_builds = {};
 			this.buildable_provinces = [];
+			this.chaos_horde_start_prov_name = null;
 			
 			//note: ive got two pulsing systems here, ill need to merge them at some point
 			//the "pulsing_province_id" and the prov_info.is_pulsing
@@ -477,6 +478,11 @@ function (dojo, declare, lang, fx, on, domAttr) {
 		{
 			//this relies on BGA framework so it should be safe
 			return this.getActivePlayer().factionid;
+		},
+		
+		getCurrentPlayerFactionId : function()
+		{
+			return this.getPlayerFactionId(this.getCurrentPlayerId());
 		},
 		
 		getPlayerFactionId : function(check_player_id)

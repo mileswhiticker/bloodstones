@@ -291,10 +291,10 @@ trait player_utils
 			$player_name = $this->getPlayerNameById($current_player_id);
 			$faction_name = $this->getFactionName($faction_id);
 			
-			$this->gamestate->setPlayerNonMultiactive($current_player_id, 'initNewGame');
-			
 			//this is not the correct way to do player notifications but i can fix it up later when i do a pass on translations
-			self::notifyAllPlayers("playerChooseFaction", '${player_name} has chosen faction ${faction_name}', array('player_id' => $current_player_id, 'player_name' => $player_name, 'faction_name' => $faction_name, 'faction_id' => $faction_id, 'old_faction_id' => $old_faction_id));
+			self::notifyAllPlayers("playerChooseFaction", clienttranslate('${player_name} has chosen faction ${faction_name}'), array('player_id' => $current_player_id, 'player_name' => $player_name, 'faction_name' => $faction_name, 'faction_id' => $faction_id, 'old_faction_id' => $old_faction_id));
+			
+			$this->gamestate->setPlayerNonMultiactive($current_player_id, 'initNewGame');
 		}
 		else
 		{
@@ -715,10 +715,10 @@ trait player_utils
 	
 	function playerDebugAction()
 	{
-		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::playerDebugAction()"));
+		self::notifyAllPlayers("debug", "", array('debugmessage' => "server::playerDebugAction()"));
 		//note: this triggers a call to the args() function so i dont need to put anything else here
 		
-		$this->debugCreateUndead();
+		//$this->debugCreateUndead();
 		
 		//$this->KillActivePlayerDesertTiles();
 		

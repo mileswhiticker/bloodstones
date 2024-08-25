@@ -155,11 +155,11 @@ $machinestates = array(
 	
 	STATE_FREEBUILD_CHAOSHORDE => array(
 		"name" => "freeBuild_chaosHorde",
-		"descriptionmyturn" => clienttranslate('You can finally choose your starting units to deploy (+5 free build points)'),
-		"description" => clienttranslate('${actplayer} as the Chaos Horde is deciding where to place their starting units...'),
+		"descriptionmyturn" => clienttranslate('You can now choose your starting horde to deploy (+10 free build points)'),
+		"description" => clienttranslate('${actplayer} as the Chaos Horde is deciding where to place their starting horde...'),
 		"type" => "activeplayer",
 		"args" => "args_freeBuild_chaosHorde",
-		"possibleactions" => array("action_skip","action_tryPayAction"),
+		"possibleactions" => array("action_skip","action_tryPayAction","action_playerDebug"),
 		"transitions" => array("freeBuild_finish" => STATE_FREEBUILD_FINISH)
 	),
 	

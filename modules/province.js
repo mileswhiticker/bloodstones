@@ -532,6 +532,19 @@ define(
 				return adj;
 			},
 			
+			GetAdjacentProvinceIds : function(prov_info)
+			{
+				var adj = [];
+				for(var i in prov_info.movement_link_paths)
+				{
+					var move_link = prov_info.movement_link_paths[i];
+					var prov_name = move_link.target_prov.name;
+					var prov_id = this.GetProvinceIdFromName(prov_name);
+					adj.push(prov_id);
+				}
+				return adj;
+			},
+			
 			GetAllArmiesInProvince : function(province_name)
 			{
 				var found_armies = [];
@@ -649,8 +662,9 @@ define(
 			
 			GetProvinceByName : function(prov_name)
 			{
-				var prov_id = this.GetProvinceIdFromName(prov_name);
-				return this.GetProvinceById(prov_id);
+				return this.provinces_by_name[prov_name];
+				//var prov_id = this.GetProvinceIdFromName(prov_name);
+				//return this.GetProvinceById(prov_id);
 			},
 			
 			GetProvinceById : function(prov_id)

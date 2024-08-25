@@ -75,7 +75,7 @@ define(
 					this.queued_builds = {};
 					this.UnselectArmyStack();
 					
-					if(this.gamedatas.gamestate.name != "freeBuild")
+					if(this.gamedatas.gamestate.name != "freeBuild" && this.gamedatas.gamestate.name != "freeBuild_chaosHorde")
 					{
 						if(approved)
 						{

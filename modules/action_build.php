@@ -13,7 +13,7 @@ trait action_build
 		$current_player_id = $this->getCurrentPlayerId();
 		$current_player_name = $this->getCurrentPlayerName();
 		
-		if($this->getStateName() != "playerMain" && $this->getStateName() != "freeBuild")
+		if($this->getStateName() != "playerMain" && $this->getStateName() != "freeBuild" && $this->getStateName() != "freeBuild_chaosHorde")
 		{
 			$outcome_info["failure_reason"] = self::ACTION_FAIL_STATE;
 			return $outcome_info;

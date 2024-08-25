@@ -266,6 +266,13 @@ define(
 									gameui.showMessage(gameui.GetProvinceBuildFailString(),"error");
 								}
 							}
+							else
+							{
+								var prov_info = gameui.GetProvinceById(target_prov_id);
+								//console.log(target_prov_id);
+								//console.log(prov_info);
+								gameui.showMessage(gameui.GetProvinceBuildUnfoundString(prov_info.type),"error");
+							}
 							
 							if(!success)
 							{

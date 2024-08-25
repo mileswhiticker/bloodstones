@@ -398,15 +398,15 @@ define(
 				{
 					case VILLAGE_FAIL_AVAIL:
 					{
-						return _("Insufficient villages available to place one there");
+						return _("Insufficient villages available to place one there.");
 					}
 					case VILLAGE_FAIL_SLOTS:
 					{
-						return _("That province is already full of villages");
+						return _("That province is already full of villages.");
 					}
 					case VILLAGE_FAIL_TERRAIN:
 					{
-						return _("You cannot build villages there");
+						return _("You cannot build villages there.");
 					}
 					case VILLAGE_FAIL_ENEMIES:
 					{
@@ -427,6 +427,68 @@ define(
 			GetProvinceBuildFailString : function()
 			{
 				return _("You can't build that unit type there");
+			},
+			
+			GetChaosHordeRechooseStartingProvString : function()
+			{
+				return _("You can now choose a different province for your starting horde.");
+			},
+			
+			GetProvinceBuildUnfoundString : function(prov_type)
+			{
+				//console.log("page::GetProvinceBuildUnfoundString(" + prov_type + ")");
+				switch(this.gamedatas.gamestate.name)
+				{
+					case ("playerMain"):
+					{
+						switch(this.getCurrentPlayerFactionId())
+						{
+							case FACTION_CHAOSHORDE:
+							{
+								return _("You can only build where you have units.");
+							}
+							default:
+							{
+								return _("You can only build at villages or your citadel.");
+							}
+						}
+					}
+					case ("freeBuild"):
+					{
+						return _("Your starting army must be at your citadel.");
+					}
+					case ("freeBuild_chaosHorde"):
+					{
+						if(this.chaos_horde_start_prov_name)
+						{
+							return _("Your starting horde must be together.");
+						}
+						else
+						{
+							if(prov_type == "Sea")
+							{
+								return _("Pick a land province for your starting horde.");
+							}
+							else if(prov_type == "Mountains")
+							{
+								return _("Your starting horde cannot be in Mountains.");
+							}
+							else if(prov_type == "Desert")
+							{
+								return _("Your starting horde cannot be in Desert.");
+							}
+							else
+							{
+								return _("Your starting horde cannot be so close to another faction's citadel.");
+							}
+						}
+					}
+					default:
+					{
+						return this.GetProvinceBuildFailString();
+					}
+						
+				}
 			},
 			
 			GetProvinceEntryFailString : function()

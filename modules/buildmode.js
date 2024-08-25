@@ -50,18 +50,18 @@ define(
 			QueueArmyBuild : function(target_prov_name, tile_id)
 			{
 				//console.log("page::QueueArmyBuild(" + target_prov_name + "," + tile_id + ")");
-				//const target_province_info = this.provinces_by_name[target_prov_name];
+				const target_province_info = this.provinces_by_name[target_prov_name];
 				
 				//todo: legality checks here if the build is allowed
 				
 				//CreateArmy : function(army_info, from_div_id)	//army_id, starting_province_id, owner_player_id
-				//console.log(tile_info);
 				
 				//get or create an army here to hold the planned build tile
 				var new_army = this.GetTargetBuildArmy(target_prov_name);
 				
 				//which tile is getting built?
 				var tile_info = this.current_player_hand.GetTileInfo(tile_id);
+				//console.log(tile_info);
 				
 				//remove it from the player hand
 				this.current_player_hand.RemoveTileFromStack(tile_id);
@@ -88,6 +88,12 @@ define(
 				}
 				build_action_prov.tiles.push(tile_id);
 				
+				//chaos horde arent limited to a starting citadel, but all their starting units must go together
+				if(this.gamedatas.gamestate.name == "freeBuild_chaosHorde" && !this.chaos_horde_start_prov_name)
+				{
+					this.LimitChaosHordeBuildableProvinces(target_prov_name);
+				}
+				
 				//console.log(this.queued_builds);
 				//console.log(JSON.stringify(this.queued_builds));
 			},
@@ -95,7 +101,6 @@ define(
 			TryCancelTileBuild : function(army_build_stack, tile_id)
 			{
 				//console.log("page::TryCancelTileBuild(army_build_stack, " + tile_id + ")");
-				//console.log(army_build_stack.tiles);
 				
 				//find this specific tile
 				var tile_info = army_build_stack.tiles[tile_id];
@@ -110,7 +115,7 @@ define(
 				this.current_player_hand.SpawnTileInStack(tile_info);
 				
 				//if there are no tiles left here, clean up the build army stack
-				if(army_build_stack.tiles.length == 0)
+				if(army_build_stack.items.length == 0)
 				{
 					//do we need to unselect this army?
 					if(this.selected_army == army_build_stack)
@@ -119,7 +124,14 @@ define(
 					}
 					
 					//finally clean up the army
-					this.DestroyArmy(army_build_stack.id_num);
+					//this.DestroyArmy(army_build_stack.id_num);
+					
+					//if we are in chaos horde mode, they can now choose a new province to deploy their starting horde in
+					if(this.gamedatas.gamestate.name == "freeBuild_chaosHorde")
+					{
+						this.UnlimitChaosHordeBuildableProvinces();
+						gameui.showMessage(gameui.GetChaosHordeRechooseStartingProvString(),"info");
+					}
 				}
 			},
 			

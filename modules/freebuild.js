@@ -18,8 +18,9 @@ define(
 		var instance = declare("_freebuild", null, {
 			//put your functions here
 			
-			AddFreeBuildUI : function(gamedatas)
+			AddFreeBuildUI : function()
 			{
+				//console.log("page::AddFreeBuildUI()");
 				//reuse most of the code from build mode
 				//see buildmode.js
 				
@@ -32,12 +33,46 @@ define(
 				this.build_mode_cancel_anim = window.requestAnimationFrame(this.buildmodeAnimFrame);
 				this.AddBuildModeUI();
 				this.EnablePaymentBucket(PHASE_BUILD);
+			},
+			
+			UnlimitChaosHordeBuildableProvinces : function()
+			{
+				//console.log("page::UnlimitChaosHordeBuildableProvinces()");
 				
-				//5 free build points
-				this.AddActionPaidAmount(5);
+				//this gets called when a chaos horde player wants to change their starting freebuild province
+				//undo and reset the changes in LimitChaosHordeBuildableProvinces()
+				this.chaos_horde_start_prov_name = null;
+				var current_player_id = this.getCurrentPlayer();
+				this.buildable_provinces = this.buildable_provinces_backup;
+				
+				this.RefreshBuildModeUI();
+			},
+			
+			LimitChaosHordeBuildableProvinces : function(start_province_name)
+			{
+				//console.log("page::LimitChaosHordeBuildableProvinces(" + start_province_name + ")");
+				this.chaos_horde_start_prov_name = start_province_name;
+				//chaos_horde_start_prov_name
+				var start_province_id = this.GetProvinceIdFromName(start_province_name);
+				
+				//now remove all other provinces
+				this.buildable_provinces = [start_province_id];
+				
+				//add back in adjacent sea provinces
+				var start_prov_info = this.provinces_by_name[start_province_name];
+				var adj_prov_ids = this.GetAdjacentProvinceIds(start_prov_info);
+				for(var i in adj_prov_ids)
+				{
+					var check_prov_id = adj_prov_ids[i];
+					var check_prov_info = this.GetProvinceById(check_prov_id);
+					if(check_prov_info.type == "Sea")
+					{
+						this.buildable_provinces.push(check_prov_id);
+					}
+				}
 			},
 		});
-			
+		
 		return instance;
 	}
 );

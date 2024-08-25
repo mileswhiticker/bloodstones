@@ -272,15 +272,15 @@ trait setup
 	{
 		//link players to their factions
 		$this->player_decks = array();
-		$players = self::getCollectionFromDb("SELECT player_id, player_factionid factionid FROM player");
+		$players = self::getCollectionFromDb("SELECT player_id, player_factionid FROM player");
 		foreach($players as $player_id => $player)
 		{
 			//have the player factions been assigned yet?
-			if(!$this->isValidFactionId($player["factionid"]))
+			if(!$this->isValidFactionId($player["player_factionid"]))
 			{
 				break;
 			}
-			$player_deck = $this->faction_decks[$player["factionid"]];
+			$player_deck = $this->faction_decks[$player["player_factionid"]];
 			$this->player_decks[$player_id] = $player_deck;
 		}
 	}

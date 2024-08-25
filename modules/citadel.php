@@ -29,7 +29,7 @@ trait citadel
 		$this->gamestate->nextState('nextCitadel');
 	}
 	
-	public function GetPossibleCitadelProvinces($player_id)
+	public function GetPossibleCitadelProvinces($player_id, $use_prov_names = true)
 	{
 		if($player_id == 0)
 		{
@@ -164,7 +164,14 @@ trait citadel
 			}
 			else
 			{
-				array_push($possible_province_names, $cur_prov_name);
+				if($use_prov_names)
+				{
+					array_push($possible_province_names, $cur_prov_name);
+				}
+				else
+				{
+					array_push($possible_province_names, $cur_prov["id"]);
+				}
 			}
 		}
 		

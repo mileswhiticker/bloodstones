@@ -1184,6 +1184,36 @@
 	border-color: #101111;
 }
 
+#faction0_color
+{
+	color: #004588;
+}
+
+#faction1_color
+{
+	color: #54B064;
+}
+
+#faction2_color
+{
+	color: #FFFF00;
+}
+
+#faction3_color
+{
+	color: #F0EDD7;
+}
+
+#faction4_color
+{
+	color: #D2BEDC;
+}
+
+#faction5_color
+{
+	color: #101111;
+}
+
 .faction0buttonselect
 {
 	background-color: #004588;

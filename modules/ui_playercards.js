@@ -52,9 +52,11 @@ define(
 					playercard.appendChild(playercard_title,true);
 					
 					//faction name
+					var faction_color_css = "faction" + factionid + "_color";
 					let faction_name = document.createElement("div");
 					faction_name.innerHTML = this.faction_strings[factionid].title;
-					faction_name.style.color = this.faction_strings[factionid].fontColour;
+					//faction_name.style.color = this.faction_strings[factionid].fontColour;
+					dojo.addClass(faction_name,faction_color_css);
 					dojo.addClass(faction_name,'playercard_faction_name');
 					playercard_title.appendChild(faction_name,true);
 					
@@ -62,7 +64,8 @@ define(
 					let regroups_left = document.createElement("div");
 					regroups_left.id = "regroups_" + player_id;
 					regroups_left.innerHTML = player.regroups;
-					regroups_left.style.color = this.faction_strings[factionid].fontColour;
+					//regroups_left.style.color = this.faction_strings[factionid].fontColour;
+					dojo.addClass(regroups_left,faction_color_css);
 					dojo.addClass(regroups_left,'regroups_left');
 					dojo.addClass(regroups_left,'playercard_element');
 					dojo.addClass(regroups_left,'regroup' + factionid);
@@ -72,7 +75,8 @@ define(
 					let player_score = document.createElement("div");
 					player_score.id = this.GetPlayerScoreDivId(player_id);
 					player_score.innerHTML = player.score;
-					player_score.style.color = this.faction_strings[factionid].fontColour;
+					//player_score.style.color = this.faction_strings[factionid].fontColour;
+					dojo.addClass(player_score,faction_color_css);
 					dojo.addClass(player_score,'player_score');
 					dojo.addClass(player_score,'playercard_element');
 					dojo.addClass(player_score,'score' + factionid);
@@ -80,7 +84,8 @@ define(
 					
 					//villages not yet built from this player
 					let player_villages_text = dojo.place("<div class=\"player_villages_text playercard_element\">" + player.villages_available + "</div>", playercard.id);
-					player_villages_text.style.color = this.faction_strings[factionid].fontColour;
+					//player_villages_text.style.color = this.faction_strings[factionid].fontColour;
+					dojo.addClass(player_villages_text,faction_color_css);
 					let player_villages_icon = dojo.place("<div class=\"player_villages_icon playercard_element\"></div>", playercard.id);
 					dojo.addClass(player_villages_icon,'village' + factionid);
 					
@@ -90,7 +95,8 @@ define(
 					
 					//text for the number of villages captured
 					let player_captured_villages_text = dojo.place("<div id=\"" + this.GetVillagesCapturedTextId(player_id) + "\"class=\"\">" + player.villages_captured + "</div>", player_villages_container_id);
-					player_captured_villages.style.color = this.faction_strings[factionid].fontColour;
+					//player_captured_villages.style.color = this.faction_strings[factionid].fontColour;
+					dojo.addClass(player_captured_villages,faction_color_css);
 					
 					//some image icons for the captured villages
 					let captured_villages_container = dojo.place("<div class=\"captured_villages_container\"></div>", player_captured_villages);
@@ -122,7 +128,8 @@ define(
 					//player name
 					let player_name = document.createElement("div");
 					player_name.innerHTML = player.name;
-					player_name.style.color = this.faction_strings[factionid].fontColour;
+					//player_name.style.color = this.faction_strings[factionid].fontColour;
+					dojo.addClass(player_name,faction_color_css);
 					dojo.addClass(player_name, 'player_name');
 					playercard.appendChild(player_name,true);
 					

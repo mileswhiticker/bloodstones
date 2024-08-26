@@ -1517,6 +1517,7 @@ class bloodstones extends Table
 	{
 		if($this->debug_skip_faction_assignment)
 		{
+			//for debugging we need this because we will be skipping a few other steps
 			$this->AssignRandomPlayerFactions();
 			$this->InitNewGame();
 			//$this->gamestate->nextState('freeBuild');
@@ -1654,14 +1655,6 @@ class bloodstones extends Table
 		//todo: the current player turn number is already stored as a global variable, it doesnt need to be a game stat
 		$this->incStat(1, "turns_number", $active_player_id);
 		
-		//due to chaos horde placement complexity, just skip them entirely for now
-		if($this->getPlayerFactionId($active_player_id) == self::FACTION_CHAOSHORDE)
-		{
-			$this->activeNextPlayer();
-			$active_player_id = $this->getActivePlayerId();
-			//$next_player_id = $this->getNextPlayerTable()[$next_player_id];
-		}
-		
 		//reset the turn timer for the player that just had their turn
 		if($old_active_player_id)
 		{
@@ -1693,9 +1686,10 @@ class bloodstones extends Table
 			$next_state = STATE_GAMEOVER;
 		}
 		
-		else if($this->GetPendingCaptureArmies($active_player_id, true))
+		else if($this->GetPendingCaptureArmies($active_player_id, true) && !$this->IsCurrentPlayerChaosHorde())
 		{
 			//first priority: can this player capture villages?
+			//chaos horde can only capture villages during their main phase
 			$next_state = STATE_PLAYERCAPTURE;
 		}
 		else if($this->CanPlayerUndeadPhase($active_player_id))

@@ -156,7 +156,7 @@ define(
 							this.AddFreeBuildUI();
 							
 							//10 free build points
-							this.AddActionPaidAmount(10);
+							this.AddActionPaidAmount(5);
 						}
 						break;
 					}

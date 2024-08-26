@@ -28,7 +28,7 @@ require_once ('modules/player.php');
 require_once ('modules/retreat_withdraw.php');
 require_once ('modules/village.php');
 require_once ('modules/citadel.php');
-require_once ('modules/capture.php');
+require_once ('modules/action_capture.php');
 require_once ('modules/action_move.php');
 require_once ('modules/action_build.php');
 require_once ('modules/action_undead.php');
@@ -101,7 +101,7 @@ class bloodstones extends Table
 	use retreat_withdraw;
 	use village;
 	use citadel;
-	use capture;
+	use action_capture;
 	use action_move;
 	use action_build;
 	use action_undead;
@@ -562,7 +562,7 @@ class bloodstones extends Table
 					$outcome_info = ["failure_reason" => self::ACTION_FAIL_STATE];
 					break;
 				}
-				$outcome_info = $this->tryPlayerCaptureVillages($action_info, $paid_tile_ids);
+				$outcome_info = $this->HandleCaptureAction($action_info, $paid_tile_ids);
 				if($outcome_info["failure_reason"] == self::ACTION_SKIP || $outcome_info["failure_reason"] == self::ACTION_SUCCESS)
 				{
 					$success = true;

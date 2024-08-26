@@ -1,11 +1,11 @@
 
 <?php
 
-trait capture
+trait action_capture
 {
-	public function tryPlayerCaptureVillages($action_info, $paid_tile_ids)
+	public function HandleCaptureAction($action_info, $paid_tile_ids)
 	{
-		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::tryPlayerCaptureVillages()"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::HandleCaptureAction()"));
 		//todo: with $bThrowException set to false i have to manually handle the failures
 		self::checkAction("action_captureVillage", false);
 		

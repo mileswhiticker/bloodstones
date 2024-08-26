@@ -216,7 +216,7 @@ class action_bloodstones extends APP_GameAction
 		self::ajaxResponse();
 	}
 	
-	public function action_captureVillage()
+	/*public function action_captureVillage()
 	{
 		self::setAjaxMode();
 		
@@ -227,7 +227,7 @@ class action_bloodstones extends APP_GameAction
 		$this->game->action_captureVillage($village_info_stringified);
 		
 		self::ajaxResponse();
-	}
+	}*/
 	
 	public function action_tryEnterPhase()
 	{

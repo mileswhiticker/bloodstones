@@ -165,8 +165,8 @@ define(
 					const army_action_steps = this.queued_action_steps[moving_army.id_string];
 					if(army_action_steps && army_action_steps != undefined)
 					{
-						console.log("army_action_steps:");
-						console.log(army_action_steps);
+						//console.log("army_action_steps:");
+						//console.log(army_action_steps);
 						
 						//loop over this army's old queued moves and override any previously applied movement overlays
 						for(var k in army_action_steps)

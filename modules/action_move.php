@@ -10,8 +10,8 @@ trait action_move
 		
 		//note: this includes army splits as well as moves
 		//first, check if the player's move is legal
-		self::notifyAllPlayers("debug", "", array('debugmessage' => "server::HandleMoveAction()"));
-		self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($action_info, true)));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::HandleMoveAction()"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($action_info, true)));
 		
 		if($this->getStateName() != "playerMain")
 		{
@@ -52,7 +52,7 @@ trait action_move
 				}
 				$source_army = self::getObjectFromDB("SELECT army_id, province_id, player_id FROM armies WHERE army_id=$source_army_id");
 				//$num_steps = count($army_action_steps);
-				self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($army_action_steps,true)));
+				//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($army_action_steps,true)));
 				
 				$dest_province_name = "NA";
 				//self::notifyAllPlayers("debug", "", array('debugmessage' => "$myvar"));
@@ -89,8 +89,8 @@ trait action_move
 						$army_id_temp = $action_step["temp_army_id_num"];
 						$temp_id_map[$army_id_temp] = $army_id_assigned;
 						
-						self::notifyAllPlayers("debug", "", array('debugmessage' => "server::HandleMoveAction() successfully assigned temp army id: $army_id_temp with assigned army id: $army_id_assigned"));
-						self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($temp_id_map,true)));
+						//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::HandleMoveAction() successfully assigned temp army id: $army_id_temp with assigned army id: $army_id_assigned"));
+						//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($temp_id_map,true)));
 					}
 					else
 					{

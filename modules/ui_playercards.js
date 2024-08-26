@@ -89,6 +89,13 @@ define(
 					let player_villages_icon = dojo.place("<div class=\"player_villages_icon playercard_element\"></div>", playercard.id);
 					dojo.addClass(player_villages_icon,'village' + factionid);
 					
+					//chaos horde cannot build villages
+					if(factionid == FACTION_CHAOSHORDE)
+					{
+						dojo.addClass(player_villages_text,"display_none");
+						dojo.addClass(player_villages_icon,"display_none");
+					}
+					
 					//villages captured by this player from enemy players
 					let player_villages_container_id = this.GetVillagesCapturedContainerId(player_id);
 					let player_captured_villages = dojo.place("<div id=\"" + player_villages_container_id + "\"class=\"player_captured_villages playercard_element\"></div>", playercard.id);
@@ -114,6 +121,12 @@ define(
 						//grab info about this player
 						var captured_player = gamedatas.players[captured_player_id];
 						var captured_factionid = captured_player.factionid;
+						
+						//chaos horde cannot build villages
+						if(captured_factionid == FACTION_CHAOSHORDE)
+						{
+							continue;
+						}
 						
 						//create the div element to show a town for this player
 						let player_captured_village = document.createElement("div");

@@ -13,6 +13,8 @@ trait action_build
 		$current_player_id = $this->getCurrentPlayerId();
 		$current_player_name = $this->getCurrentPlayerName();
 		
+		//todo: check for active player status
+		
 		if($this->getStateName() != "playerMain" && $this->getStateName() != "freeBuild" && $this->getStateName() != "freeBuild_chaosHorde")
 		{
 			$outcome_info["failure_reason"] = self::ACTION_FAIL_STATE;
@@ -83,13 +85,20 @@ trait action_build
 			//special handling for freebuild mode
 			if($this->getStateName() == "freeBuild")
 			{
+				//this is a multiactiveplayer so we set this player nonactive, and go to the next state when they're the last one
 				self::DbQuery("UPDATE player SET player_freebuildpoints=0 WHERE player_id='$current_player_id'");
 				$this->gamestate->setPlayerNonMultiactive($current_player_id, "freeBuild_chaosHorde_setup");
 			}
 			else if($this->getStateName() == "freeBuild_chaosHorde")
 			{
+				//this is an activeplayer type state so we simply go to the next state
 				self::DbQuery("UPDATE player SET player_freebuildpoints=0 WHERE player_id='$current_player_id'");
-				$this->gamestate->setPlayerNonMultiactive($current_player_id, "freeBuild_finish");
+				$this->gamestate->nextState('freeBuild_finish');
+			}
+			else
+			{
+				//the only other state this should be called is "playerMain"
+				//after completing a build action we stay in the same state and the current_player remains active
 			}
 			
 			$outcome_info["failure_reason"] = self::ACTION_SUCCESS;

@@ -56,6 +56,7 @@ trait player_utils
 	function dbSetScore($player_id, $count)
 	{
 		$this->DbQuery("UPDATE player SET player_score='$count' WHERE player_id='$player_id'");
+		self::notifyAllPlayers("playerScoreChanged", "", array('player_id' => $player_id, 'new_score' => $count));
 	}
 	
 	// set aux score (tie breaker)
@@ -71,6 +72,8 @@ trait player_utils
 		if ($inc != 0) {
 			$count += $inc;
 			$this->dbSetScore($player_id, $count);
+			$player_name = $this->getPlayerNameById($player_id);
+			self::notifyAllPlayers("logPlayerMessage", clienttranslate('${player_name} has gained ${incscore} Victory Points.'), array("player_name" => $player_name, "incscore" => $inc));
 		}
 		return $count;
 	}

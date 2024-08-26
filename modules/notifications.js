@@ -76,6 +76,7 @@ define(
 				dojo.subscribe('battleResolve_dragons', this, "notif_battleResolve_dragons");
 				dojo.subscribe('battleResolve_undead', this, "notif_battleResolve_undead");
 				dojo.subscribe('playerUndeadMove', this, "notif_playerUndeadMove");
+				dojo.subscribe('playerScoreChanged', this, "notif_scoreChanged");
 				
 				//dont display player notifications for our own moves
 				//this.setIgnoreNotificationCheck("playerArmyMove", (notif) => (notif.args.moving_player_id == this.player_id));
@@ -97,6 +98,12 @@ define(
 			},    
 			
 			*/
+			
+			notif_scoreChanged : function(notif)
+			{
+				var player_score_div = dojo.byId(this.GetPlayerScoreDivId(notif.args.player_id));
+				player_score_div.innerHTML = notif.args.new_score;
+			},
 			
 			notif_debug : function(notif) {
 				console.log(notif.args.debugmessage);

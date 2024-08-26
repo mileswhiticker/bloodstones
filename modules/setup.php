@@ -356,10 +356,18 @@ trait setup
 		//draw the first hand of tiles for each player
 		$this->setupFreebuildPlayerHands();
 		
+		//record the player starting factions
 		$players = self::getCollectionFromDB( "SELECT player_id, player_factionid FROM player" );
 		foreach($players as $player_id => $player)
 		{
-			$this->setStat($player["player_factionid"], "player_faction", $player_id);
+			$faction_id = $player["player_factionid"];
+			$this->setStat($faction_id, "player_faction", $player_id);
+			
+			//chaos horde get a bonus 10 starting VP
+			if($faction_id == self::FACTION_CHAOSHORDE)
+			{
+				$this->dbIncScore($player_id, 10);
+			}
 		}
 		
 		//todo: what else needs to go here?

@@ -489,6 +489,9 @@ trait player_utils
 			$prov_name = $army["province_id"];
 			$prov_id = $this->getProvinceIdFromName($prov_name);
 			$province_ids[] = $prov_id;
+			
+			//add in adjacent sea provinces as well
+			$province_ids = array_merge($province_ids, $this->GetAdjSeaProvIds($prov_id));
 		}
 		
 		return $province_ids;
@@ -706,6 +709,14 @@ trait player_utils
 	{
 		$faction_id = self::FACTION_CORSAIRS;
 		return self::getUniqueValueFromDB("SELECT player_id FROM player WHERE player_factionid='$faction_id'");;
+	}
+	
+	public function IsCurrentPlayerChaosHorde()
+	{
+		$current_player_id = $this->getCurrentPlayerId();
+		$faction_id = $this->GetPlayerFaction($current_player_id);
+		
+		return ($faction_id == self::FACTION_CHAOSHORDE);
 	}
 	
 	public function GetNecromancersPlayer()

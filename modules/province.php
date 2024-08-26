@@ -49,7 +49,7 @@ trait province
 			
 			if($check_prov["type"] == "Sea")
 			{
-				array_push($adj_provinces, $connected_prov_id);
+				$adj_provinces[] = $connected_prov_id;
 			}
 		}
 		return $adj_provinces;

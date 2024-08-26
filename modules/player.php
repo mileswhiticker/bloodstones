@@ -183,19 +183,23 @@ trait player_utils
 	
 	function DiscardTilesFromHand($paid_tile_infos, $owner_player_id)
 	{
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::DiscardTilesFromHand()"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($paid_tile_infos, true)));
+		
 		$paid_tile_ids = array();
 		$pips_spent = 0;
+		$player_deck = $this->player_decks[$owner_player_id];
 		
-		foreach($paid_tile_infos as $paid_tile_id => $paid_tile_info)
+		foreach($paid_tile_infos as $index => $paid_tile_info)
 		{
-			array_push($paid_tile_ids, $paid_tile_info["id"]);
-			$pips = $this->getTilePipsFromType($paid_tile_info["type_arg"]);
+			$paid_tile_id = $paid_tile_info["id"];
+			array_push($paid_tile_ids, $paid_tile_id);
+			$pips = $this->getTilePipsFromId($paid_tile_id, $player_deck);
 			$pips_spent += $pips;
 			//self::notifyAllPlayers("debug", "", array('debugmessage' => $paid_tile["id"]));
 		}
 		
-		//grab the appropriate tile deck
-		$player_deck = $this->player_decks[$owner_player_id];
+		//move these tiles to the discard
 		$player_deck->moveCards($paid_tile_ids, "discard");
 		
 		//update the players about the discarded cards
@@ -366,6 +370,13 @@ trait player_utils
 	{
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::GetPlayerBuildableProvinces($player_id)"));
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($this->player_decks, true)));
+		
+		//chaos horde can build anywhere they have units, instead of at citadel or village
+		$faction_id = $this->getPlayerFactionId($player_id);
+		if($faction_id == self::FACTION_CHAOSHORDE)
+		{
+			return $this->GetChaosHordeBuildableProvinces($player_id);
+		}
 		$province_ids = [];
 		
 		/*
@@ -464,6 +475,21 @@ trait player_utils
 		//todo: chaos horde can build anywhere they have units
 		
 		//finally, add any adjacent sea provinces for building ships
+		
+		return $province_ids;
+	}
+	
+	public function GetChaosHordeBuildableProvinces($player_id)
+	{
+		$province_ids = [];
+		$armies = $this->GetPlayerArmies($player_id);
+		
+		foreach($armies as $army_id => $army)
+		{
+			$prov_name = $army["province_id"];
+			$prov_id = $this->getProvinceIdFromName($prov_name);
+			$province_ids[] = $prov_id;
+		}
 		
 		return $province_ids;
 	}

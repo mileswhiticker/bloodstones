@@ -161,7 +161,7 @@ class bloodstones extends Table
 		$this->villages_deck = self::getNew("module.common.deck");
 		$this->villages_deck->init("villages");
 		
-		$this->debug_skip_faction_assignment = true;
+		$this->debug_skip_faction_assignment = false;
 	}
 	
     protected function getGameName( )

@@ -25,7 +25,7 @@ define(
 			
 			UICanvasRenderPlaceCitadelOverlay : function()
 			{
-				console.log("page::UICanvasRenderPlaceCitadelOverlay()");
+				//console.log("page::UICanvasRenderPlaceCitadelOverlay()");
 				for(var i in this.possible_citadel_provinces)
 				{
 					var cur_province_name = this.possible_citadel_provinces[i];

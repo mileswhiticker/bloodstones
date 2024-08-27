@@ -336,7 +336,7 @@ define(
 			
 			AddVillagesCaptured : function(player_id, num_new_villages)
 			{
-				console.log("page::AddVillagesCaptured(" + player_id + "," + num_new_villages + ")");
+				//console.log("page::AddVillagesCaptured(" + player_id + "," + num_new_villages + ")");
 				var player = this.gamedatas.players[player_id];
 				console.log(player);
 				player.villages_captured = Number(player.villages_captured);

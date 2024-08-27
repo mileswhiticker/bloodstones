@@ -338,7 +338,7 @@ trait province
 		$province_type = $this->GetProvinceTypeName($province_id);
 		$slots_max = $this->GetProvinceVillageSlotsMax($province_type);
 		$slots_avail = $slots_max - $this->countProvinceVillagesBuilt($province_id, $faction_id);
-		self::notifyAllPlayers("debug", "", array('debugmessage' => "server::GetProvinceVillageSlotsAvailable($province_id, $faction_id): $slots_avail"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::GetProvinceVillageSlotsAvailable($province_id, $faction_id): $slots_avail"));
 		
 		return $slots_avail;
 	}
@@ -354,7 +354,7 @@ trait province
 	function countProvinceVillagesBuilt($province_id, $faction_id)
 	{
 		$num = count($this->getProvinceVillagesBuilt($faction_id, $province_id));
-		self::notifyAllPlayers("debug", "", array('debugmessage' => "server::countProvinceVillagesBuilt($province_id, $faction_id): $num"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::countProvinceVillagesBuilt($province_id, $faction_id): $num"));
 		return $num;
 	}
 }

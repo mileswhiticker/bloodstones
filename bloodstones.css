@@ -407,19 +407,29 @@
     width: 33%;
 }
 
-#button_build
+/*PHASE_CAPTURE = 0*/
+#small_phase_button0
+{
+    grid-row-start: 1;
+    grid-column-start: 3;
+}
+
+/*PHASE_BUILD = 3*/
+#small_phase_button3
 {
     grid-row-start: 2;
     grid-column-start: 1;
 }
 
-#button_move
+/*PHASE_MOVE = 4*/
+#small_phase_button4
 {
     grid-row-start: 2;
     grid-column-start: 2;
 }
 
-#button_battle
+/*PHASE_BATTLE = 5*/
+#small_phase_button5
 {
     grid-row-start: 2;
     grid-column-start: 3;
@@ -427,6 +437,9 @@
 
 .phase_small{
 	/*border-style: dashed;*/
+	text-align: center;
+	width: 100%;
+	height: 100%;
 }
 
 #province_overlay_canvas {

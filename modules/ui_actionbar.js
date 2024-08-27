@@ -39,7 +39,6 @@ define(
 				
 				this.player_phases_all = ["villages","undead","main","build","move","battle","end","reset"];
 				//this.player_phases_large = ["villages","undead","main","end"];
-				this.player_phases_small = ["build","move","battle"];
 				this.phase_buttons = {
 					"villages":{"string":"1. Capture Villages","node":null},
 					"undead":{"string":"2. Move Undead","node":null},
@@ -103,31 +102,40 @@ define(
 				const phasecontainer_small = dojo.place(
 					"<div id=\"phasecontainer_small\"></div>","main"
 				);
-				for(var i in this.player_phases_small)
+				
+				for(var i=0; i<this.player_phases_small.length; i++)
 				{
-					const phase_name = this.player_phases_small[i];
+					const cur_small_phase = this.player_phases_small[i];
+					console.log("placing cur_small_phase:" + cur_small_phase);
 					const actionbutton = dojo.place(
-						"<div id=\"" + phase_name + "\" class=\"phase_small\">"
-						+ this.phase_buttons[phase_name]["string"]
+						"<div id=\""
+						+ this.GetSmallPhaseButtonDivId(cur_small_phase)
+						+ "\" class=\"phase_small\">"
+						+ this.GetSmallPhaseEntryString(cur_small_phase)
 						+ "</div>","phasecontainer_small"
 					);
 					
 					dojo.addClass(actionbutton, "blst_button");
 					dojo.addClass(actionbutton, "blst_button_disabled");
 					
-					switch(phase_name)
+					switch(cur_small_phase)
 					{
-						case 'build':
+						case PHASE_CAPTURE:
+						{
+							dojo.connect(actionbutton, "click", dojo.hitch(this, this.onClickCapturePhaseButton));
+							break;
+						}
+						case PHASE_BUILD:
 						{
 							dojo.connect(actionbutton, "click", dojo.hitch(this, this.onClickBuildModeButton));
 							break;
 						}
-						case 'move':
+						case PHASE_MOVE:
 						{
 							dojo.connect(actionbutton, "click", dojo.hitch(this, this.onClickMoveModeButton));
 							break;
 						}
-						case 'battle':
+						case PHASE_BATTLE:
 						{
 							dojo.connect(actionbutton, "click", dojo.hitch(this, this.onClickBattleModeButton));
 							break;
@@ -136,7 +144,7 @@ define(
 				}
 				
 				//finish phase button
-				phase_name = "end_phase_button";//this.player_phases_large[3];
+				var phase_name = "end_phase_button";//this.player_phases_large[3];
 				var exit_phase_string = "NA exit phase";
 				this.exit_phase_strings = [
 					_("Finish capturing"),
@@ -183,6 +191,18 @@ define(
 				if(!this.isCurrentPlayerMainPhase())
 				{
 					this.server_enterPhase(PHASE_MAIN);
+				}
+			},
+			
+			onClickCapturePhaseButton : function(event)
+			{
+				if(this.isCurrentPlayerCapturePhase())
+				{
+					this.ExitCapturePhase(false);
+				}
+				else if(this.isCurrentPlayerMainPhase())
+				{
+					this.EnterCapturePhase();
 				}
 			},
 			
@@ -340,9 +360,67 @@ define(
 				}
 				
 				//update the bottom ui panel button
+				//note: small phases represent the available actions for the player during the main turn state
 				var end_phase_button = dojo.byId("end_phase_button");
-				//end_phase_button.innerHTML = this.exit_phase_strings[new_phase_id];
+				//var small_phases = [PHASE_CAPTURE, PHASE_BUILD, PHASE_MOVE, PHASE_BATTLE];
 				
+				if(new_phase_id == PHASE_RESET)
+				{
+					//disable small phase transitions
+					for(var i=0; i<this.player_phases_small.length; i++)
+					{
+						var cur_small_phase = this.player_phases_small[i];
+						var small_phase_button = dojo.byId(this.GetSmallPhaseButtonDivId(cur_small_phase));
+						dojo.addClass(small_phase_button, "blst_button_disabled");
+					}
+					
+					//prevent end of turn while waiting for server to process (note: server doesnt allow this anyway)
+					dojo.addClass(end_phase_button, "blst_button_disabled");
+					
+					//lock payment window
+					this.LockPaymentBucket();
+				}
+				else if(new_phase_id == PHASE_MAIN)
+				{
+					//loop over the small phases for the player
+					for(var i=0; i<this.player_phases_small.length; i++)
+					{
+						var cur_small_phase = this.player_phases_small[i];
+						var small_phase_button = dojo.byId(this.GetSmallPhaseButtonDivId(cur_small_phase));
+						
+						//enable the entry for this action phase
+						small_phase_button.innerHTML = this.GetSmallPhaseEntryString(cur_small_phase);
+						dojo.removeClass(small_phase_button, "blst_button_disabled");
+					}
+					
+					//player can end their turn
+					dojo.removeClass(end_phase_button, "blst_button_disabled");
+				}
+				else
+				{
+					//loop over the small phases for the player
+					for(var i=0; i<this.player_phases_small.length; i++)
+					{
+						var cur_small_phase = this.player_phases_small[i];
+						var small_phase_button = dojo.byId("small_phase_button" + cur_small_phase);
+						
+						if(cur_small_phase == new_phase_id)
+						{
+							//we have just entered this action phase
+							small_phase_button.innerHTML = this.GetSmallPhaseExitString(cur_small_phase);
+						}
+						else
+						{
+							//disable the entry for this action phase
+							dojo.addClass(small_phase_button, "blst_button_disabled");
+						}
+					}
+					
+					//player has to exit the action phase before they can end their turn
+					dojo.addClass(end_phase_button, "blst_button_disabled");
+				}
+				
+				/*
 				switch(new_phase_id)
 				{
 					case PHASE_MAIN:
@@ -359,6 +437,21 @@ define(
 						dojo.removeClass(small_phase_button, "blst_button_disabled");
 						
 						dojo.removeClass(end_phase_button, "blst_button_disabled");
+						break;
+					}
+					case PHASE_CAPTURE:
+					{
+						small_phase_button = dojo.byId("button_capture");
+						small_phase_button.innerHTML = this.exit_phase_strings[PHASE_CAPTURE];
+						small_phase_button = dojo.byId("button_move");
+						small_phase_button.innerHTML = "Move";
+						dojo.addClass(small_phase_button, "blst_button_disabled");
+						small_phase_button = dojo.byId("button_build");
+						dojo.addClass(small_phase_button, "blst_button_disabled");
+						small_phase_button = dojo.byId("button_battle");
+						dojo.addClass(small_phase_button, "blst_button_disabled");
+						
+						dojo.addClass(end_phase_button, "blst_button_disabled");
 						break;
 					}
 					case PHASE_MOVE:
@@ -412,6 +505,7 @@ define(
 						break;
 					}
 				}
+				*/
 			},
 
 			// onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
@@ -482,7 +576,7 @@ define(
 					}
 				}*/
 			},
-
+			
 		});
 		
 		return instance;

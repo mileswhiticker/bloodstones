@@ -63,6 +63,11 @@ define(
 				return (this.isCurrentPlayerActive() && this.current_phase_id == PHASE_RESET);
 			},
 			
+			isCurrentPlayerCapturePhase : function()
+			{
+				return (this.isCurrentPlayerActive() && this.current_phase_id == PHASE_CAPTURE);
+			},
+			
 			isCurrentPlayerBuildMode : function()
 			{
 				return (this.isCurrentPlayerActive() && this.current_phase_id == PHASE_BUILD) || this.isCurrentPlayerActiveState("freeBuild") || this.isCurrentPlayerActiveState("freeBuild_chaosHorde");

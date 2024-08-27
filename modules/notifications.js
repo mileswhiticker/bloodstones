@@ -71,6 +71,7 @@ define(
 				dojo.subscribe('playerChooseFaction', this, "notif_playerChooseFaction");
 				dojo.subscribe('playerChooseFactionFail', this, "notif_playerChooseFactionFail");
 				dojo.subscribe('playerCaptureSuccess', this, "notif_playerCaptureSuccess");
+				dojo.subscribe('playerCaptureFail', this, "notif_playerCaptureFail");
 				dojo.subscribe('desert_tiles', this, "notif_desert_tiles");
 				dojo.subscribe('battleResolve', this, "notif_battleResolve");
 				dojo.subscribe('battleResolve_dragons', this, "notif_battleResolve_dragons");
@@ -154,6 +155,23 @@ define(
 					new_captured_villages++;
 				}
 				this.AddVillagesCaptured(capture_player_id, new_captured_villages);
+			},
+			
+			notif_playerCaptureFail : function(notif)
+			{
+				switch(notif.args.failure_reason)
+				{
+					case ACTION_FAIL_CAPTUREMAX:
+					{
+						this.showMessage(this.GetFailCaptureMaxString(), "info");
+						break;
+					}
+					default:
+					{
+						this.showMessage("ERROR: failed to capture villages with code: " + notif.args.failure_reason, "error");
+						break;
+					}
+				}
 			},
 			
 			notif_playerChooseFactionFail : function(notif)

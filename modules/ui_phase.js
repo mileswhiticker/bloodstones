@@ -31,18 +31,22 @@ define(
 				//state transition: next player -> capture
 				this.UIPlayerGeneric(args);
 				
-				//the current phase and previous phases can no longer be selected
-				this.UIActivePhase("title_capture");
-				this.UIFuturePhase("end_phase_button");
+				//previous states are grey text, current state is white text, future states are buttons
+				this.UIActiveTitle("title_capture");
+				this.UIActiveButton("title_undead");
+				this.UIActiveButton("title_main");
+				this.UIInactiveButton_smallPhases();
+				this.UIActiveButton("title_buildvillages");
+				this.UIActiveButton("end_phase_button");
 				
 				//special handling for undead phase
 				if(this.getPlayerFactionId(this.getCurrentPlayer()) == FACTION_NECROMANCERS)
 				{
-					this.UIFuturePhase("title_undead");
+					this.UIActiveButton("title_undead");
 				}
 				else
 				{
-					this.UIFinishedPhase("title_undead");
+					this.UIInactiveTitle("title_undead");
 				}
 			},
 			
@@ -51,13 +55,13 @@ define(
 				//state: capture -> undead
 				this.UIPlayerGeneric(args);
 				
-				//the current phase and previous phases can no longer be selected
-				this.UIFinishedPhase("title_capture");
-				this.UIActivePhase("title_undead");
-				this.UIFuturePhase("end_phase_button");
-				this.UIDisabledButton("button_build");
-				this.UIDisabledButton("button_move");
-				this.UIDisabledButton("button_battle");
+				//previous states are grey text, current state is white text, future states are buttons
+				this.UIInactiveTitle("title_capture");
+				this.UIActiveTitle("title_undead");
+				this.UIActiveButton("title_main");
+				this.UIInactiveButton_smallPhases();
+				this.UIActiveButton("title_buildvillages");
+				this.UIActiveButton("end_phase_button");
 			},
 			
 			UIStatePlayerMain : function(args)
@@ -65,15 +69,12 @@ define(
 				//state: undead -> main OR capture -> main
 				this.UIPlayerGeneric(args);
 				
-				//the current phase and previous phases can no longer be selected
-				this.UIFinishedPhase("title_capture");
-				this.UIFinishedPhase("title_undead");
-				
-				//enable the next few phases
-				this.UIActivePhase("title_main");
-				this.UIActiveButton("button_build");
-				this.UIActiveButton("button_move");
-				this.UIActiveButton("button_battle");
+				//previous states are grey text, current state is white text, future states are buttons
+				this.UIInactiveTitle("title_capture");
+				this.UIInactiveTitle("title_undead");
+				this.UIActiveTitle("title_main");
+				this.UIActiveButton_smallPhases();
+				this.UIActiveButton("title_buildvillages");
 				this.UIActiveButton("end_phase_button");
 			},
 			
@@ -82,14 +83,12 @@ define(
 				//state: main -> build villages
 				this.UIPlayerGeneric(args);
 				
-				//the current phase and previous phases can no longer be selected
-				this.UIFinishedPhase("title_capture");
-				this.UIFinishedPhase("title_undead");
-				this.UIFinishedPhase("title_main");
-				this.UIFinishedPhase("button_build");
-				this.UIFinishedPhase("button_move");
-				this.UIFinishedPhase("button_battle");
-				this.UIActivePhase("title_buildvillages");
+				//previous states are grey text, current state is white text, future states are buttons
+				this.UIInactiveTitle("title_capture");
+				this.UIInactiveTitle("title_undead");
+				this.UIInactiveTitle("title_main");
+				this.UIInactiveButton_smallPhases();
+				this.UIActiveTitle("title_buildvillages");
 				this.UIActiveButton("end_phase_button");
 			},
 			
@@ -98,42 +97,48 @@ define(
 				//nothing
 			},
 			
-			UIFinishedPhase : function(phase_name)
+			UIActiveTitle : function(div_id)
 			{
-				dojo.removeClass(phase_name, "blst_button_disabled");
-				dojo.removeClass(phase_name, "blst_button");
-				dojo.addClass(phase_name, "inactive_phase");
+				dojo.removeClass(div_id, "blst_button");
+				dojo.removeClass(div_id, "blst_button_disabled");
+				dojo.removeClass(div_id, "inactive_phase");
 			},
 			
-			UIActiveButton : function(phase_name)
+			UIInactiveTitle : function(div_id)
 			{
-				dojo.removeClass(phase_name, "inactive_phase");
-				dojo.removeClass(phase_name, "blst_button_disabled");
-				dojo.addClass(phase_name, "blst_button");
+				dojo.removeClass(div_id, "blst_button");
+				dojo.removeClass(div_id, "blst_button_disabled");
+				dojo.addClass(div_id, "inactive_phase");
 			},
 			
-			UIDisabledButton : function(phase_name)
+			UIActiveButton_smallPhases : function()
 			{
-				dojo.removeClass(phase_name, "inactive_phase");
-				dojo.addClass(phase_name, "blst_button_disabled");
-				dojo.addClass(phase_name, "blst_button");
+				this.UIActiveButton(this.GetSmallPhaseButtonDivId(PHASE_CAPTURE));
+				this.UIActiveButton(this.GetSmallPhaseButtonDivId(PHASE_BUILD));
+				this.UIActiveButton(this.GetSmallPhaseButtonDivId(PHASE_MOVE));
+				this.UIActiveButton(this.GetSmallPhaseButtonDivId(PHASE_BATTLE));
 			},
 			
-			UIActivePhase : function(phase_name)
+			UIActiveButton : function(div_id)
 			{
-				dojo.removeClass(phase_name, "blst_button");
-				dojo.removeClass(phase_name, "inactive_phase");
+				dojo.addClass(div_id, "blst_button");
+				dojo.removeClass(div_id, "blst_button_disabled");
+				dojo.removeClass(div_id, "inactive_phase");
 			},
 			
-			UIFuturePhase : function(phase_name)
+			UIInactiveButton_smallPhases : function()
 			{
-				dojo.removeClass(phase_name, "blst_button");
-				dojo.removeClass(phase_name, "inactive_phase");
+				this.UIInactiveButton(this.GetSmallPhaseButtonDivId(PHASE_CAPTURE));
+				this.UIInactiveButton(this.GetSmallPhaseButtonDivId(PHASE_BUILD));
+				this.UIInactiveButton(this.GetSmallPhaseButtonDivId(PHASE_MOVE));
+				this.UIInactiveButton(this.GetSmallPhaseButtonDivId(PHASE_BATTLE));
 			},
 			
-			UIFutureButton : function(phase_name)
+			UIInactiveButton : function(div_id)
 			{
-				dojo.removeClass(phase_name, "inactive_phase");
+				dojo.addClass(div_id, "blst_button");
+				dojo.addClass(div_id, "blst_button_disabled");
+				dojo.addClass(div_id, "inactive_phase");
 			},
 		});
 		

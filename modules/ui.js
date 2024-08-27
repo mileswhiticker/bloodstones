@@ -189,34 +189,6 @@ define(
 						}
 						break;
 					}
-					case 'playerTurn':
-					{
-						//note: this state is getting phased out and shouldnt get called
-						console.log("WARNING: state \'playerTurn\' is getting phased out and should not occur.");
-						/*
-						//popup notifying players of the new turn
-						const end_turn_popup = dojo.place("<div id=\"end_turn_popup\"><p>it is now " + active_player.name + "'s turn!</p></div>","centrepanel");
-						dojo.style(end_turn_popup, 'zIndex', this.GameLayerDialog());
-						this.fadeOutAndDestroy(end_turn_popup, 1000, 2000);
-						*/
-						
-						//enable active player interface
-						if(this.isCurrentPlayerActive())
-						{
-							this.EnableButton("end_turn_button");
-							var bottompanel = dojo.byId("bottompanel");
-							dojo.style(bottompanel, 'animation-name', 'fadein');
-							dojo.style(bottompanel, 'opacity', '1');
-							
-							//this is a bit hacky here, i have to rewrite this section to clean it up
-							//["build","move","battle"];
-							dojo.removeClass("build", "blst_button_disabled");
-							dojo.removeClass("move", "blst_button_disabled");
-							dojo.removeClass("battle", "blst_button_disabled");
-						}
-						
-						break;
-					}
 					case 'chooseWithdraw':
 					{
 						this.UIStateChooseWithdraw(args);

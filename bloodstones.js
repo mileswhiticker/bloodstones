@@ -50,6 +50,7 @@ const FACTION_CORSAIRS = 3;
 const FACTION_NECROMANCERS = 4;
 const FACTION_CHAOSHORDE = 5;
 
+//todo: change these village outcome flags into action outcome flags
 const VILLAGE_SUCCESS = 0;
 const VILLAGE_SKIP = 1;
 const VILLAGE_FAIL_UNKNOWN = 2;
@@ -63,6 +64,7 @@ const VILLAGE_FAIL_FRIENDLIES = 9;	//no friendlies present or in adjacent provin
 const VILLAGE_FAIL_CITADEL = 10;	//friendly/any citadel present 
 const VILLAGE_FAIL_TERRAIN = 11;	//mountain/sea/desert province
 const VILLAGE_FAIL_DISTANCE = 12;
+const ACTION_FAIL_CAPTUREMAX = 13;	//only one capture per turn
 
 define([
 	//dojo modules
@@ -152,6 +154,7 @@ define([
 	g_gamethemeurl + '/modules/citadel_ui.js',
 	
 	g_gamethemeurl + '/modules/capture.js',
+	g_gamethemeurl + '/modules/capture_enterexit.js',
 	g_gamethemeurl + '/modules/capture_ui.js',
 	g_gamethemeurl + '/modules/capture_approvecancel.js',
 	
@@ -226,6 +229,7 @@ function (dojo, declare, lang, fx, on, domAttr) {
 		_citadel_ui,
 		
 		_capture,
+		_capture_enterexit,
 		_capture_ui,
 		_capture_approvecancel,
 		
@@ -249,7 +253,8 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			this.current_phase_id = null;
 			this.payment_mode = 0;
 			this.player_phases_all = ["villages","undead","main","build","move","battle","end","reset"];
-			this.exit_phase_strings = [];
+			this.player_phases_small = [PHASE_CAPTURE, PHASE_BUILD, PHASE_MOVE, PHASE_BATTLE];
+			//this.exit_phase_strings = [];
 			this.colour_cycle = Colour(5,10,15,255);
 			this.next_debug_colour = Colour(30,20,10,255);
 			this.canvas_render_function = null;
@@ -568,6 +573,11 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			
 			//note: i decided move its functionality onto the server (so i dont need to use it here...) 
 			//i'll leave the frame of the function here anyway for reference 
+		},
+		
+		isCurrentPlayerChaosHorde : function()
+		{
+			return (this.getCurrentPlayerFactionId() == FACTION_CHAOSHORDE);
 		},
 		
         /* Example:

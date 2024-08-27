@@ -424,6 +424,65 @@ define(
 				
 			},
 			
+			GetSmallPhaseEntryString : function(phase_id)
+			{
+				switch(phase_id)
+				{
+					case PHASE_CAPTURE:
+					{
+						return _("Capture villages");
+					}
+					case PHASE_BUILD:
+					{
+						return _("Build tiles");
+					}
+					case PHASE_MOVE:
+					{
+						return _("Move/split armies");
+					}
+					case PHASE_BATTLE:
+					{
+						return _("Battle enemies");
+					}
+					default:
+					{
+						return _("ERROR: page::GetSmallPhaseEntryString(" + phase_id + ") unknown phase_id");
+					}
+				}
+			},
+			
+			GetSmallPhaseExitString : function(phase_id)
+			{
+				switch(phase_id)
+				{
+					case PHASE_CAPTURE:
+					{
+						return _("Finish capturing");
+					}
+					case PHASE_BUILD:
+					{
+						return _("Finish building");
+					}
+					case PHASE_MOVE:
+					{
+						return _("Finish moving");
+					}
+					case PHASE_BATTLE:
+					{
+						return _("Finish battles");
+					}
+					default:
+					{
+						return _("ERROR: page::GetSmallPhaseExitString(" + phase_id + ") unknown phase_id");
+					}
+				}
+			},
+			
+			GetFailCaptureMaxString : function()
+			{
+				return _("You can only take one village capture action per turn");
+			},
+			
 			GetProvinceBuildFailString : function()
 			{
 				return _("You can't build that unit type there");

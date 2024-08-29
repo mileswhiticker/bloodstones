@@ -203,7 +203,7 @@ define(
 			TryCancelVillageBuild : function(temp_village_stack)
 			{
 				//safety check for player events
-				if(!this.isCurrentPlayerBuildVillages())
+				if(!this.isCurrentPlayerVillagesState())
 				{
 					return;
 				}
@@ -314,6 +314,7 @@ define(
 					villagestack.createAsVillage(this, "centrepanel", village_info);	//node id formerly "gamemap"
 					this.villagestacks_by_province[province_name] = villagestack;
 					this.villagestacks_all.push(villagestack);
+					this.villagestacks_by_idstring[villagestack.id_string] = villagestack;
 				}
 				else
 				{
@@ -322,6 +323,11 @@ define(
 				
 				//add 1 village tile to the stack using the player's faction
 				villagestack.addVillage(this.getPlayerFactionId(owner_player_id));
+			},
+			
+			RemoveVillageFromStack : function(village_stack)
+			{
+				//todo: oh god ive got to finish writing this and fix this issue here
 			},
 			
 			DestroyVillageStackById : function(village_id)
@@ -364,6 +370,11 @@ define(
 				switch(gameui.gamedatas.gamestate.name)
 				{
 					case 'playerCapture':
+					{
+						this.TryToggleVillageCapture(villagestack);
+						break;
+					}
+					case 'playerMain':
 					{
 						this.TryToggleVillageCapture(villagestack);
 						break;

@@ -78,6 +78,7 @@ define(
 				dojo.subscribe('battleResolve_undead', this, "notif_battleResolve_undead");
 				dojo.subscribe('playerUndeadMove', this, "notif_playerUndeadMove");
 				dojo.subscribe('playerScoreChanged', this, "notif_scoreChanged");
+				dojo.subscribe('captureInfoUpdated', this, "notif_captureInfoUpdated");
 				
 				//dont display player notifications for our own moves
 				//this.setIgnoreNotificationCheck("playerArmyMove", (notif) => (notif.args.moving_player_id == this.player_id));
@@ -99,6 +100,26 @@ define(
 			},    
 			
 			*/
+			
+			notif_captureInfoUpdated : function(notif)
+			{
+				//console.log("page::notif_captureInfoUpdated()");
+				//console.log(notif);
+				
+				if(this.isCurrentPlayerChaosHorde())
+				{
+					if(this.isCurrentPlayerCaptureMode())
+					{
+						//sanity check: this shouldnt happen
+						console.log("WARNING: page::notif_captureInfoUpdated() while current player is in capture phase");
+						console.log(notif);
+					}
+					else
+					{
+						this.possible_capture_infos = notif.args.possible_capture_infos;
+					}
+				}
+			},
 			
 			notif_scoreChanged : function(notif)
 			{
@@ -138,10 +159,10 @@ define(
 			
 			notif_playerCaptureSuccess : function(notif)
 			{
-				console.log("page::notif_playerCaptureSuccess()");
-				console.log(notif);
+				//console.log("page::notif_playerCaptureSuccess()");
+				//console.log(notif);
 				var capture_player_id = notif.args.capture_player_id;
-				console.log("capture_player_id: " + capture_player_id);
+				//console.log("capture_player_id: " + capture_player_id);
 				
 				/*
 				'capture_player_id' => $active_player_id,
@@ -155,6 +176,12 @@ define(
 					new_captured_villages++;
 				}
 				this.AddVillagesCaptured(capture_player_id, new_captured_villages);
+				
+				//chaos horde capture during their main phase, so they need ui updates here
+				if(this.isCurrentPlayerResetMode())
+				{
+					this.enterSmallPhase(STATE_MAIN_DEFAULT);
+				}
 			},
 			
 			notif_playerCaptureFail : function(notif)
@@ -260,7 +287,7 @@ define(
 				//update the ui
 				if(this.isCurrentPlayerResetMode())
 				{
-					this.enterPhase(PHASE_MAIN);
+					this.enterSmallPhase(STATE_MAIN_DEFAULT);
 				}
 			},
 			
@@ -269,7 +296,7 @@ define(
 				console.log("page::notif_playerMoveFail()");
 				if(gameui.isCurrentPlayerResetMode())
 				{
-					gameui.enterPhase(PHASE_MAIN);
+					gameui.enterSmallPhase(STATE_MAIN_DEFAULT);
 				}
 				//todo: reset the move
 			},
@@ -354,7 +381,7 @@ define(
 			},
 			
 			notif_changePhase : function(notif) {
-				gameui.enterPhase(notif.args.new_phase);
+				gameui.enterSmallPhase(notif.args.new_phase);
 			},
 			
 			notif_tileDiscard : function(notif)

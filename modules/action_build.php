@@ -8,6 +8,8 @@ trait action_build
 		$c2 = count($paid_tile_infos);
 		$c3 = count($paid_tile_ids);
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::HandleBuildAction(action_info($c1), paid_tile_infos($c2), paid_tile_ids($c3))"));
+		//there is a rare bug somewhere in this function's call stack: getCards() card not found. i've only seen it pop up a couple of times and it goes away on a refresh
+		//most recently it happened during chaos horde freebuild state
 		
 		$outcome_info = ["failure_reason" => self::ACTION_FAIL_UNKNOWN];
 		$current_player_id = $this->getCurrentPlayerId();

@@ -407,29 +407,29 @@
     width: 33%;
 }
 
-/*PHASE_CAPTURE = 0*/
-#small_phase_button0
+/*STATE_MAIN_CAPTURE = 3*/
+#small_phase_button3
 {
     grid-row-start: 1;
     grid-column-start: 3;
 }
 
-/*PHASE_BUILD = 3*/
-#small_phase_button3
+/*STATE_MAIN_BUILD = 4*/
+#small_phase_button4
 {
     grid-row-start: 2;
     grid-column-start: 1;
 }
 
-/*PHASE_MOVE = 4*/
-#small_phase_button4
+/*STATE_MAIN_MOVE = 5*/
+#small_phase_button5
 {
     grid-row-start: 2;
     grid-column-start: 2;
 }
 
-/*PHASE_BATTLE = 5*/
-#small_phase_button5
+/*STATE_MAIN_BATTLE = 6*/
+#small_phase_button6
 {
     grid-row-start: 2;
     grid-column-start: 3;

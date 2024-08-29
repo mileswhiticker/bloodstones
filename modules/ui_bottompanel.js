@@ -68,7 +68,7 @@ define(
 					dojo.addClass(actionbutton, "blst_button");
 					dojo.addClass(actionbutton, "blst_button_disabled");
 					
-					if(cur_small_phase == PHASE_CAPTURE && !this.isCurrentPlayerChaosHorde())
+					if(cur_small_phase == STATE_MAIN_CAPTURE && !this.isCurrentPlayerChaosHorde())
 					{
 						dojo.addClass(actionbutton, "display_none");
 					}
@@ -162,28 +162,33 @@ define(
 			{
 				switch(small_phase_id)
 				{
-					case PHASE_CAPTURE:
+					case STATE_MAIN_CAPTURE:
 					{
 						return this.onClickCapturePhaseButton;
 						//dojo.connect(actionbutton, "click", dojo.hitch(this, this.onClickCapturePhaseButton));
 						break;
 					}
-					case PHASE_BUILD:
+					case STATE_MAIN_BUILD:
 					{
 						return this.onClickBuildModeButton;
 						//dojo.connect(actionbutton, "click", dojo.hitch(this, this.onClickBuildModeButton));
 						break;
 					}
-					case PHASE_MOVE:
+					case STATE_MAIN_MOVE:
 					{
 						return this.onClickMoveModeButton;
 						//dojo.connect(actionbutton, "click", dojo.hitch(this, this.onClickMoveModeButton));
 						break;
 					}
-					case PHASE_BATTLE:
+					case STATE_MAIN_BATTLE:
 					{
 						return this.onClickBattleModeButton;
 						//dojo.connect(actionbutton, "click", dojo.hitch(this, this.onClickBattleModeButton));
+						break;
+					}
+					default:
+					{
+						console.log("ERROR: page::GetSmallPhaseButtonCallback(" + small_phase_id + ") unknown small_phase_id");
 						break;
 					}
 				}

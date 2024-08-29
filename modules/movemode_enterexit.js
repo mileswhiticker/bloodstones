@@ -21,16 +21,15 @@ define(
 			{
 				//console.log("page::EnterMoveMode()");
 				//if(gameui.selected_army != null)
-				if(this.isCurrentPlayerMainPhase())
+				if(this.isCurrentPlayerMainState())
 				{
 					this.queued_province_moves = [];
 					this.queued_province_moves_by_army = [];
 					this.queued_action_steps = {};
-					this.enterPhase(PHASE_MOVE);
+					this.enterSmallPhase(STATE_MAIN_MOVE);
 					this.AddMoveModeUI();
-					this.EnablePaymentBucket(PHASE_MOVE);
+					this.EnablePaymentBucket(STATE_MAIN_MOVE);
 					//this.ResetActionInfo(ACTION_MOVE);	//todo: im not sure what this function was meant to be or do, movemode needs a bunch of work to clean it up
-					//this.server_enterPhase(PHASE_MOVE);
 				}
 				/*else if(this.isCurrentPlayerMoveMode())
 				{
@@ -121,11 +120,11 @@ define(
 					
 					if(approved)
 					{
-						this.enterPhase(PHASE_RESET);
+						this.enterSmallPhase(STATE_MAIN_RESET);
 					}
 					else
 					{
-						this.enterPhase(PHASE_MAIN);
+						this.enterSmallPhase(STATE_MAIN_DEFAULT);
 					}
 				}
 				else

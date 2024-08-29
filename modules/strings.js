@@ -126,33 +126,37 @@ define(
 			{
 				switch(action_mode)
 				{
-					case PHASE_CAPTURE:
+					case STATE_CAPTURE:
 					{
-						return _("Drag tiles here from your hand to pay for village capturing");
+						return _("Drag tiles here from your hand to pay for village capturing (maximum of one tile)");
 					}
-					case PHASE_MOVE:
+					case STATE_MAIN_CAPTURE:
+					{
+						return _("Drag tiles here from your hand to pay for village capturing (maximum of one tile)");
+					}
+					case STATE_MAIN_MOVE:
 					{
 						return _("Drag tiles here from your hand to pay for movement");
 					}
-					case PHASE_BUILD:
+					case STATE_MAIN_BUILD:
 					{
 						return _("Drag tiles here from your hand to pay for building");
 					}
-					case PHASE_BATTLE:
+					case STATE_MAIN_BATTLE:
 					{
-						return _("Drag a tile here from your hand to improve your battle score");
+						return _("Drag a tile here from your hand to improve your battle score (maximum of one tile)");
 					}
-					case PHASE_BUILDVILLAGE:
+					case STATE_BUILDVILLAGE:
 					{
-						return _("You can drag one tile here from your hand to pay for village building");
+						return _("You can drag one tile here from your hand to pay for village building (maximum of one tile)");
 					}
-					case PHASE_UNDEAD:
+					case STATE_UNDEAD:
 					{
 						return _("You cannot pay for more undead movement");
 					}
 					default:
 					{
-						return "TileDropPayString " + action_mode;
+						return "TileDropPayString(" + action_mode + ")";
 					}
 				}
 			},
@@ -161,23 +165,27 @@ define(
 			{
 				switch(action_mode)
 				{
-					case PHASE_CAPTURE:
+					case STATE_CAPTURE:
 					{
 						return _("Capture cost");
 					}
-					case PHASE_MOVE:
+					case STATE_MAIN_CAPTURE:
+					{
+						return _("Capture cost");
+					}
+					case STATE_MAIN_MOVE:
 					{
 						return _("Movement cost");
 					}
-					case PHASE_BUILD:
+					case STATE_MAIN_BUILD:
 					{
 						return _("Build cost");
 					}
-					case PHASE_BUILDVILLAGE:
+					case STATE_BUILDVILLAGE:
 					{
 						return _("Build cost");
 					}
-					case PHASE_UNDEAD:
+					case STATE_UNDEAD:
 					{
 						return _("Moves remaining:");
 					}
@@ -192,7 +200,7 @@ define(
 			{
 				switch(action_mode)
 				{
-					case PHASE_UNDEAD:
+					case STATE_UNDEAD:
 					{
 						return "";
 					}
@@ -208,33 +216,37 @@ define(
 			{
 				switch(action_mode)
 				{
-					case PHASE_CAPTURE:
+					case STATE_CAPTURE:
 					{
 						return _("Skip capturing and end turn");
 					}
-					case PHASE_MOVE:
+					case STATE_MAIN_CAPTURE:
+					{
+						return _("Cancel capturing");
+					}
+					case STATE_MAIN_MOVE:
 					{
 						return _("Cancel Movement");
 					}
-					case PHASE_BUILD:
+					case STATE_MAIN_BUILD:
 					{
 						return _("Cancel Building");
 					}
-					case PHASE_BATTLE:
+					case STATE_MAIN_BATTLE:
 					{
 						return _("Withdraw from battle");
 					}
-					case PHASE_BUILDVILLAGE:
+					case STATE_BUILDVILLAGE:
 					{
 						return _("Skip building and end turn");
 					}
-					case PHASE_UNDEAD:
+					case STATE_UNDEAD:
 					{
 						return _("Reset queued undead movement");
 					}
 					default:
 					{
-						return "GetActionCancelString " + action_mode;
+						return "GetActionCancelString(" + action_mode + ")";
 					}
 				}
 			},
@@ -243,27 +255,31 @@ define(
 			{
 				switch(action_mode)
 				{
-					case PHASE_CAPTURE:
+					case STATE_CAPTURE:
 					{
 						return _("Approve Capturing");
 					}
-					case PHASE_MOVE:
+					case STATE_MAIN_CAPTURE:
+					{
+						return _("Approve capturing");
+					}
+					case STATE_MAIN_MOVE:
 					{
 						return _("Approve Movement");
 					}
-					case PHASE_BUILD:
+					case STATE_MAIN_BUILD:
 					{
 						return _("Approve Building");
 					}
-					case PHASE_BATTLE:
+					case STATE_MAIN_BATTLE:
 					{
 						return _("Fight battle!");
 					}
-					case PHASE_BUILDVILLAGE:
+					case STATE_BUILDVILLAGE:
 					{
 						return _("Build villages");
 					}
-					case PHASE_UNDEAD:
+					case STATE_UNDEAD:
 					{
 						return _("Finish all undead movement");
 					}
@@ -278,19 +294,23 @@ define(
 			{
 				switch(fail_reason)
 				{
-					case PHASE_CAPTURE:
+					case STATE_CAPTURE:
 					{
 						return _("You must pay more pips to capture those villages");
 					}
-					case PHASE_MOVE:
+					case STATE_MAIN_CAPTURE:
+					{
+						return _("You must pay more pips to capture those villages");
+					}
+					case STATE_MAIN_MOVE:
 					{
 						return _("You must pay more pips for that movement");
 					}
-					case PHASE_BUILD:
+					case STATE_MAIN_BUILD:
 					{
 						return _("You must pay more pips to build those tiles");
 					}
-					case PHASE_BUILDVILLAGE:
+					case STATE_BUILDVILLAGE:
 					{
 						return _("You must pay more pips to build those villages");
 					}
@@ -310,7 +330,7 @@ define(
 			{
 				switch(action_mode)
 				{
-					case PHASE_UNDEAD:
+					case STATE_UNDEAD:
 					{
 						return "";
 					}
@@ -325,7 +345,7 @@ define(
 			{
 				switch(action_mode)
 				{
-					case PHASE_UNDEAD:
+					case STATE_UNDEAD:
 					{
 						return "";
 					}
@@ -340,19 +360,23 @@ define(
 			{
 				switch(action_mode)
 				{
-					case PHASE_CAPTURE:
+					case STATE_CAPTURE:
 					{
 						return "action_currency_icon_pip";
 					}
-					case PHASE_MOVE:
+					case STATE_MAIN_CAPTURE:
 					{
 						return "action_currency_icon_pip";
 					}
-					case PHASE_BUILD:
+					case STATE_MAIN_MOVE:
+					{
+						return "action_currency_icon_pip";
+					}
+					case STATE_MAIN_BUILD:
 					{
 						return "action_currency_icon_tile";
 					}
-					case PHASE_BUILDVILLAGE:
+					case STATE_BUILDVILLAGE:
 					{
 						return "action_currency_icon_pip";
 					}
@@ -367,11 +391,15 @@ define(
 			{
 				switch(action_mode)
 				{
-					case PHASE_CAPTURE:
+					case STATE_CAPTURE:
 					{
 						return _("Villages cost 1 pip to capture in Plains and Forest. Hills cost 2 pip.");
 					}
-					case PHASE_BUILDVILLAGE:
+					case STATE_MAIN_CAPTURE:
+					{
+						return _("Villages cost 1 pip to capture in Plains and Forest. Hills cost 2 pip.");
+					}
+					case STATE_BUILDVILLAGE:
 					{
 						return _("Villages cost 1 pip to build in Plains and Forest. Hills cost 2 pip.");
 					}
@@ -428,19 +456,19 @@ define(
 			{
 				switch(phase_id)
 				{
-					case PHASE_CAPTURE:
+					case STATE_MAIN_CAPTURE:
 					{
 						return _("Capture villages");
 					}
-					case PHASE_BUILD:
+					case STATE_MAIN_BUILD:
 					{
 						return _("Build tiles");
 					}
-					case PHASE_MOVE:
+					case STATE_MAIN_MOVE:
 					{
 						return _("Move/split armies");
 					}
-					case PHASE_BATTLE:
+					case STATE_MAIN_BATTLE:
 					{
 						return _("Battle enemies");
 					}
@@ -455,19 +483,19 @@ define(
 			{
 				switch(phase_id)
 				{
-					case PHASE_CAPTURE:
+					case STATE_MAIN_CAPTURE:
 					{
 						return _("Finish capturing");
 					}
-					case PHASE_BUILD:
+					case STATE_MAIN_BUILD:
 					{
 						return _("Finish building");
 					}
-					case PHASE_MOVE:
+					case STATE_MAIN_MOVE:
 					{
 						return _("Finish moving");
 					}
-					case PHASE_BATTLE:
+					case STATE_MAIN_BATTLE:
 					{
 						return _("Finish battles");
 					}

@@ -239,7 +239,14 @@ trait village
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::GetPossibleVillageProvinces($player_id)"));
 		$possible_provinces = [];
 		
+		//chaos horde can't build villages
+		if($this->IsCurrentPlayerChaosHorde())
+		{
+			return [];
+		}
+		
 		//can build in provinces adjacent to citadel (but not citadel province!)
+		//todo: check for citadel destroyed!
 		$citadel_prov_id = $this->GetPlayerCitadelProvId($player_id);
 		$cit_adj_prov_names = $this->GetAdjProvinceNames($citadel_prov_id);
 		$possible_provinces = array_merge($possible_provinces, $cit_adj_prov_names);

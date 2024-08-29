@@ -229,7 +229,7 @@ $machinestates = array(
 		"descriptionmyturn" => clienttranslate('${you} can build villages now.'),
 		"type" => "activeplayer",
 		"args" => "args_playerVillages",
-		"possibleactions" => array("action_playerBuildVillages","action_skip","action_tryPayAction"),
+		"possibleactions" => array("action_playerBuildVillages","action_skip","action_tryPayAction","action_earlyEndTurn"),
 		"transitions" => array("nextPlayer" => STATE_NEXTPLAYER)
     ),
     

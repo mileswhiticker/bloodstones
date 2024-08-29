@@ -20,14 +20,14 @@ define(
 			
 			EnterBuildMode : function()
 			{
-				if(this.isCurrentPlayerMainPhase())
+				if(this.isCurrentPlayerMainState())
 				{
 					//this.queued_province_moves = [];
 					//this.queued_province_moves_by_army = [];
 					//this.queued_action_steps = {};
-					this.enterPhase(PHASE_BUILD);
+					this.enterSmallPhase(STATE_MAIN_BUILD);
 					this.AddBuildModeUI();
-					this.EnablePaymentBucket(PHASE_BUILD);
+					this.EnablePaymentBucket(STATE_MAIN_BUILD);
 					
 					//reset these
 					this.pulsing_province_time = 0;
@@ -36,7 +36,7 @@ define(
 					
 					//this.prev_frame_timestamp = this.date.getTime();
 					this.build_mode_cancel_anim = window.requestAnimationFrame(this.buildmodeAnimFrame);
-					//this.ResetActionInfo(PHASE_BUILD);
+					//this.ResetActionInfo(STATE_MAIN_BUILD);
 				}
 				else
 				{
@@ -57,7 +57,7 @@ define(
 				//enter the next phase
 				if(approved)
 				{
-					//this.enterPhase(PHASE_RESET);
+					//this.enterSmallPhase(STATE_MAIN_RESET);
 					this.ServerPayAction(ACTION_BUILD);
 				}
 				else
@@ -79,11 +79,11 @@ define(
 					{
 						if(approved)
 						{
-							this.enterPhase(PHASE_RESET);
+							this.enterSmallPhase(STATE_MAIN_RESET);
 						}
 						else
 						{
-							this.enterPhase(PHASE_MAIN);
+							this.enterSmallPhase(STATE_MAIN_DEFAULT);
 						}
 					}
 				}
@@ -135,12 +135,12 @@ define(
 				
 				if(gameui.isCurrentPlayerResetMode())
 				{
-					gameui.enterPhase(PHASE_MAIN);
+					gameui.enterSmallPhase(STATE_MAIN_DEFAULT);
 				}
 				else
 				{
 					//player can exit directly from build mode
-					//console.log("WARNING: CleanupBuildMode() but not in PHASE_RESET");
+					//console.log("WARNING: CleanupBuildMode() but not in STATE_MAIN_RESET");
 				}
 			},
 			/*

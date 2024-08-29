@@ -146,6 +146,12 @@ trait action_move
 			//$attacking_player_id = $this->getGameStateValue("attacking_player_id");
 			
 			$outcome_info["failure_reason"] = self::ACTION_SUCCESS;
+			
+			//chaos horde may trigger a recalculation of capturable villages
+			if($this->IsCurrentPlayerChaosHorde())
+			{
+				$this->UpdatePendingCaptureArmies();
+			}
 		}
 		/*else
 		{

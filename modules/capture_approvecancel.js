@@ -20,7 +20,7 @@ define(
 			BeginCaptureState : function()
 			{
 				console.log("page::BeginCaptureState()");
-				this.EnablePaymentBucket(PHASE_CAPTURE);
+				this.EnablePaymentBucket(STATE_CAPTURE);
 				this.UICanvasRenderCaptureOverlay();		//run once before the animation kicks in
 				this.StartAnimatedCanvas(this.UICanvasRenderCaptureOverlay)
 			},
@@ -60,7 +60,7 @@ define(
 					//reset the planned move
 					this.RefundPaystackTiles();
 					this.DestroyPayWindow();
-					//this.onClickEndTurnButton();
+					this.CancelAllPlannedVillageCaptures();
 					this.ServerSkipAction();
 				}
 			},

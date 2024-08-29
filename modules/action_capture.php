@@ -84,6 +84,7 @@ trait action_capture
 		}
 		if($success)
 		{
+			$retval["failure_reason"] = self::ACTION_SUCCESS;
 			$this->incStat($num_planned_captures, "villages_captured", $active_player_id);
 			//self::notifyAllPlayers("debug", "", array('debugmessage' => "capture is legal"));
 		}
@@ -97,7 +98,6 @@ trait action_capture
 		$this->villages_deck->moveCards($village_tile_ids, "captured", $active_faction_id);
 		
 		//tell the players
-		//todo: this isnt handled in js yet
 		$active_player_name = $this->getActivePlayerName();
 		self::notifyAllPlayers('playerCaptureSuccess', clienttranslate('${active_player_name} has captured ${num_planned_captures} village(s)'), array(
 			'active_player_name' => $active_player_name,
@@ -113,6 +113,12 @@ trait action_capture
 		//move them to discard
 		$player_deck->moveCards($paid_tile_ids, "discard");
 		
+		//chaos horde may trigger a recalculation of capturable villages
+		//im commenting this out because the client should in theory block the player from trying to do a second capture mode...
+		/*if($this->IsCurrentPlayerChaosHorde())
+		{
+			$this->UpdatePendingCaptureArmies();
+		}*/
 		//update the players
 		self::notifyPlayer($active_player_id, 'tileDiscard', '', array(
 			'discarded_tiles_ids' => $paid_tile_ids,
@@ -122,7 +128,12 @@ trait action_capture
 		$this->updatePlayerHandChanged($active_player_id);
 		
 		//now, finish the player's turn because only one capture action is allowed at a time
-		$this->activePlayerCompleteState();
+		//chaos horde can only do one capture, but they can keep doing with their main state after capturing
+		//chaos horde capture as part of their main turn so they can keep going
+		if(!$this->IsCurrentPlayerChaosHorde())
+		{
+			$this->activePlayerCompleteState();
+		}
 		
 		//the outer function will handle any exceptions by rolling back player actions if something went wrong
 		return $retval;

@@ -18,18 +18,66 @@ define(
 		var instance = declare("_ui_phase", null, {
 			//put your functions here
 			//this file is poorly named, these functions are entirely for updating the bottompanel
+			//args are entirely unused here but im leaving them in just in case i need them in future
 			
-			UIPlayerGeneric : function(args)
+			UIState : function(ui_state_id)
 			{
-				this.ShowBottomPanel();
+				switch(ui_state_id)
+				{
+					case STATE_CAPTURE:
+					{
+						this.UIStatePlayerCapture();
+						break;
+					}
+					case STATE_UNDEAD:
+					{
+						this.UIStatePlayerUndead();
+						break;
+					}
+					case STATE_MAIN_DEFAULT:
+					{
+						this.UIStatePlayerMain();
+						break;
+					}
+					case STATE_MAIN_BUILD:
+					{
+						break;
+					}
+					case STATE_MAIN_MOVE:
+					{
+						break;
+					}
+					case STATE_MAIN_BATTLE:
+					{
+						break;
+					}
+					case STATE_MAIN_RESET:
+					{
+						break;
+					}
+					case STATE_MAIN_CAPTURE:
+					{
+						break;
+					}
+					case STATE_BUILDVILLAGE:
+					{
+						this.UIStatePlayerVillages();
+						break;
+					}
+				}
 			},
 			
-			UIInterfacePlayerCapture : function(args)
+			IsStateIdMain : function(ui_state_id)
+			{
+				return (ui_state_id >= STATE_MAIN_MIN && ui_state_id <= STATE_MAIN_MAX)
+			},
+			
+			UIStatePlayerCapture : function()
 			{
 				//console.log("page::UIInterfacePlayerCapture()");
 				
 				//state transition: next player -> capture
-				this.UIPlayerGeneric(args);
+				this.ShowBottomPanel();
 				
 				//previous states are grey text, current state is white text, future states are buttons
 				this.UIActiveTitle("title_capture");
@@ -53,7 +101,7 @@ define(
 			UIStatePlayerUndead : function(args)
 			{
 				//state: capture -> undead
-				this.UIPlayerGeneric(args);
+				this.ShowBottomPanel();
 				
 				//previous states are grey text, current state is white text, future states are buttons
 				this.UIInactiveTitle("title_capture");
@@ -64,24 +112,75 @@ define(
 				this.UIActiveButton("end_phase_button");
 			},
 			
-			UIStatePlayerMain : function(args)
+			UIStatePlayerMain : function(ui_state_id = STATE_MAIN_DEFAULT)
 			{
+				//console.log("page::UIStatePlayerMain(" + ui_state_id + ")");
+				
 				//state: undead -> main OR capture -> main
-				this.UIPlayerGeneric(args);
+				this.ShowBottomPanel();
 				
 				//previous states are grey text, current state is white text, future states are buttons
 				this.UIInactiveTitle("title_capture");
 				this.UIInactiveTitle("title_undead");
 				this.UIActiveTitle("title_main");
-				this.UIActiveButton_smallPhases();
+				//this.UIActiveButton_smallPhases();
 				this.UIActiveButton("title_buildvillages");
 				this.UIActiveButton("end_phase_button");
+				
+				switch(ui_state_id)
+				{
+					case STATE_MAIN_DEFAULT:
+					{
+						this.UIActiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_CAPTURE));
+						this.UIActiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BUILD));
+						this.UIActiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_MOVE));
+						this.UIActiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BATTLE));
+						break;
+					}
+					case STATE_MAIN_CAPTURE:
+					{
+						this.UIActiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_CAPTURE));
+						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BUILD));
+						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_MOVE));
+						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BATTLE));
+						break;
+					}
+					case STATE_MAIN_BUILD:
+					{
+						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_CAPTURE));
+						this.UIActiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BUILD));
+						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_MOVE));
+						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BATTLE));
+						break;
+					}
+					case STATE_MAIN_MOVE:
+					{
+						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_CAPTURE));
+						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BUILD));
+						this.UIActiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_MOVE));
+						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BATTLE));
+						break;
+					}
+					case STATE_MAIN_BATTLE:
+					{
+						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_CAPTURE));
+						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BUILD));
+						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_MOVE));
+						this.UIActiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BATTLE));
+						break;
+					}
+				}
 			},
+			
+			/*UIActiveButton_smallPhases : function()
+			{
+				
+			},*/
 			
 			UIStatePlayerVillages : function(args)
 			{
 				//state: main -> build villages
-				this.UIPlayerGeneric(args);
+				this.ShowBottomPanel();
 				
 				//previous states are grey text, current state is white text, future states are buttons
 				this.UIInactiveTitle("title_capture");
@@ -111,14 +210,6 @@ define(
 				dojo.addClass(div_id, "inactive_phase");
 			},
 			
-			UIActiveButton_smallPhases : function()
-			{
-				this.UIActiveButton(this.GetSmallPhaseButtonDivId(PHASE_CAPTURE));
-				this.UIActiveButton(this.GetSmallPhaseButtonDivId(PHASE_BUILD));
-				this.UIActiveButton(this.GetSmallPhaseButtonDivId(PHASE_MOVE));
-				this.UIActiveButton(this.GetSmallPhaseButtonDivId(PHASE_BATTLE));
-			},
-			
 			UIActiveButton : function(div_id)
 			{
 				dojo.addClass(div_id, "blst_button");
@@ -128,10 +219,11 @@ define(
 			
 			UIInactiveButton_smallPhases : function()
 			{
-				this.UIInactiveButton(this.GetSmallPhaseButtonDivId(PHASE_CAPTURE));
-				this.UIInactiveButton(this.GetSmallPhaseButtonDivId(PHASE_BUILD));
-				this.UIInactiveButton(this.GetSmallPhaseButtonDivId(PHASE_MOVE));
-				this.UIInactiveButton(this.GetSmallPhaseButtonDivId(PHASE_BATTLE));
+				//console.log("page::UIInactiveButton_smallPhases()");
+				this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_CAPTURE));
+				this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BUILD));
+				this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_MOVE));
+				this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BATTLE));
 			},
 			
 			UIInactiveButton : function(div_id)

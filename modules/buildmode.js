@@ -33,12 +33,12 @@ define(
 				
 				switch(this.payment_mode)
 				{
-					case PHASE_MOVE:
+					case STATE_MAIN_MOVE:
 					{
 						this.AddActionPaidAmount(this.GetTilePips(tile_info.type_arg));
 						break;
 					}
-					case PHASE_BUILD:
+					case STATE_MAIN_BUILD:
 					{
 						this.AddActionPaidAmount(1);
 						break;

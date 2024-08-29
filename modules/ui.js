@@ -166,7 +166,7 @@ define(
 						{
 							this.possible_capture_infos = args.args.possible_capture_infos;
 							//console.log(args.args.possible_capture_infos);
-							this.UIInterfacePlayerCapture(args);
+							this.UIStatePlayerCapture(args);
 							this.BeginCaptureState();
 						}
 						break;
@@ -184,8 +184,11 @@ define(
 					{
 						if(this.isCurrentPlayerActive())
 						{
+							//this is needed for chaos horde
+							this.possible_capture_infos = args.args.possible_capture_infos;
+							
 							this.buildable_provinces = args.args.buildable_provinces;
-							this.UIStatePlayerMain(args);
+							this.UIStatePlayerMain(STATE_MAIN_DEFAULT);
 						}
 						break;
 					}

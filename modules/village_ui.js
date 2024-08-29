@@ -21,22 +21,21 @@ define(
 			//CreateBuildVillagesUI
 			UIBeginBuildVillages : function()
 			{
-				this.EnablePaymentBucket(PHASE_BUILDVILLAGE);
+				this.EnablePaymentBucket(STATE_BUILDVILLAGE);
 				
 				//run once before the anim frame kicks in
 				this.UICanvasRenderBuildVillagesOverlay();
-				
 			},
 			
 			UICanvasRenderBuildVillagesOverlay : function()
 			{
-				//console.log("page::UICanvasRenderBuildVillagesOverlay()");
+				console.log("page::UICanvasRenderBuildVillagesOverlay()");
 				this.StartAnimatedCanvas(this.UICanvasRenderBuildVillagesOverlay);
 				//loop over the provinces and add an overlay for all the ones that are valid for player to build in
-				//console.log("page::UICanvasRenderBuildVillagesOverlay()");
 				//console.log(this.buildable_province_names);
 				
-				this.buildable_province_names = this.GetVillageBuildProvinces(this.getCurrentPlayer());
+				//list of buildable provinces are sent by server now
+				//this.buildable_province_names = this.GetVillageBuildProvinces(this.getCurrentPlayer());
 				for(var i in this.buildable_province_names)
 				{
 					//var cur_province = this.provinces[i];

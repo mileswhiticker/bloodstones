@@ -120,7 +120,7 @@ define(
 						gameui.EnableProvinceBuildHover(prov_name);
 					}
 				}
-				else if(gameui.isCurrentPlayerBuildVillages())
+				else if(gameui.isCurrentPlayerVillagesState())
 				{
 					if(gameui.dragging_data_id == "current_player_villages")
 					{
@@ -157,7 +157,7 @@ define(
 					}
 					//console.log(event);
 				}
-				else if(gameui.isCurrentPlayerBuildVillages())
+				else if(gameui.isCurrentPlayerVillagesState())
 				{
 					if(gameui.dragging_data_id == "current_player_villages")
 					{
@@ -283,7 +283,7 @@ define(
 					}
 					
 				}
-				else if(gameui.isCurrentPlayerBuildVillages())
+				else if(gameui.isCurrentPlayerVillagesState())
 				{
 					if(gameui.dragging_data_id == "current_player_villages")
 					{

@@ -554,7 +554,7 @@ define(
 				{
 					//have we already selected an army stack?
 					//enter move mode if it's our army and we are able to
-					if(this.isCurrentPlayerMainPhase() && !this.isCurrentPlayerMoveMode())
+					if(this.isCurrentPlayerMainState() && !this.isCurrentPlayerMoveMode())
 					{
 						this.EnterMoveMode();
 					}

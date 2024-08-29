@@ -28,6 +28,11 @@ define(
 				return this.isCurrentPlayerActiveState("citadelPlacement")
 			},
 			
+			isCurrentPlayerCaptureState : function()
+			{
+				return this.isCurrentPlayerActiveState("playerCapture")
+			},
+			
 			isCurrentPlayerUndeadState : function()
 			{
 				return this.isCurrentPlayerActiveState("playerUndead")
@@ -43,49 +48,45 @@ define(
 				return this.isCurrentPlayerActiveState("chooseWithdraw")
 			},
 			
-			isCurrentPlayerBuildVillages : function()
-			{
-				return this.isCurrentPlayerActiveState("playerVillages")
-			},
-			
-			isCurrentPlayerMainPhase : function()
-			{
-				return this.isCurrentPlayerActiveState("playerMain")
-			},
-			
 			isCurrentPlayerVillagesState : function()
 			{
 				return this.isCurrentPlayerActiveState("playerVillages")
 			},
 			
-			isCurrentPlayerResetMode : function()
+			isCurrentPlayerMainState : function()
 			{
-				return (this.isCurrentPlayerActive() && this.current_phase_id == PHASE_RESET);
+				return this.isCurrentPlayerActiveState("playerMain")
 			},
 			
-			isCurrentPlayerCapturePhase : function()
+			isCurrentPlayerResetMode : function()
 			{
-				return (this.isCurrentPlayerActive() && this.current_phase_id == PHASE_CAPTURE);
+				return (this.isCurrentPlayerActive() && this.current_phase_id == STATE_MAIN_RESET);
+			},
+			
+			isCurrentPlayerCaptureMode : function()
+			{
+				//only chaos horde can do this
+				return (this.isCurrentPlayerMainState() && this.current_phase_id == STATE_MAIN_CAPTURE);
 			},
 			
 			isCurrentPlayerBuildMode : function()
 			{
-				return (this.isCurrentPlayerActive() && this.current_phase_id == PHASE_BUILD) || this.isCurrentPlayerActiveState("freeBuild") || this.isCurrentPlayerActiveState("freeBuild_chaosHorde");
+				return (this.isCurrentPlayerActive() && this.current_phase_id == STATE_MAIN_BUILD) || this.isCurrentPlayerActiveState("freeBuild") || this.isCurrentPlayerActiveState("freeBuild_chaosHorde");
 			},
 			
 			isCurrentPlayerFreeBuildMode : function()
 			{
-				return this.isCurrentPlayerActiveState("freeBuild");
+				return this.isCurrentPlayerActiveState("freeBuild") || this.isCurrentPlayerActiveState("freeBuild_chaosHorde");
 			},
 			
 			isCurrentPlayerMoveMode : function()
 			{
-				return (this.isCurrentPlayerActive() && this.current_phase_id == PHASE_MOVE);
+				return (this.isCurrentPlayerActive() && this.current_phase_id == STATE_MAIN_MOVE);
 			},
 			
 			isCurrentPlayerBattleMode : function()
 			{
-				return (this.isCurrentPlayerActive() && this.current_phase_id == PHASE_BATTLE);
+				return (this.isCurrentPlayerActive() && this.current_phase_id == STATE_MAIN_BATTLE);
 			},
 			
 		});

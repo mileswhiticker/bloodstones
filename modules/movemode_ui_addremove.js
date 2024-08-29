@@ -241,7 +241,7 @@ define(
 				dojo.query(".province_move_cost").forEach(dojo.destroy);
 				
 				//todo: cancel any queued movement
-				//this.enterPhase(PHASE_MAIN);
+				//this.enterPhase(STATE_MAIN_DEFAULT);
 			},
 			
 			RefreshMoveModeUI : function()

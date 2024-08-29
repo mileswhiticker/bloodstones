@@ -120,22 +120,22 @@ define(
 					
 					switch(cur_small_phase)
 					{
-						case PHASE_CAPTURE:
+						case STATE_MAIN_CAPTURE:
 						{
 							dojo.connect(actionbutton, "click", dojo.hitch(this, this.onClickCapturePhaseButton));
 							break;
 						}
-						case PHASE_BUILD:
+						case STATE_MAIN_BUILD:
 						{
 							dojo.connect(actionbutton, "click", dojo.hitch(this, this.onClickBuildModeButton));
 							break;
 						}
-						case PHASE_MOVE:
+						case STATE_MAIN_MOVE:
 						{
 							dojo.connect(actionbutton, "click", dojo.hitch(this, this.onClickMoveModeButton));
 							break;
 						}
-						case PHASE_BATTLE:
+						case STATE_MAIN_BATTLE:
 						{
 							dojo.connect(actionbutton, "click", dojo.hitch(this, this.onClickBattleModeButton));
 							break;
@@ -156,7 +156,7 @@ define(
 					_("End turn"),
 					_("Please wait...")
 				];
-				if(gamedatas.player_turn_phase > PHASE_MIN && this.gamedatas.player_turn_phase < PHASE_MAX)
+				if(gamedatas.player_turn_phase > STATE_MIN && this.gamedatas.player_turn_phase < STATE_MAX)
 				{
 					this.phase_buttons[phase_name]["string"] = this.exit_phase_strings[gamedatas.player_turn_phase];
 				}
@@ -179,30 +179,15 @@ define(
 				//this.addActionButton( 'giveCards_button', _('Give selected cards'), 'onGiveCards' );
 			},
 			
-			tryEnterUndeadPhase : function()
-			{
-				console.log("page::tryEnterUndeadPhase()");
-				this.server_enterPhase(PHASE_UNDEAD);
-			},
-			
-			tryEnterMainPhase : function()
-			{
-				console.log("page::tryEnterMainPhase()");
-				if(!this.isCurrentPlayerMainPhase())
-				{
-					this.server_enterPhase(PHASE_MAIN);
-				}
-			},
-			
 			onClickCapturePhaseButton : function(event)
 			{
-				if(this.isCurrentPlayerCapturePhase())
+				if(this.isCurrentPlayerCaptureMode())
 				{
-					this.ExitCapturePhase(false);
+					this.ExitCaptureMode(false);
 				}
-				else if(this.isCurrentPlayerMainPhase())
+				else if(this.isCurrentPlayerMainState())
 				{
-					this.EnterCapturePhase();
+					this.EnterCaptureMode();
 				}
 			},
 			
@@ -213,7 +198,7 @@ define(
 				{
 					this.ExitBuildMode(false);
 				}
-				else if(this.isCurrentPlayerMainPhase())
+				else if(this.isCurrentPlayerMainState())
 				{
 					this.EnterBuildMode();
 				}
@@ -231,7 +216,7 @@ define(
 				{
 					this.EndMoveMode(false);
 				}
-				else if(this.isCurrentPlayerMainPhase())
+				else if(this.isCurrentPlayerMainState())
 				{
 					this.EnterMoveMode();
 				}
@@ -245,13 +230,12 @@ define(
 			onClickBattleModeButton : function(event)
 			{
 				//console.log("page::onClickBattleModeButton()");
-				//this.server_enterPhase(PHASE_BATTLE);
 				
 				if(this.isCurrentPlayerBattleMode())
 				{
 					this.ExitBattleMode(false);
 				}
-				else if(this.isCurrentPlayerMainPhase())
+				else if(this.isCurrentPlayerMainState())
 				{
 					this.EnterBattleMode();
 				}
@@ -295,58 +279,14 @@ define(
 				}
 			},
 			
-			server_enterPhase : function(target_phase_id)
-			{
-				console.log("page::server_enterPhase()");
-				//is this move allowed?
-				if(gameui.checkAction('action_server_enterPhase'))
-				{
-					//ajax call to pass the request back to php
-					gameui.ajaxcall( "/bloodstones/bloodstones/action_server_enterPhase.html", {
-						phase_id: target_phase_id,
-						player_id: this.player_id,
-						lock: true
-						},
-						 gameui, function( result ) {
-							
-							// What to do after the server call if it succeeded
-							// (most of the time: nothing)
-							
-						 }, function( is_error) {
-
-							// What to do after the server call in anyway (success or failure)
-							// (most of the time: nothing)
-						}
-					);
-				}
-			},
-			
-			enterPhase : function(new_phase_id)
+			enterSmallPhase : function(new_phase_id)
 			{
 				//if we are not the current player, this entire panel will get disabled
-				//console.log("page::enterPhase(" + new_phase_id + ")");
+				//console.log("page::enterSmallPhase(" + new_phase_id + ")");
 				if(!this.isCurrentPlayerActive())
 				{
 					console.log("WARNING: attempted to enter phase " + new_phase_id + " but current player is not active.");
 					return;
-				}
-				
-				//transfer some of the UI stuff on the action bar
-				if(this.active_phase_handle != null)
-				{
-					dojo.disconnect(this.active_phase_handle);
-				}
-				
-				var old_phase_id = this.current_phase_id;
-				if(old_phase_id != null)
-				{
-					var old_phase_name = this.player_phases_all[old_phase_id];
-					const old_phase_node = dojo.byId(old_phase_name);	//todo: there is an error here
-					if(old_phase_node != null)
-					{
-						dojo.removeClass(old_phase_node, "active_phase");
-						dojo.addClass(old_phase_node, "inactive_phase");
-					}
 				}
 				
 				this.current_phase_id = new_phase_id;
@@ -356,31 +296,26 @@ define(
 				{
 					dojo.removeClass(new_phase_node, "inactive_phase");
 					dojo.addClass(new_phase_node, "active_phase");
-					//this.active_phase_handle = dojo.connect(new_phase_node, "click", dojo.hitch(this, this.onClickCurrentPhase));
 				}
 				
 				//update the bottom ui panel button
 				//note: small phases represent the available actions for the player during the main turn state
 				var end_phase_button = dojo.byId("end_phase_button");
-				//var small_phases = [PHASE_CAPTURE, PHASE_BUILD, PHASE_MOVE, PHASE_BATTLE];
+				//var small_phases = [STATE_MAIN_CAPTURE, STATE_MAIN_BUILD, STATE_MAIN_MOVE, STATE_MAIN_BATTLE];
 				
-				if(new_phase_id == PHASE_RESET)
+				if(new_phase_id == STATE_MAIN_RESET)
 				{
 					//disable small phase transitions
-					for(var i=0; i<this.player_phases_small.length; i++)
-					{
-						var cur_small_phase = this.player_phases_small[i];
-						var small_phase_button = dojo.byId(this.GetSmallPhaseButtonDivId(cur_small_phase));
-						dojo.addClass(small_phase_button, "blst_button_disabled");
-					}
+					this.UIInactiveButton_smallPhases();
 					
 					//prevent end of turn while waiting for server to process (note: server doesnt allow this anyway)
 					dojo.addClass(end_phase_button, "blst_button_disabled");
 					
 					//lock payment window
-					this.LockPaymentBucket();
+					//in theory we might not have a payment bucket every time we enter STATE_MAIN_RESET
+					//this.LockPaymentBucket();
 				}
-				else if(new_phase_id == PHASE_MAIN)
+				else if(new_phase_id == STATE_MAIN_DEFAULT)
 				{
 					//loop over the small phases for the player
 					for(var i=0; i<this.player_phases_small.length; i++)
@@ -423,7 +358,7 @@ define(
 				/*
 				switch(new_phase_id)
 				{
-					case PHASE_MAIN:
+					case STATE_MAIN_DEFAULT:
 					{
 						var small_phase_button;
 						small_phase_button = dojo.byId("button_move");
@@ -439,10 +374,10 @@ define(
 						dojo.removeClass(end_phase_button, "blst_button_disabled");
 						break;
 					}
-					case PHASE_CAPTURE:
+					case STATE_CAPTURE:
 					{
 						small_phase_button = dojo.byId("button_capture");
-						small_phase_button.innerHTML = this.exit_phase_strings[PHASE_CAPTURE];
+						small_phase_button.innerHTML = this.exit_phase_strings[STATE_CAPTURE];
 						small_phase_button = dojo.byId("button_move");
 						small_phase_button.innerHTML = "Move";
 						dojo.addClass(small_phase_button, "blst_button_disabled");
@@ -454,10 +389,10 @@ define(
 						dojo.addClass(end_phase_button, "blst_button_disabled");
 						break;
 					}
-					case PHASE_MOVE:
+					case STATE_MAIN_MOVE:
 					{
 						small_phase_button = dojo.byId("button_move");
-						small_phase_button.innerHTML = this.exit_phase_strings[PHASE_MOVE];
+						small_phase_button.innerHTML = this.exit_phase_strings[STATE_MAIN_MOVE];
 						small_phase_button = dojo.byId("button_build");
 						dojo.addClass(small_phase_button, "blst_button_disabled");
 						small_phase_button = dojo.byId("button_battle");
@@ -466,10 +401,10 @@ define(
 						dojo.addClass(end_phase_button, "blst_button_disabled");
 						break;
 					}
-					case PHASE_BUILD:
+					case STATE_MAIN_BUILD:
 					{
 						small_phase_button = dojo.byId("button_build");
-						small_phase_button.innerHTML = this.exit_phase_strings[PHASE_BUILD];
+						small_phase_button.innerHTML = this.exit_phase_strings[STATE_MAIN_BUILD];
 						small_phase_button = dojo.byId("button_move");
 						dojo.addClass(small_phase_button, "blst_button_disabled");
 						small_phase_button = dojo.byId("button_battle");
@@ -478,10 +413,10 @@ define(
 						dojo.addClass(end_phase_button, "blst_button_disabled");
 						break;
 					}
-					case PHASE_BATTLE:
+					case STATE_MAIN_BATTLE:
 					{
 						small_phase_button = dojo.byId("button_battle");
-						small_phase_button.innerHTML = this.exit_phase_strings[PHASE_BATTLE];
+						small_phase_button.innerHTML = this.exit_phase_strings[STATE_MAIN_BATTLE];
 						small_phase_button = dojo.byId("button_build");
 						dojo.addClass(small_phase_button, "blst_button_disabled");
 						small_phase_button = dojo.byId("button_move");
@@ -490,7 +425,7 @@ define(
 						dojo.addClass(end_phase_button, "blst_button_disabled");
 						break;
 					}
-					case PHASE_RESET:
+					case STATE_MAIN_RESET:
 					{
 						small_phase_button = dojo.byId("button_battle");
 						dojo.addClass(small_phase_button, "blst_button_disabled");

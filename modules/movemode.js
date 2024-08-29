@@ -14,7 +14,6 @@ define(
 		"dojo/_base/declare"
 	],
 	function (dojo, declare){
-		this.payment_mode = PHASE_INVALID;	//use the same constants as action phases
 		
 		var instance = declare("_movemode", null, {
 			//put your functions here

@@ -541,7 +541,7 @@ class bloodstones extends Table
 		//i've only done it for ACTION_CAPTURE and i'll need to do the rest later
 		//see line 268 of action.php
 		self::checkAction("action_tryPayAction");
-		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::tryPayAction() action_type:$action_type"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::tryPayAction($action_type)"));
 
 		$owner_player_id = self::getCurrentPlayerId();
 		$owner_player_name = self::getCurrentPlayerName();
@@ -555,9 +555,11 @@ class bloodstones extends Table
 			
 			case(self::ACTION_CAPTURE):
 			{
+				//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::tryPayAction() ACTION_CAPTURE"));
+				
 				//i am replacing the $success variable with a more nuanced struct containing info on the type of failure
 				//todo: change the other action handling states to conform to this model
-				if($this->getStateName() != "playerCapture")
+				if($this->getStateName() != "playerCapture" && !$this->IsCurrentPlayerChaosHorde())
 				{
 					$outcome_info = ["failure_reason" => self::ACTION_FAIL_STATE];
 					break;
@@ -568,13 +570,15 @@ class bloodstones extends Table
 					$success = true;
 				}
 				//for testing, allow failures to proceed
-				$success = true;
+				//$success = true;
 				break;
 			}
 			
 			//move actions (1)
 			case(self::ACTION_MOVE):
 			{
+				//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::tryPayAction() ACTION_MOVE"));
+				
 				$outcome_info = $this->HandleMoveAction($action_info, $paid_tile_infos, $paid_tile_ids);
 				if($outcome_info["failure_reason"] <= 1)
 				{
@@ -589,6 +593,8 @@ class bloodstones extends Table
 			//build actions
 			case(self::ACTION_BUILD):
 			{
+				//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::tryPayAction() ACTION_BUILD"));
+				
 				$outcome_info = $this->HandleBuildAction($action_info, $paid_tile_infos, $paid_tile_ids);
 				if($outcome_info["failure_reason"] <= 1)
 				{
@@ -600,12 +606,14 @@ class bloodstones extends Table
 			//swap out a tile in combat
 			case(self::ACTION_SWAP):
 			{
-				//todo
+				//todo: merge that other system into this one
 				break;
 			}
 			
 			case(self::ACTION_BUILDVILLAGE):
 			{
+				//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::tryPayAction() ACTION_BUILDVILLAGE"));
+				
 				if($this->getStateName() != "playerVillages")
 				{
 					$outcome_info = ["failure_reason" => self::ACTION_FAIL_STATE];
@@ -1357,6 +1365,11 @@ class bloodstones extends Table
 		$args = array(
 			"buildable_provinces" => $this->GetPlayerBuildableProvinces($active_player_id)
 		);
+		
+		if($this->IsCurrentPlayerChaosHorde())
+		{
+			$args["possible_capture_infos"] = $this->GetPendingCaptureArmies($active_player_id);
+		}
 		
 		return $args;
 	}

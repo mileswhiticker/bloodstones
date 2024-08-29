@@ -17,18 +17,26 @@
 
 var gameui;
 
-const PHASE_INVALID = -1;
-const PHASE_MIN = -1;
-const PHASE_CAPTURE = 0;
-const PHASE_UNDEAD = 1;
-const PHASE_MAIN = 2;
-const PHASE_BUILD = 3;
-const PHASE_MOVE = 4;
-const PHASE_BATTLE = 5;
-const PHASE_BUILDVILLAGE = 6;
-const PHASE_END = 7;
-const PHASE_RESET = 8;
-const PHASE_MAX = 8;
+//these constants are a mess, i've gone through a few iterations of how this code works
+//at some point ill clean up and standardise them but roughly my concept is:
+//each constant represents a game state, except for STATE_MAIN which has client only states linked to player actions
+//STATE_ refers to game states (which sometimes have a single action associated with them)
+const STATE_INVALID = -1;
+const STATE_MIN = -1;
+const STATE_CAPTURE = 0;
+const STATE_UNDEAD = 1;
+
+const STATE_MAIN_MIN = 2;
+const STATE_MAIN_DEFAULT = 2;
+const STATE_MAIN_CAPTURE = 3;
+const STATE_MAIN_BUILD = 4;
+const STATE_MAIN_MOVE = 5;
+const STATE_MAIN_BATTLE = 6;
+const STATE_MAIN_RESET = 7;
+const STATE_MAIN_MAX = 7;
+
+const STATE_BUILDVILLAGE = 8;
+const STATE_MAX = 8;
 
 const ACTION_UNKNOWN = 0;
 const ACTION_MOVE = 1;
@@ -251,9 +259,9 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			/* General UI */
 			
 			this.current_phase_id = null;
-			this.payment_mode = 0;
+			this.payment_mode = STATE_INVALID;
 			this.player_phases_all = ["villages","undead","main","build","move","battle","end","reset"];
-			this.player_phases_small = [PHASE_CAPTURE, PHASE_BUILD, PHASE_MOVE, PHASE_BATTLE];
+			this.player_phases_small = [STATE_MAIN_CAPTURE, STATE_MAIN_BUILD, STATE_MAIN_MOVE, STATE_MAIN_BATTLE];
 			//this.exit_phase_strings = [];
 			this.colour_cycle = Colour(5,10,15,255);
 			this.next_debug_colour = Colour(30,20,10,255);
@@ -404,6 +412,7 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			//finished villages
 			this.villagestacks_all = [];
 			this.villagestacks_by_province = [];
+			this.villagestacks_by_idstring = [];
 			
 			/* Place citadel state */
 			this.possible_citadel_provinces = [];

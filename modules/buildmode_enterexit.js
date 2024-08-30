@@ -121,7 +121,7 @@ define(
 					}
 					
 					//do we need to unselect this army?
-					if(gameui.selected_army == cur_army)
+					if(window.gameui.selected_army == cur_army)
 					{
 						this.UnselectArmyStack();
 					}
@@ -133,9 +133,9 @@ define(
 				}
 				this.queued_build_armies_by_province = [];
 				
-				if(gameui.isCurrentPlayerResetMode())
+				if(window.gameui.isCurrentPlayerResetMode())
 				{
-					gameui.enterSmallPhase(STATE_MAIN_DEFAULT);
+					window.gameui.enterSmallPhase(STATE_MAIN_DEFAULT);
 				}
 				else
 				{

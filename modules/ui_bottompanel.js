@@ -133,12 +133,12 @@ define(
 			ServerEarlyEndTurn : function()
 			{
 				//console.log("page::EarlyEndTurn()");
-				if(gameui.checkAction('action_earlyEndTurn'))
+				if(window.gameui.checkAction('action_earlyEndTurn'))
 				{
-					gameui.ajaxcall( "/bloodstones/bloodstones/action_earlyEndTurn.html", {
+					window.gameui.ajaxcall( "/bloodstones/bloodstones/action_earlyEndTurn.html", {
 						lock: true
 						}, 
-						 gameui, function( result ) {
+						 window.gameui, function( result ) {
 							
 							// What to do after the server call if it succeeded
 							// (most of the time: nothing)

@@ -84,9 +84,9 @@ define(
 				
 				//dragging
 				paywindow.draggable = true;
-				paywindow.ondragstart = gameui.PaywindowDragStart;
-				paywindow.ondrag = gameui.PaywindowDrag;
-				paywindow.ondrop = gameui.PaywindowDrop;
+				paywindow.ondragstart = window.gameui.PaywindowDragStart;
+				paywindow.ondrag = window.gameui.PaywindowDrag;
+				paywindow.ondrop = window.gameui.PaywindowDrop;
 				this.paywindowPrevY = 0;
 			},
 			
@@ -145,7 +145,7 @@ define(
 			PayBucketDragEnter : function(event)
 			{
 				//console.log("page::PayBucketDragEnter()");
-				var item_div_id = gameui.dragging_data_id;//event.dataTransfer.getData("text/plain");
+				var item_div_id = window.gameui.dragging_data_id;//event.dataTransfer.getData("text/plain");
 				var check_string = null;
 				if(item_div_id != null)
 				{
@@ -160,7 +160,7 @@ define(
 			PayBucketDragLeave : function(event)
 			{
 				//console.log("page::PayBucketDragLeave()");
-				var item_div_id = gameui.dragging_data_id;//event.dataTransfer.getData("text/plain");
+				var item_div_id = window.gameui.dragging_data_id;//event.dataTransfer.getData("text/plain");
 				var check_string = null;
 				if(item_div_id != null)
 				{
@@ -180,7 +180,7 @@ define(
 			PayBucketDrop : function(event)
 			{
 				//console.log("page::PayBucketDrop()");
-				var item_div_id = gameui.dragging_data_id;//event.dataTransfer.getData("text/plain");
+				var item_div_id = window.gameui.dragging_data_id;//event.dataTransfer.getData("text/plain");
 				var check_string = null;
 				if(item_div_id != null)
 				{
@@ -198,7 +198,7 @@ define(
 					//the item div id here is in the format "player_hand_item_XY"
 					var item_id = item_div_id.substring(17);
 					//console.log("dropped: " + item_div_id + " extracting: " + item_id);
-					gameui.PayTile(item_id);
+					window.gameui.PayTile(item_id);
 				}
 			},
 			
@@ -530,7 +530,7 @@ define(
 			PaywindowDragStart : function(event)
 			{
 				//console.log("page::PaywindowDragStart()");
-				gameui.paywindowPrevY = event.pageY;
+				window.gameui.paywindowPrevY = event.pageY;
 			},
 			
 			PaywindowDrag : function(event)
@@ -544,7 +544,7 @@ define(
 					//console.log("shifting box...");
 					var paywindow = dojo.byId("paywindow");
 					var paywindow_marginbox = dojo.marginBox(paywindow);
-					var deltaY = (gameui.paywindowPrevY - newPageY);
+					var deltaY = (window.gameui.paywindowPrevY - newPageY);
 					//console.log("deltaY:" + deltaY);
 					
 					var gamemap = dojo.byId("gamemap");
@@ -561,7 +561,7 @@ define(
 					if(newDivY < maxY && newDivY > minY)
 					{
 						dojo.style(paywindow,"top", newDivY + "px");
-						gameui.paywindowPrevY = newPageY;
+						window.gameui.paywindowPrevY = newPageY;
 					}
 				}
 			},

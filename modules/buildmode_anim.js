@@ -22,45 +22,45 @@ define(
 			{
 				//update the time since last draw call
 				//console.log(this);
-				//var newTime = gameui.date.getTime();
+				//var newTime = window.gameui.date.getTime();
 				var deltaTime = 0;
-				deltaTime = (prev_frame_time - gameui.prev_frame_timestamp);
-				//console.log(gameui.prev_frame_timestamp);
-				gameui.prev_frame_timestamp = prev_frame_time;
+				deltaTime = (prev_frame_time - window.gameui.prev_frame_timestamp);
+				//console.log(window.gameui.prev_frame_timestamp);
+				window.gameui.prev_frame_timestamp = prev_frame_time;
 				if(deltaTime > 60)
 				{
 					//deltaTime = 60;
 				}
 				//console.log(deltaTime);
 				
-				if(gameui.pulsing_province_id != null)
+				if(window.gameui.pulsing_province_id != null)
 				{
-					gameui.pulsing_province_time += deltaTime * gameui.pulsing_province_dir / 1000;
-					if(gameui.pulsing_province_time >= gameui.pulsing_province_time_max)
+					window.gameui.pulsing_province_time += deltaTime * window.gameui.pulsing_province_dir / 1000;
+					if(window.gameui.pulsing_province_time >= window.gameui.pulsing_province_time_max)
 					{
-						gameui.pulsing_province_dir *= -1;
-						gameui.pulsing_province_time = gameui.pulsing_province_time_max;
+						window.gameui.pulsing_province_dir *= -1;
+						window.gameui.pulsing_province_time = window.gameui.pulsing_province_time_max;
 					}
-					else if(gameui.pulsing_province_time < 0)
+					else if(window.gameui.pulsing_province_time < 0)
 					{
-						gameui.pulsing_province_dir *= -1;
-						gameui.pulsing_province_time = 0;
+						window.gameui.pulsing_province_dir *= -1;
+						window.gameui.pulsing_province_time = 0;
 					}
 					
-					//console.log(gameui.pulsing_province_time);
-					gameui.ClearCanvas();
-					gameui.AddBuildModeUI();
-					//gameui.pulsing_province_id
+					//console.log(window.gameui.pulsing_province_time);
+					window.gameui.ClearCanvas();
+					window.gameui.AddBuildModeUI();
+					//window.gameui.pulsing_province_id
 				}
-				else if(gameui.pulsing_province_time != 0.4)
+				else if(window.gameui.pulsing_province_time != 0.4)
 				{
-					gameui.pulsing_province_time = 0.4;
-					gameui.pulsing_province_dir = 1;
-					gameui.ClearCanvas();
-					gameui.AddBuildModeUI();
+					window.gameui.pulsing_province_time = 0.4;
+					window.gameui.pulsing_province_dir = 1;
+					window.gameui.ClearCanvas();
+					window.gameui.AddBuildModeUI();
 				}
 				
-				gameui.build_mode_cancel_anim = window.requestAnimationFrame(gameui.buildmodeAnimFrame);
+				window.gameui.build_mode_cancel_anim = window.requestAnimationFrame(window.gameui.buildmodeAnimFrame);
 			},
 			
 		});

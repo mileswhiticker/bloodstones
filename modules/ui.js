@@ -120,7 +120,7 @@ define(
 					case("initNewGame"):
 					{
 						this.ResetPlayerInfo(args.args.players);
-						this.AddMainGameUI(this.gamedatas);
+						this.AddMainWindow(this.gamedatas);
 						break;
 					}
 					case 'citadelPlacement':
@@ -383,7 +383,7 @@ define(
 			{
 				//console.log("page::onClickCentrepanel()");
 				
-				if(gameui.selected_army != null)
+				if(window.gameui.selected_army != null)
 				{
 					//this.UnselectArmyStack();
 				}
@@ -416,12 +416,12 @@ define(
 				}
 				
 				//is this move allowed?
-				if(gameui.checkAction('action_playerEndTurn'))
+				if(window.gameui.checkAction('action_playerEndTurn'))
 				{
-					gameui.ajaxcall( "/bloodstones/bloodstones/action_playerEndTurn.html", {
+					window.gameui.ajaxcall( "/bloodstones/bloodstones/action_playerEndTurn.html", {
 						lock: true
 						}, 
-						 gameui, function( result ) {
+						 window.gameui, function( result ) {
 							
 							// What to do after the server call if it succeeded
 							// (most of the time: nothing)
@@ -438,12 +438,12 @@ define(
 			onClickBuildVillagesButton : function(event)
 			{
 				//is this move allowed?
-				if(gameui.checkAction('action_beginBuildVillages'))
+				if(window.gameui.checkAction('action_beginBuildVillages'))
 				{
-					gameui.ajaxcall( "/bloodstones/bloodstones/action_beginBuildVillages.html", {
+					window.gameui.ajaxcall( "/bloodstones/bloodstones/action_beginBuildVillages.html", {
 						lock: true
 						}, 
-						 gameui, function( result ) {
+						 window.gameui, function( result ) {
 							
 							// What to do after the server call if it succeeded
 							// (most of the time: nothing)
@@ -460,12 +460,12 @@ define(
 			onClickUndeadButton : function(event)
 			{
 				//is this move allowed?
-				if(gameui.checkAction('action_playerUndead'))
+				if(window.gameui.checkAction('action_playerUndead'))
 				{
-					gameui.ajaxcall( "/bloodstones/bloodstones/action_playerUndead.html", {
+					window.gameui.ajaxcall( "/bloodstones/bloodstones/action_playerUndead.html", {
 						lock: true
 						}, 
-						 gameui, function( result ) {
+						 window.gameui, function( result ) {
 							
 							// What to do after the server call if it succeeded
 							// (most of the time: nothing)

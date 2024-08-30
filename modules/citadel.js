@@ -71,15 +71,15 @@ define(
 				console.log("page::ServerPlaceCitadel()");
 				
 				//is this move allowed?
-				if(gameui.checkAction('action_playerPlaceCitadel'))
+				if(window.gameui.checkAction('action_playerPlaceCitadel'))
 				{
 					//send this to the server
 					//see action.php
-					gameui.ajaxcall( "/bloodstones/bloodstones/action_playerPlaceCitadel.html", {
+					window.gameui.ajaxcall( "/bloodstones/bloodstones/action_playerPlaceCitadel.html", {
 						prov_name: province_name,
 						lock: true
 						}, 
-						 gameui, function( result ) {
+						 window.gameui, function( result ) {
 							
 							// What to do after the server call if it succeeded
 							// (most of the time: nothing)

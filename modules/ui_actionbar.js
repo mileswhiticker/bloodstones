@@ -258,14 +258,14 @@ define(
 			{
 				console.log("page::tryNextPhase()");
 				//is this move allowed?
-				if(gameui.checkAction('action_tryNextPhase'))
+				if(window.gameui.checkAction('action_tryNextPhase'))
 				{
 					//ajax call to pass the request back to php
-					gameui.ajaxcall( "/bloodstones/bloodstones/action_tryNextPhase.html", {
+					window.gameui.ajaxcall( "/bloodstones/bloodstones/action_tryNextPhase.html", {
 						player_id: this.player_id,
 						lock: true
 						},
-						 gameui, function( result ) {
+						 window.gameui, function( result ) {
 							
 							// What to do after the server call if it succeeded
 							// (most of the time: nothing)

@@ -41,54 +41,54 @@ define(
 			{
 				//update the time since last draw call
 				//console.log(this);
-				//var newTime = gameui.date.getTime();
+				//var newTime = window.gameui.date.getTime();
 				var deltaTime = 0;
-				deltaTime = (prev_frame_time - gameui.prev_frame_timestamp);
-				//console.log(gameui.prev_frame_timestamp);
-				gameui.prev_frame_timestamp = prev_frame_time;
+				deltaTime = (prev_frame_time - window.gameui.prev_frame_timestamp);
+				//console.log(window.gameui.prev_frame_timestamp);
+				window.gameui.prev_frame_timestamp = prev_frame_time;
 				if(deltaTime > 60)
 				{
 					//deltaTime = 60;
 				}
 				//console.log(deltaTime);
 				
-				if(gameui.pulsing_province_id != null || gameui.all_pulsing_provinces.length > 0)
+				if(window.gameui.pulsing_province_id != null || window.gameui.all_pulsing_provinces.length > 0)
 				{
-					gameui.pulsing_province_time += deltaTime * gameui.pulsing_province_dir / 1000;
-					if(gameui.pulsing_province_time >= gameui.pulsing_province_time_max)
+					window.gameui.pulsing_province_time += deltaTime * window.gameui.pulsing_province_dir / 1000;
+					if(window.gameui.pulsing_province_time >= window.gameui.pulsing_province_time_max)
 					{
-						gameui.pulsing_province_dir *= -1;
-						gameui.pulsing_province_time = gameui.pulsing_province_time_max;
+						window.gameui.pulsing_province_dir *= -1;
+						window.gameui.pulsing_province_time = window.gameui.pulsing_province_time_max;
 					}
-					else if(gameui.pulsing_province_time < 0)
+					else if(window.gameui.pulsing_province_time < 0)
 					{
-						gameui.pulsing_province_dir *= -1;
-						gameui.pulsing_province_time = 0;
+						window.gameui.pulsing_province_dir *= -1;
+						window.gameui.pulsing_province_time = 0;
 					}
 					
-					//console.log(gameui.pulsing_province_time);
-					gameui.ClearCanvas();
-					if(gameui.canvas_render_function != null)
+					//console.log(window.gameui.pulsing_province_time);
+					window.gameui.ClearCanvas();
+					if(window.gameui.canvas_render_function != null)
 					{
-						gameui.canvas_render_function();
+						window.gameui.canvas_render_function();
 					}
 					else
 					{
 						//this is still triggering, which means StopAnimatedCanvas() isn't functioning correctly
 						//i'll need to look into it at some point but it's not a real problem
 						//todo: rewrite the "pulsing" system to use css animations instead of window animation frames, the code will be much shorter and cleaner
-						//gameui.previous_canvas_render_function
+						//window.gameui.previous_canvas_render_function
 						console.log("WARNING: page::blstAnimFrame(" + prev_frame_time + ") called with null canvas_render_function (1)");
 					}
 				}
-				else if(gameui.pulsing_province_time != gameui.pulsing_province_default)
+				else if(window.gameui.pulsing_province_time != window.gameui.pulsing_province_default)
 				{
-					gameui.pulsing_province_time = gameui.pulsing_province_default;
-					gameui.pulsing_province_dir = 1;
-					gameui.ClearCanvas();
-					if(gameui.canvas_render_function != null)
+					window.gameui.pulsing_province_time = window.gameui.pulsing_province_default;
+					window.gameui.pulsing_province_dir = 1;
+					window.gameui.ClearCanvas();
+					if(window.gameui.canvas_render_function != null)
 					{
-						gameui.canvas_render_function();
+						window.gameui.canvas_render_function();
 					}
 					else
 					{
@@ -96,7 +96,7 @@ define(
 					}
 				}
 				
-				gameui.build_mode_cancel_anim = window.requestAnimationFrame(gameui.blstAnimFrame);
+				window.gameui.build_mode_cancel_anim = window.requestAnimationFrame(window.gameui.blstAnimFrame);
 			},
 			
 		});

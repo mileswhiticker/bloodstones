@@ -34,7 +34,7 @@ define(
 			{
 				//console.log( "Starting game setup" );
 				console.log(gamedatas);
-				gameui = this;
+				window.gameui = this;
 				
 				//some universal setup functions that apply as soon as we leave the lobby
 				this.setupNotifications();
@@ -51,7 +51,7 @@ define(
 					default:
 					{
 						//the standard game ui
-						this.AddMainGameUI(gamedatas);
+						this.AddMainWindow(gamedatas);
 						break;
 					}
 				}

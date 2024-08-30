@@ -30,14 +30,14 @@ define(
 				}
 				
 				//battle has not yet started
-				if(gameui.checkAction('action_startBattle'))
+				if(window.gameui.checkAction('action_startBattle'))
 				{
 					//ajax call to pass the request back to php
-					gameui.ajaxcall( "/bloodstones/bloodstones/action_startBattle.html", {
+					window.gameui.ajaxcall( "/bloodstones/bloodstones/action_startBattle.html", {
 						battling_province_name: this.preview_battle_province_name,
 						lock: true
 						},
-						 gameui, function( result ) {
+						 window.gameui, function( result ) {
 							
 							// What to do after the server call if it succeeded
 							// (most of the time: nothing)
@@ -54,13 +54,13 @@ define(
 			ServerRejectWithdraw : function()
 			{
 				console.log("page::ServerRejectWithdraw()");
-				if(gameui.checkAction('action_rejectWithdraw'))
+				if(window.gameui.checkAction('action_rejectWithdraw'))
 				{
 					//ajax call to pass the request back to php
-					gameui.ajaxcall( "/bloodstones/bloodstones/action_rejectWithdraw.html", {
+					window.gameui.ajaxcall( "/bloodstones/bloodstones/action_rejectWithdraw.html", {
 						lock: true
 						},
-						 gameui, function( result ) {
+						 window.gameui, function( result ) {
 							
 							// What to do after the server call if it succeeded
 							// (most of the time: nothing)
@@ -111,14 +111,14 @@ define(
 				}
 				
 				//now send the request to server to swap in the tile
-				if(gameui.checkAction('action_swapTile'))
+				if(window.gameui.checkAction('action_swapTile'))
 				{
 					//ajax call to pass the request back to php
-					gameui.ajaxcall( "/bloodstones/bloodstones/action_swapTile.html", {
+					window.gameui.ajaxcall( "/bloodstones/bloodstones/action_swapTile.html", {
 						swap_tile_id: tile_id,
 						lock: true
 						},
-						 gameui, function( result ) {
+						 window.gameui, function( result ) {
 							
 							// What to do after the server call if it succeeded
 							// (most of the time: nothing)
@@ -135,13 +135,13 @@ define(
 			ServerChooseWithdraw : function()
 			{
 				//console.log("page::ServerChooseWithdraw()");
-				if(gameui.checkAction('action_chooseWithdraw'))
+				if(window.gameui.checkAction('action_chooseWithdraw'))
 				{
 					//ajax call to pass the request back to php
-					gameui.ajaxcall( "/bloodstones/bloodstones/action_chooseWithdraw.html", {
+					window.gameui.ajaxcall( "/bloodstones/bloodstones/action_chooseWithdraw.html", {
 						lock: true
 						},
-						 gameui, function( result ) {
+						 window.gameui, function( result ) {
 							
 							// What to do after the server call if it succeeded
 							// (most of the time: nothing)
@@ -160,13 +160,13 @@ define(
 				if(this.gamedatas.gamestate.name == "battleEnd")
 				{
 					//is this move allowed?
-					if(gameui.checkAction('action_sacrificeUnit'))
+					if(window.gameui.checkAction('action_sacrificeUnit'))
 					{
-						gameui.ajaxcall( "/bloodstones/bloodstones/action_sacrificeUnit.html", {
+						window.gameui.ajaxcall( "/bloodstones/bloodstones/action_sacrificeUnit.html", {
 							sacrifice_tile_id: tile_info.id,
 							lock: true
 							}, 
-							 gameui, function( result ) {
+							 window.gameui, function( result ) {
 								
 								// What to do after the server call if it succeeded
 								// (most of the time: nothing)
@@ -185,13 +185,13 @@ define(
 			{
 				console.log("page::ServerWithdraw(" + prov_name + ")");
 				//is this move allowed?
-				if(gameui.checkAction('action_withdraw'))
+				if(window.gameui.checkAction('action_withdraw'))
 				{
-					gameui.ajaxcall( "/bloodstones/bloodstones/action_withdraw.html", {
+					window.gameui.ajaxcall( "/bloodstones/bloodstones/action_withdraw.html", {
 						retreat_prov_name: prov_name,
 						lock: true
 						}, 
-						 gameui, function( result ) {
+						 window.gameui, function( result ) {
 							
 							// What to do after the server call if it succeeded
 							// (most of the time: nothing)
@@ -208,13 +208,13 @@ define(
 			ServerRetreat : function(prov_name)
 			{
 				//is this move allowed?
-				if(gameui.checkAction('action_retreat'))
+				if(window.gameui.checkAction('action_retreat'))
 				{
-					gameui.ajaxcall( "/bloodstones/bloodstones/action_retreat.html", {
+					window.gameui.ajaxcall( "/bloodstones/bloodstones/action_retreat.html", {
 						retreat_prov_name: prov_name,
 						lock: true
 						}, 
-						 gameui, function( result ) {
+						 window.gameui, function( result ) {
 							
 							// What to do after the server call if it succeeded
 							// (most of the time: nothing)

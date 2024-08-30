@@ -70,7 +70,7 @@ define(
 				new_army.SpawnTileInStack(tile_info);
 				
 				//toggle selection 
-				if(gameui.selected_army == new_army)
+				if(window.gameui.selected_army == new_army)
 				{
 					this.RefreshSelectArmyStack();
 				}
@@ -130,7 +130,7 @@ define(
 					if(this.gamedatas.gamestate.name == "freeBuild_chaosHorde")
 					{
 						this.UnlimitChaosHordeBuildableProvinces();
-						gameui.showMessage(gameui.GetChaosHordeRechooseStartingProvString(),"info");
+						window.gameui.showMessage(window.gameui.GetChaosHordeRechooseStartingProvString(),"info");
 					}
 				}
 			},

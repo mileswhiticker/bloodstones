@@ -72,12 +72,12 @@ define(
 			{
 				//console.log("page::spawnBattle()");
 				//is this move allowed?
-				if(gameui.checkAction("action_spawnBattle"))
+				if(window.gameui.checkAction("action_spawnBattle"))
 				{
-					gameui.ajaxcall( "/bloodstones/bloodstones/action_spawnBattle.html", { 
+					window.gameui.ajaxcall( "/bloodstones/bloodstones/action_spawnBattle.html", { 
 						lock: true
 						}, 
-						 gameui, function( result ) {
+						 window.gameui, function( result ) {
 							
 							// What to do after the server call if it succeeded
 							// (most of the time: nothing)
@@ -95,12 +95,12 @@ define(
 			{
 				//console.log("page::findBattle()");
 				//is this move allowed?
-				if(gameui.checkAction('action_findBattle'))
+				if(window.gameui.checkAction('action_findBattle'))
 				{
-					gameui.ajaxcall( "/bloodstones/bloodstones/action_findBattle.html", { 
+					window.gameui.ajaxcall( "/bloodstones/bloodstones/action_findBattle.html", { 
 						lock: true
 						}, 
-						 gameui, function( result ) {
+						 window.gameui, function( result ) {
 							
 							// What to do after the server call if it succeeded
 							// (most of the time: nothing)
@@ -119,12 +119,12 @@ define(
 				//console.log("page::playerCycleHand()");
 				
 				//is this move allowed?
-				if(gameui.checkAction('action_playerCycleHand'))
+				if(window.gameui.checkAction('action_playerCycleHand'))
 				{
-					gameui.ajaxcall( "/bloodstones/bloodstones/action_playerCycleHand.html", { 
+					window.gameui.ajaxcall( "/bloodstones/bloodstones/action_playerCycleHand.html", { 
 						lock: true
 						}, 
-						 gameui, function( result ) {
+						 window.gameui, function( result ) {
 							
 							// What to do after the server call if it succeeded
 							// (most of the time: nothing)
@@ -291,17 +291,17 @@ define(
 				//console.log("page::onClickPlayerHandTile()");
 				
 				//is this move allowed?
-				if(gameui.checkAction('action_playerSpawnTestArmy'))
+				if(window.gameui.checkAction('action_playerSpawnTestArmy'))
 				{
 					//pick a random province and spawn a new army stack there
 					//as provinces are only stored client side, we have to pick a random province here
-					//var province_id = gameui.provinces[Math.floor((Math.random() * gameui.provinces.length))].name;
+					//var province_id = window.gameui.provinces[Math.floor((Math.random() * window.gameui.provinces.length))].name;
 					//console.log("Clicked on " + event.target.id + " now spawning army at " + province_div_name);
 					
-					gameui.ajaxcall( "/bloodstones/bloodstones/action_playerSpawnTestArmy.html", { 
+					window.gameui.ajaxcall( "/bloodstones/bloodstones/action_playerSpawnTestArmy.html", { 
 						lock: true
 						}, 
-						 gameui, function( result ) {
+						 window.gameui, function( result ) {
 							
 							// What to do after the server call if it succeeded
 							// (most of the time: nothing)
@@ -319,12 +319,12 @@ define(
 			{
 				console.log("page::playerDebugAction()");
 				//is this move allowed?
-				if(gameui.checkAction('action_playerDebug'))
+				if(window.gameui.checkAction('action_playerDebug'))
 				{
-					gameui.ajaxcall( "/bloodstones/bloodstones/action_playerDebug.html", { 
+					window.gameui.ajaxcall( "/bloodstones/bloodstones/action_playerDebug.html", { 
 						lock: true
 						}, 
-						 gameui, function( result ) {
+						 window.gameui, function( result ) {
 							
 							// What to do after the server call if it succeeded
 							// (most of the time: nothing)

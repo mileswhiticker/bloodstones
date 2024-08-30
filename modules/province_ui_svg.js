@@ -78,8 +78,8 @@ define(
 						};
 						
 						//random province type for testing
-						var prov_type_index = Math.floor(Math.random() * gameui.all_province_types.length);
-						new_prov.type = gameui.all_province_types[prov_type_index];
+						var prov_type_index = Math.floor(Math.random() * window.gameui.all_province_types.length);
+						new_prov.type = window.gameui.all_province_types[prov_type_index];
 						
 						//todo: how are we doing movement links?
 						//
@@ -88,7 +88,7 @@ define(
 						//this is the same semantics for both svg path and html canvas path, which is convenient
 						var canvas = dojo.byId("province_overlay_canvas");
 						var context = canvas.getContext("2d");
-						new_prov.prov_path_segments = gameui.ParseSVGPath(svg_path_data,context,new_prov.offset);
+						new_prov.prov_path_segments = window.gameui.ParseSVGPath(svg_path_data,context,new_prov.offset);
 						//console.log(new_prov.prov_path_segments);
 						
 						//we are now finished with this newly loaded province

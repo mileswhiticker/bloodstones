@@ -15,8 +15,6 @@
  *
  */
 
-var gameui;
-
 //these constants are a mess, i've gone through a few iterations of how this code works
 //at some point ill clean up and standardise them but roughly my concept is:
 //each constant represents a game state, except for STATE_MAIN which has client only states linked to player actions
@@ -576,7 +574,7 @@ function (dojo, declare, lang, fx, on, domAttr) {
 		
 		checkActionState : function(action_name)
 		{
-			//a custom function to replace gameui.checkAction() 
+			//a custom function to replace window.gameui.checkAction() 
 			//which will normally check whether a) the action is in the allowed action list for the state b) the current player is active
 			//instead this function just checks if the action is in the allowed action list
 			

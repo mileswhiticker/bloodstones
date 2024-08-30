@@ -443,7 +443,7 @@ define(
 				//only ships can be built in sea provinces, and sea provinces can only build ships
 				if(prov_info.type == "Sea")
 				{
-					if(gameui.IsTileTypeShip(tile_info.type_arg))
+					if(window.gameui.IsTileTypeShip(tile_info.type_arg))
 					{
 						return true;
 					}
@@ -451,7 +451,7 @@ define(
 				}
 				else
 				{
-					if(gameui.IsTileTypeShip(tile_info.type_arg))
+					if(window.gameui.IsTileTypeShip(tile_info.type_arg))
 					{
 						return false;
 					}

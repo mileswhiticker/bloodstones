@@ -20,7 +20,7 @@ define(
 			EnterMoveMode : function()
 			{
 				//console.log("page::EnterMoveMode()");
-				//if(gameui.selected_army != null)
+				//if(window.gameui.selected_army != null)
 				if(this.isCurrentPlayerMainState())
 				{
 					this.queued_province_moves = [];

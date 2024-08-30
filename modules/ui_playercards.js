@@ -154,9 +154,9 @@ define(
 						//make the village icon draggable
 						player_villages_icon.id = "current_player_villages";
 						player_villages_icon.draggable = true;
-						player_villages_icon.ondragstart = gameui.callback_HandTileDragStart;
-						player_villages_icon.ondragend = gameui.callback_HandTileDragEnd;
-						player_villages_icon.ondrop = gameui.callback_HandTileDrop;
+						player_villages_icon.ondragstart = window.gameui.callback_HandTileDragStart;
+						player_villages_icon.ondragend = window.gameui.callback_HandTileDragEnd;
+						player_villages_icon.ondrop = window.gameui.callback_HandTileDrop;
 						
 						//here we do the private content that is only visible to the current player
 						//there is more info so make this larger
@@ -302,7 +302,7 @@ define(
 				dojo.style(this, "opacity", 0.2);
 				//the div id here is in the format "player_hand_item_XY"
 				//event.dataTransfer.setData("text/plain", this.id);
-				gameui.dragging_data_id = this.id;
+				window.gameui.dragging_data_id = this.id;
 			},
 			
 			HandTileDragEnd : function(event)
@@ -310,7 +310,7 @@ define(
 				//console.log("page::HandTileDragEnd() " + this.id);
 				//dojo.removeClass(this, 'tile_dragging');
 				dojo.style(this, "opacity", 1);
-				gameui.dragging_data_id = null;
+				window.gameui.dragging_data_id = null;
 			},
 			
 			HandTileDrop : function(event)

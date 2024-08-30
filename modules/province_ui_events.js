@@ -30,140 +30,140 @@ define(
 				
 				//this.isCurrentPlayerCitadelState()
 				
-				/*var province_info = gameui.provinces_by_name[province_name];
+				/*var province_info = window.gameui.provinces_by_name[province_name];
 				this.DebugDrawMoveLinks(province_info);
 				return;*/
 				
-				if(gameui.isCurrentPlayerActive())
+				if(window.gameui.isCurrentPlayerActive())
 				{
 					//im doing if..else chains here instead of string defines because it's a little easier and isn't much harder to read
-					if(gameui.isCurrentPlayerUndeadState())
+					if(window.gameui.isCurrentPlayerUndeadState())
 					{
-						gameui.TryQueueProvinceMoveUndead(province_name);
+						window.gameui.TryQueueProvinceMoveUndead(province_name);
 					}
-					else if(gameui.isCurrentPlayerMoveMode())
+					else if(window.gameui.isCurrentPlayerMoveMode())
 					{
-						gameui.TryQueueProvinceMove(province_name);
+						window.gameui.TryQueueProvinceMove(province_name);
 					}
-					else if(gameui.isCurrentPlayerCitadelState())
+					else if(window.gameui.isCurrentPlayerCitadelState())
 					{
-						gameui.EndCitadelState(province_name);
+						window.gameui.EndCitadelState(province_name);
 					}
-					else if(gameui.isCurrentPlayerRetreatState())
+					else if(window.gameui.isCurrentPlayerRetreatState())
 					{
 						//is this a valid retreat province?
-						for(var index in gameui.retreat_prov_options)
+						for(var index in window.gameui.retreat_prov_options)
 						{
-							var retreat_option = gameui.retreat_prov_options[index];
+							var retreat_option = window.gameui.retreat_prov_options[index];
 							if(retreat_option.name == province_name)
 							{
 								//found it
-								gameui.ServerRetreat(province_name);
+								window.gameui.ServerRetreat(province_name);
 								return;
 							}
 						}
 					}
-					else if(gameui.isCurrentPlayerWithdrawState())
+					else if(window.gameui.isCurrentPlayerWithdrawState())
 					{
 						//is this a valid retreat province?
-						for(var index in gameui.retreat_prov_options)
+						for(var index in window.gameui.retreat_prov_options)
 						{
-							var retreat_option = gameui.retreat_prov_options[index];
+							var retreat_option = window.gameui.retreat_prov_options[index];
 							if(retreat_option.name == province_name)
 							{
 								//found it
-								gameui.ServerWithdraw(province_name);
+								window.gameui.ServerWithdraw(province_name);
 								return;
 							}
 						}
 					}
-					else if(gameui.isCurrentPlayerVillagesState())
+					else if(window.gameui.isCurrentPlayerVillagesState())
 					{
-						var province_info = gameui.provinces_by_name[province_name];
-						gameui.TryQueueVillageBuild(province_info);
+						var province_info = window.gameui.provinces_by_name[province_name];
+						window.gameui.TryQueueVillageBuild(province_info);
 					}
 					else
 					{
 						//just unselect the current army, if there is one selected
-						gameui.UnselectArmyStack();
+						window.gameui.UnselectArmyStack();
 					}
 				}
 				else
 				{
 					//just unselect the current army, if there is one selected
-					gameui.UnselectArmyStack();
+					window.gameui.UnselectArmyStack();
 				}
 			},
 			
 			onDragEnterProvince : function(event)
 			{
-				//console.log("page::onDragEnterProvince() " + gameui.dragging_data_id);
+				//console.log("page::onDragEnterProvince() " + window.gameui.dragging_data_id);
 				//console.log(event);
-				if(gameui.isCurrentPlayerBuildMode())
+				if(window.gameui.isCurrentPlayerBuildMode())
 				{
-					//gameui.dragging_data_id
+					//window.gameui.dragging_data_id
 					//SetProvinceOverlay : function(province_info, overlay_type = PROV_NONE, label_type = LABEL_NONE, label_text = "")
 					var check_string = null;
-					if(gameui.dragging_data_id != null)
+					if(window.gameui.dragging_data_id != null)
 					{
-						check_string = gameui.dragging_data_id.substring(0,16);
+						check_string = window.gameui.dragging_data_id.substring(0,16);
 					}
 					if(check_string == "player_hand_item")
 					{
 						//console.log(event);
-						var prov_name = gameui.GetProvNameFromAreaElement(event.target.id);
+						var prov_name = window.gameui.GetProvNameFromAreaElement(event.target.id);
 						//console.log(prov_name);
 						
-						var province_info = gameui.provinces_by_name[prov_name]
+						var province_info = window.gameui.provinces_by_name[prov_name]
 						//console.log(province_info);
-						//gameui.SetProvinceOverlay(province_info, gameui.GetProvinceBuildableHover(province_info));
-						gameui.EnableProvinceBuildHover(prov_name);
+						//window.gameui.SetProvinceOverlay(province_info, window.gameui.GetProvinceBuildableHover(province_info));
+						window.gameui.EnableProvinceBuildHover(prov_name);
 					}
 				}
-				else if(gameui.isCurrentPlayerVillagesState())
+				else if(window.gameui.isCurrentPlayerVillagesState())
 				{
-					if(gameui.dragging_data_id == "current_player_villages")
+					if(window.gameui.dragging_data_id == "current_player_villages")
 					{
-						var prov_name = gameui.GetProvNameFromAreaElement(event.target.id);
-						//var province_info = gameui.provinces_by_name[prov_name]
-						gameui.EnableProvinceBuildHover(prov_name);
+						var prov_name = window.gameui.GetProvNameFromAreaElement(event.target.id);
+						//var province_info = window.gameui.provinces_by_name[prov_name]
+						window.gameui.EnableProvinceBuildHover(prov_name);
 					}
 				}
 			},
 			
 			onDragLeaveProvince : function(event)
 			{
-				if(gameui.isCurrentPlayerBuildMode())
+				if(window.gameui.isCurrentPlayerBuildMode())
 				{
-					//console.log("page::onDragLeaveProvince() " + gameui.dragging_data_id);
+					//console.log("page::onDragLeaveProvince() " + window.gameui.dragging_data_id);
 					var check_string = null;
-					if(gameui.dragging_data_id != null)
+					if(window.gameui.dragging_data_id != null)
 					{
-						check_string = gameui.dragging_data_id.substring(0,16);
+						check_string = window.gameui.dragging_data_id.substring(0,16);
 					}
 					if(check_string == "player_hand_item")
 					{
 						//console.log(event);
-						var prov_name = gameui.GetProvNameFromAreaElement(event.target.id);
-						if(prov_name == gameui.pulsing_province_id)
+						var prov_name = window.gameui.GetProvNameFromAreaElement(event.target.id);
+						if(prov_name == window.gameui.pulsing_province_id)
 						{
 							//console.log(prov_name);
 							
-							var province_info = gameui.provinces_by_name[prov_name]
+							var province_info = window.gameui.provinces_by_name[prov_name]
 							//console.log(province_info);
-							//gameui.SetProvinceOverlay(province_info, gameui.GetProvinceBuildableHover(province_info));
-							gameui.DisableProvinceBuildHover(prov_name);
+							//window.gameui.SetProvinceOverlay(province_info, window.gameui.GetProvinceBuildableHover(province_info));
+							window.gameui.DisableProvinceBuildHover(prov_name);
 						}
 					}
 					//console.log(event);
 				}
-				else if(gameui.isCurrentPlayerVillagesState())
+				else if(window.gameui.isCurrentPlayerVillagesState())
 				{
-					if(gameui.dragging_data_id == "current_player_villages")
+					if(window.gameui.dragging_data_id == "current_player_villages")
 					{
-						var prov_name = gameui.GetProvNameFromAreaElement(event.target.id);
-						//var province_info = gameui.provinces_by_name[prov_name]
-						gameui.EnableProvinceBuildHover(prov_name);
+						var prov_name = window.gameui.GetProvNameFromAreaElement(event.target.id);
+						//var province_info = window.gameui.provinces_by_name[prov_name]
+						window.gameui.EnableProvinceBuildHover(prov_name);
 					}
 				}
 			},
@@ -212,34 +212,34 @@ define(
 			onDragOverProvince : function(event)
 			{
 				event.preventDefault();
-				//console.log("page::onDragOverProvince() " + gameui.dragging_data_id);
-				//gameui.pulsing_province_id = gameui.dragging_data_id;
+				//console.log("page::onDragOverProvince() " + window.gameui.dragging_data_id);
+				//window.gameui.pulsing_province_id = window.gameui.dragging_data_id;
 			},
 			
 			onDropProvince : function(event)
 			{
 				event.preventDefault();
 				
-				var prov_name = gameui.GetProvNameFromAreaElement(event.target.id);
-				var target_prov_id = gameui.GetProvinceIdFromName(prov_name);
-				gameui.DisableProvinceBuildHover(prov_name);
+				var prov_name = window.gameui.GetProvNameFromAreaElement(event.target.id);
+				var target_prov_id = window.gameui.GetProvinceIdFromName(prov_name);
+				window.gameui.DisableProvinceBuildHover(prov_name);
 				
 				//console.log("page::onDropProvince() target_prov_id:" + target_prov_id);
 				
-				if(gameui.isCurrentPlayerBuildMode())
+				if(window.gameui.isCurrentPlayerBuildMode())
 				{
-					if(gameui.dragging_data_id != null)
+					if(window.gameui.dragging_data_id != null)
 					{
-						var check_string = gameui.dragging_data_id.substring(0,16);
+						var check_string = window.gameui.dragging_data_id.substring(0,16);
 						if(check_string == "player_hand_item")
 						{
 							//check if this is a valid build province
-							//todo: should this array gameui.buildable_provinces be indexed? that way we dont have to loop over it
+							//todo: should this array window.gameui.buildable_provinces be indexed? that way we dont have to loop over it
 							var found = false;
 							var buildable_prov_id;
-							for(var index in gameui.buildable_provinces)
+							for(var index in window.gameui.buildable_provinces)
 							{
-								buildable_prov_id = gameui.buildable_provinces[index];
+								buildable_prov_id = window.gameui.buildable_provinces[index];
 								if(target_prov_id == buildable_prov_id)
 								{
 									//this one is buildable
@@ -252,26 +252,26 @@ define(
 							if(found)
 							{
 								//can this type of unit be built in this province?
-								var tile_id = check_string = gameui.dragging_data_id.substring(17);
-								var tile_info = gameui.gamedatas.hand[tile_id];
-								if(gameui.CanProvinceBuildTile(buildable_prov_id, tile_info))
+								var tile_id = check_string = window.gameui.dragging_data_id.substring(17);
+								var tile_info = window.gameui.gamedatas.hand[tile_id];
+								if(window.gameui.CanProvinceBuildTile(buildable_prov_id, tile_info))
 								{
 									success = true;
 									//console.log("dropping tile_id:" + tile_id + " on prov_name:" + prov_name);
-									gameui.QueueArmyBuild(prov_name, tile_id);
+									window.gameui.QueueArmyBuild(prov_name, tile_id);
 								}
 								else
 								{
 									//show a warning message that this tile cant be built in this province
-									gameui.showMessage(gameui.GetProvinceBuildFailString(),"error");
+									window.gameui.showMessage(window.gameui.GetProvinceBuildFailString(),"error");
 								}
 							}
 							else
 							{
-								var prov_info = gameui.GetProvinceById(target_prov_id);
+								var prov_info = window.gameui.GetProvinceById(target_prov_id);
 								//console.log(target_prov_id);
 								//console.log(prov_info);
-								gameui.showMessage(gameui.GetProvinceBuildUnfoundString(prov_info.type),"error");
+								window.gameui.showMessage(window.gameui.GetProvinceBuildUnfoundString(prov_info.type),"error");
 							}
 							
 							if(!success)
@@ -283,12 +283,12 @@ define(
 					}
 					
 				}
-				else if(gameui.isCurrentPlayerVillagesState())
+				else if(window.gameui.isCurrentPlayerVillagesState())
 				{
-					if(gameui.dragging_data_id == "current_player_villages")
+					if(window.gameui.dragging_data_id == "current_player_villages")
 					{
-						var province_info = gameui.provinces_by_name[prov_name];
-						gameui.TryQueueVillageBuild(province_info);
+						var province_info = window.gameui.provinces_by_name[prov_name];
+						window.gameui.TryQueueVillageBuild(province_info);
 					}
 				}
 			},

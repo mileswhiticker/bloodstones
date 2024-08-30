@@ -185,9 +185,9 @@ define(
 				//this.container_div.style.height = "50px";		//this is automatically overriden
 				
 				this.setSelectionMode(3);
-				this.apparenceBorderWidth = gameui.army_selection_border_width;		//note: the default stock handling expects this to be string value eg "5px" but i think ive overwridden it everywhere here
+				this.apparenceBorderWidth = window.gameui.army_selection_border_width;		//note: the default stock handling expects this to be string value eg "5px" but i think ive overwridden it everywhere here
 				dojo.style(this.container_div, 'margin', this.apparenceBorderWidth + "px");
-				dojo.style(this.container_div, 'zIndex', gameui.GameLayerArmy());
+				dojo.style(this.container_div, 'zIndex', window.gameui.GameLayerArmy());
 				
 				//a custom element to hide behind the tiles and show if the stack is selected
 				this.selected_div = dojo.place("<div class=\'selected_army_bg\'></div>",this.container_div.id,"first");
@@ -207,13 +207,13 @@ define(
 				if(from_div_id != null && typeof from_div_id != 'undefined')
 				{
 					//console.log("spawning army " + this.id_num + " from_div_id: " + from_div_id);
-					gameui.placeOnObjectPos(this.container_div.id, from_div_id, this.apparenceBorderWidth, -this.item_height/2);
+					window.gameui.placeOnObjectPos(this.container_div.id, from_div_id, this.apparenceBorderWidth, -this.item_height/2);
 				}
 				//this.SpawnTestUnitsInStack(factionid);
 				this.SpawnTilesInStack(army_info["tiles"]);
 
 				//this method will "slide" it out across the board to the starting provine
-				gameui.MoveArmy(this, army_info.province_id,  true);
+				window.gameui.MoveArmy(this, army_info.province_id,  true);
 			},
 			
 			createAsVillage: function(page, host_div_id, village_info)
@@ -244,9 +244,9 @@ define(
 				this.backgroundSize = "100% 100%";
 				this.setSelectionMode(3);
 				/*
-				this.apparenceBorderWidth = gameui.army_selection_border_width;		//note: the default stock handling expects this to be string value eg "5px" but i think ive overwridden it everywhere here
+				this.apparenceBorderWidth = window.gameui.army_selection_border_width;		//note: the default stock handling expects this to be string value eg "5px" but i think ive overwridden it everywhere here
 				dojo.style(this.container_div, 'margin', this.apparenceBorderWidth + "px");
-				dojo.style(this.container_div, 'zIndex', gameui.GameLayerArmy());
+				dojo.style(this.container_div, 'zIndex', window.gameui.GameLayerArmy());
 				
 				//a custom element to hide behind the tiles and show if the stack is selected
 				this.selected_div = dojo.place("<div class=\'selected_army_bg\'></div>",this.container_div.id,"first");
@@ -265,7 +265,7 @@ define(
 				}*/
 				
 				//this method will "slide" it out across the board to the starting provine
-				gameui.MoveArmy(this, village_info.province_id,  true);
+				window.gameui.MoveArmy(this, village_info.province_id,  true);
 			},
 			
 			addVillage(new_faction_id)
@@ -298,7 +298,7 @@ define(
 				//this.container_div.style.width = "50px";
 				//this.container_div.style.height = "50px";		//this is automatically overriden
 				this.setSelectionMode(0);
-				gameui.MoveArmy(this, citadel_info.province_id,  true);
+				window.gameui.MoveArmy(this, citadel_info.province_id,  true);
 			},
 			
 			addCitadel(new_faction_id)
@@ -323,7 +323,7 @@ define(
 				this.item_width = 115;
 				this.item_height = 57;
 				this.selectable = 0;
-				dojo.style(this.container_div, 'zIndex', gameui.GameLayerUIOver());
+				dojo.style(this.container_div, 'zIndex', window.gameui.GameLayerUIOver());
 				//dojo.style(this.container_div, 'width', "115px");
 			},
 			
@@ -518,7 +518,7 @@ define(
 				{
 					node_tilebonus = dojo.place("<div id=\"" + node_id + "\"class=\"battle_display_tilebonus\"></div>", div_container);
 					//what is the combat bonus for this fight?
-					var tilebonus_amount = gameui.getTileCombatBonus(Number(item.type), this.player_id, is_attacker, item.id);
+					var tilebonus_amount = window.gameui.getTileCombatBonus(Number(item.type), this.player_id, is_attacker, item.id);
 					//console.log("tilebonus_amount: " + tilebonus_amount);
 					if(tilebonus_amount != 0)
 					{
@@ -527,7 +527,7 @@ define(
 					
 					//this is possibly hacky putting it here, but it seems to work nicely in testing
 					//because this is only on creation of this ui element, it only gets added to the total once
-					gameui.addBattlescore(tilebonus_amount, this.player_id)
+					window.gameui.addBattlescore(tilebonus_amount, this.player_id)
 				}
 				var item_id = this.getItemDivId( item.id );
 				var item_div = dojo.byId(item_id);
@@ -808,7 +808,7 @@ define(
 			{
 				//console.log("page::StartQueuedMove() this.province_id:" + this.province_id);
 				this.starting_province_location = this.province_id;
-				gameui.queued_moving_armies.push(this);
+				window.gameui.queued_moving_armies.push(this);
 			},
 			
 			EndQueuedMove : function()
@@ -824,7 +824,7 @@ define(
 					for(var index in this.items)
 					{
 						var item = this.items[index];
-						if(!gameui.IsTileTypeShip(item.type) && !gameui.IsTileTypeDragon(item.type))
+						if(!window.gameui.IsTileTypeShip(item.type) && !window.gameui.IsTileTypeDragon(item.type))
 						{
 							return false;
 						}
@@ -849,7 +849,7 @@ define(
 					for(var index in this.items)
 					{
 						var item = this.items[index];
-						if(gameui.IsTileTypeShip(item.type))
+						if(window.gameui.IsTileTypeShip(item.type))
 						{
 							return true;
 						}
@@ -865,7 +865,7 @@ define(
 					for(var index in this.items)
 					{
 						var item = this.items[index];
-						if(!gameui.IsTileTypeUndead(item.type))
+						if(!window.gameui.IsTileTypeUndead(item.type))
 						{
 							return true;
 						}
@@ -881,7 +881,7 @@ define(
 					for(var index in this.items)
 					{
 						var item = this.items[index];
-						if(gameui.IsTileTypeUndead(item.type))
+						if(window.gameui.IsTileTypeUndead(item.type))
 						{
 							return true;
 						}
@@ -899,9 +899,9 @@ define(
 				
 				//max of 2 
 				var moves_left = 2;
-				if(gameui.queued_undead_moves[this.id_string])
+				if(window.gameui.queued_undead_moves[this.id_string])
 				{
-					var moves = gameui.queued_undead_moves[this.id_string];
+					var moves = window.gameui.queued_undead_moves[this.id_string];
 					moves_left -= moves.length;	//the starting province increases this array size by 1
 					moves_left += 1;
 				}
@@ -923,7 +923,7 @@ define(
 					{
 						case STACK_ARMY:
 						{
-							gameui.ghosted_armies.push(this);
+							window.gameui.ghosted_armies.push(this);
 							break;
 						}
 					}
@@ -989,7 +989,7 @@ define(
 				{
 					item_visible_width = Math.round( this.item_width*this.horizontal_overlap/100 );
 					item_visible_width_lastitemlost = this.item_width - item_visible_width;
-					itemIndex = 1;//gameui.GameLayerArmy() + 1;
+					itemIndex = 1;//window.gameui.GameLayerArmy() + 1;
 				}
 				var vertical_overlap_px = 0;
 				if( this.vertical_overlap != 0 )
@@ -1118,9 +1118,9 @@ define(
 						{
 							//item_div.draggable = true;
 							item_div.draggable = true;
-							item_div.ondragstart = gameui.callback_HandTileDragStart;
-							item_div.ondragend = gameui.callback_HandTileDragEnd;
-							item_div.ondrop = gameui.callback_HandTileDrop;
+							item_div.ondragstart = window.gameui.callback_HandTileDragStart;
+							item_div.ondragend = window.gameui.callback_HandTileDragEnd;
+							item_div.ondrop = window.gameui.callback_HandTileDrop;
 						}
 
 						if( typeof item.loc != 'undefined' )
@@ -1290,15 +1290,15 @@ define(
 					{
 						//console.log(event);
 						var item_id = event.target.id.substring(14);
-						var tile_info = gameui.current_player_paystack.GetTileInfo(item_id);
-						gameui.RefundPaystackTile(tile_info);
+						var tile_info = window.gameui.current_player_paystack.GetTileInfo(item_id);
+						window.gameui.RefundPaystackTile(tile_info);
 						break;
 					}
 					case STACK_BATTLE_TILES_TEMP:
 					{
 						var item_id = event.target.id.substring(26);
-						var tile_info = gameui.current_player_paystack.GetTileInfo(item_id);
-						gameui.RefundPaystackTile(tile_info);
+						var tile_info = window.gameui.current_player_paystack.GetTileInfo(item_id);
+						window.gameui.RefundPaystackTile(tile_info);
 						break;
 					}
 					case STACK_BATTLE_DISPLAY:
@@ -1309,13 +1309,13 @@ define(
 							//console.log(item_id);
 							var tile_info = this.GetTileInfo(item_id);
 							//console.log(tile_info);
-							gameui.TrySacrificeArmyTile(tile_info);
+							window.gameui.TrySacrificeArmyTile(tile_info);
 						}
 						break;
 					}
 					case STACK_VILLAGE:
 					{
-						gameui.onClickVillageStack(event, this);
+						window.gameui.onClickVillageStack(event, this);
 						break;
 					}
 					default:

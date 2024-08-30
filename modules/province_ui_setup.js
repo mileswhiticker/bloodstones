@@ -52,10 +52,10 @@ define(
 					*/
 					dojo.connect(area_element, "click", dojo.hitch(this, this.onClickProvince));
 					
-					area_element.ondragenter = gameui.onDragEnterProvince;
-					area_element.ondragleave = gameui.onDragLeaveProvince;
-					area_element.ondragover = gameui.onDragOverProvince;
-					area_element.ondrop = gameui.onDropProvince;
+					area_element.ondragenter = window.gameui.onDragEnterProvince;
+					area_element.ondragleave = window.gameui.onDragLeaveProvince;
+					area_element.ondragover = window.gameui.onDragOverProvince;
+					area_element.ondrop = window.gameui.onDropProvince;
 					
 					//console.log(province.name + ": " + province_div.style.cssText);
 					

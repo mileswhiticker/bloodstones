@@ -265,7 +265,7 @@ define(
 				dojo.destroy(temp_village.container_div);
 				
 				//update the total village build cost
-				var prov_info = gameui.provinces_by_name[temp_village.province_id];
+				var prov_info = window.gameui.provinces_by_name[temp_village.province_id];
 				var new_cost = this.getProvVillageCostType(prov_info.type);
 				this.AddActionCostAmount(-new_cost);
 				
@@ -367,7 +367,7 @@ define(
 			onClickVillageStack : function(event, villagestack)
 			{
 				//console.log("page::onClickVillageStack()");
-				switch(gameui.gamedatas.gamestate.name)
+				switch(window.gameui.gamedatas.gamestate.name)
 				{
 					case 'playerCapture':
 					{

@@ -21,7 +21,7 @@ define(
 			AddMoveModeUI : function()
 			{
 				//console.log("page::AddMoveModeUI()");
-				/*if(gameui.selected_army == null)
+				/*if(window.gameui.selected_army == null)
 				{
 					console.log("ERROR: Trying to enter move mode with no army selected");
 					return;
@@ -39,7 +39,7 @@ define(
 						return;
 					}
 					//is the player wanting to queue some more movement for a selected army?
-					const moving_army = gameui.selected_army;
+					const moving_army = window.gameui.selected_army;
 					
 					//check the adjacent province links and add move cost overlays
 					//armies can move in 1 step at a time, but with ships or bridges they can get adjacency by skipping over several sea provinces

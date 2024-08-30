@@ -18,7 +18,7 @@ define(
 		var instance = declare("_ui_main", null, {
 			//put your functions here
 			
-			AddMainGameUI : function(gamedatas)
+			AddMainWindow : function(gamedatas)
 			{
 				//check if this ui has already been created
 				if(dojo.byId("centrepanel"))
@@ -96,7 +96,7 @@ define(
 				}
 			},
 			
-			RemoveMainGameUI : function()
+			RemoveMainWindow : function()
 			{
 				dojo.destroy("leftpanel");
 				dojo.destroy("centrepanel");

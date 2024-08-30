@@ -185,13 +185,13 @@ define(
 			ServerUndeadAction : function()
 			{
 				//console.log("page::ServerUndeadAction()");
-				if(gameui.checkAction('action_moveUndead'))
+				if(window.gameui.checkAction('action_moveUndead'))
 				{
-					gameui.ajaxcall( "/bloodstones/bloodstones/action_moveUndead.html", {
+					window.gameui.ajaxcall( "/bloodstones/bloodstones/action_moveUndead.html", {
 						undead_moves: this.GetJsonUndeadMoves(),
 						lock: true
 						}, 
-						 gameui, function( result ) {
+						 window.gameui, function( result ) {
 							
 							// What to do after the server call if it succeeded
 							// (most of the time: nothing)

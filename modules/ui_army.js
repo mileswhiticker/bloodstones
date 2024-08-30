@@ -23,17 +23,17 @@ define(
 			SelectArmyStack : function(new_selected_army)
 			{
 				//console.log("page::SelectArmyStack(" + new_selected_army.id_num + ")");
-				if(gameui.selected_army != null)
+				if(window.gameui.selected_army != null)
 				{
-					console.log("ERROR: Trying to select army " + new_selected_army.id_num + " but already selected " + gameui.selected_army.id_num);
+					console.log("ERROR: Trying to select army " + new_selected_army.id_num + " but already selected " + window.gameui.selected_army.id_num);
 				}
 				else if(new_selected_army != null)
 				{
 					//select it in the code, have it handle its own ui updates
-					gameui.selected_army = new_selected_army;
-					gameui.selected_army.selectStack();
+					window.gameui.selected_army = new_selected_army;
+					window.gameui.selected_army.selectStack();
 					
-					//console.log(gameui.selected_army);
+					//console.log(window.gameui.selected_army);
 					
 					//update the ui to show more info about this selected army stack
 					var selected_army_div = dojo.byId("selected_army");
@@ -171,19 +171,19 @@ define(
 				//console.log("page::UnselectArmyStack()");
 				/*var test_obj;
 				test_obj.forceerror();*/
-				var old_selected_army = gameui.selected_army;
+				var old_selected_army = window.gameui.selected_army;
 				if(old_selected_army != null)
 				{
 					//unselect it in code, have it handle its own ui updates
-					gameui.selected_army.unselectStack();
-					gameui.selected_army = null;
+					window.gameui.selected_army.unselectStack();
+					window.gameui.selected_army = null;
 					
 					//clean up the ui
 					dojo.query(".selected_stack_element").forEach(dojo.destroy);
 				}
 				else
 				{
-					//console.log("ERROR: UnselectArmyStack() but gameui.selected_army is null");
+					//console.log("ERROR: UnselectArmyStack() but window.gameui.selected_army is null");
 				}
 				
 				return old_selected_army;
@@ -503,12 +503,12 @@ define(
 				}
 				else if(this.isCurrentPlayerMoveMode())
 				{
-					gameui.HandleMovemodeArmyClicked(clicked_army);
+					window.gameui.HandleMovemodeArmyClicked(clicked_army);
 				}
 				else if(this.isCurrentPlayerBattleMode())
 				{
 					//do we already have an army selected?
-					if(gameui.selected_army != null)
+					if(window.gameui.selected_army != null)
 					{
 						//unselect it
 						this.UnselectArmyStack();
@@ -517,15 +517,15 @@ define(
 					//transfer selection to this army
 					this.SelectArmyStack(clicked_army);
 						
-					if(gameui.battling_province_name == null)
+					if(window.gameui.battling_province_name == null)
 					{
-						//gameui.TryEnterBattle(clicked_army);
+						//window.gameui.TryEnterBattle(clicked_army);
 					}
 				}
 				else
 				{
 					//do we already have an army selected?
-					if(gameui.selected_army == null)
+					if(window.gameui.selected_army == null)
 					{
 						//select this army
 						this.SelectArmyStack(clicked_army);
@@ -533,7 +533,7 @@ define(
 					else
 					{
 						//did we click on the currently selected army?
-						var old_selected_army = gameui.selected_army;
+						var old_selected_army = window.gameui.selected_army;
 						if(old_selected_army == clicked_army)
 						{
 							//toggle army selection
@@ -550,7 +550,7 @@ define(
 				
 				/*old code from this point on*/
 				/*
-				if(gameui.selected_army == null)
+				if(window.gameui.selected_army == null)
 				{
 					//have we already selected an army stack?
 					//enter move mode if it's our army and we are able to
@@ -565,7 +565,7 @@ define(
 				}
 				else
 				{
-					var old_selected_army = gameui.selected_army;
+					var old_selected_army = window.gameui.selected_army;
 					
 					//toggle army selection
 					if(old_selected_army == clicked_army)
@@ -668,7 +668,7 @@ define(
 				//console.log("page::ServerArmyMove(" + moving_army.id_string + ", " + provinces_route + ")_" + provinces_array_JSON);
 				
 				//is this move allowed?
-				if(gameui.checkAction('action_tryArmyStackMove'))
+				if(window.gameui.checkAction('action_tryArmyStackMove'))
 				{
 					//regular expression to extract the army id number from the node id string
 					//var army_id_num = moving_army.id_string.replace(/[^0-9]/g,"");
@@ -687,12 +687,12 @@ define(
 					provinces_array_JSON = JSON.stringify(province_route_names);
 					
 					//ajax call to pass the request back to php
-					gameui.ajaxcall( "/bloodstones/bloodstones/action_tryArmyStackMove.html", {
+					window.gameui.ajaxcall( "/bloodstones/bloodstones/action_tryArmyStackMove.html", {
 						source_army_id: army_id_num,
 						provinces_array: provinces_array_JSON,
 						lock: true
 						},
-						 gameui, function( result ) {
+						 window.gameui, function( result ) {
 							
 							// What to do after the server call if it succeeded
 							// (most of the time: nothing)
@@ -713,7 +713,7 @@ define(
 				//console.log(splitting_tile_ids);
 				
 				//is this move allowed?
-				if(gameui.checkAction('action_tryArmyStackSplit'))
+				if(window.gameui.checkAction('action_tryArmyStackSplit'))
 				{
 					//regular expression to extract the army id number from the node id string
 					//var army_id_num = splitting_army.id_string.replace(/[^0-9]/g,"");
@@ -723,13 +723,13 @@ define(
 					splitting_tiles_JSON = JSON.stringify(splitting_tile_ids);
 					
 					//ajax call to pass the request back to php
-					gameui.ajaxcall( "/bloodstones/bloodstones/action_tryArmyStackSplit.html", {
+					window.gameui.ajaxcall( "/bloodstones/bloodstones/action_tryArmyStackSplit.html", {
 						source_army_id: army_id_num,
 						splitting_tiles: splitting_tiles_JSON,
 						select_target: select_new_army,
 						lock: true
 						},
-						 gameui, function( result ) {
+						 window.gameui, function( result ) {
 							
 							// What to do after the server call if it succeeded
 							// (most of the time: nothing)
@@ -748,7 +748,7 @@ define(
 				//console.log("page::ServerArmyMerge(" + army_source.id_string + "," + army_target.id_string + "," + tile_ids_to_merge.length + ")");
 				
 				//is this move allowed?
-				if(gameui.checkAction('action_tryArmyStackMerge'))
+				if(window.gameui.checkAction('action_tryArmyStackMerge'))
 				{
 					//regular expression to extract the army id number from the node id string
 					var army_id_source = army_source.id_string.replace(/[^0-9]/g,"");
@@ -761,13 +761,13 @@ define(
 					*/
 					
 					//ajax call to pass the request back to php
-					gameui.ajaxcall( "/bloodstones/bloodstones/action_tryArmyStackMerge.html", {
+					window.gameui.ajaxcall( "/bloodstones/bloodstones/action_tryArmyStackMerge.html", {
 						source_army_id: army_id_source,
 						target_army_id: army_id_target,
 						splitting_tiles: tile_list_JSON,
 						lock: true
 						},
-						 gameui, function( result ) {
+						 window.gameui, function( result ) {
 							
 							// What to do after the server call if it succeeded
 							// (most of the time: nothing)

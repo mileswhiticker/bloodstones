@@ -22,7 +22,7 @@ define(
 			{
 				//console.log("page::ServerPayAction(" + action_type_arg + ")");
 				//is this move allowed?
-				if(gameui.checkAction('action_tryPayAction'))
+				if(window.gameui.checkAction('action_tryPayAction'))
 				{
 					//put in JSON format for the server depending on the kind of action
 					var action_info_JSON = "";
@@ -69,14 +69,14 @@ define(
 					
 					//send this to the server
 					//see line 268 of action.php
-					gameui.ajaxcall( "/bloodstones/bloodstones/action_tryPayAction.html", {
+					window.gameui.ajaxcall( "/bloodstones/bloodstones/action_tryPayAction.html", {
 						action_type: action_type_arg,
 						action_info: action_info_JSON,
 						paid_tile_infos: paid_tiles_JSON,
 						paid_tile_ids: paid_tile_ids_JSON,
 						lock: true
 						}, 
-						 gameui, function( result ) {
+						 window.gameui, function( result ) {
 							
 							// What to do after the server call if it succeeded
 							// (most of the time: nothing)
@@ -95,12 +95,12 @@ define(
 			ServerSkipAction : function()
 			{
 				console.log("page::ServerSkipAction()");
-				if(gameui.checkAction('action_skip'))
+				if(window.gameui.checkAction('action_skip'))
 				{
-					gameui.ajaxcall( "/bloodstones/bloodstones/action_skip.html", {
+					window.gameui.ajaxcall( "/bloodstones/bloodstones/action_skip.html", {
 						lock: true
 						}, 
-						 gameui, function( result ) {
+						 window.gameui, function( result ) {
 							
 							// What to do after the server call if it succeeded
 							// (most of the time: nothing)

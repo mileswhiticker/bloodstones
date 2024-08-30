@@ -65,17 +65,17 @@ define(
 				var prov_name = event.target.id.substring(26);
 				//console.log(prov_name);
 				this.is_previewing_battle = true;
-				gameui.PreviewBattle(prov_name);
+				window.gameui.PreviewBattle(prov_name);
 			},
 			
 			onClickProceedBattle : function(event)
 			{
-				gameui.TryProceedCurrentBattle();
+				window.gameui.TryProceedCurrentBattle();
 			},
 			
 			onClickWithdrawBattle : function(event)
 			{
-				gameui.TryWithdrawCurrentBattle();
+				window.gameui.TryWithdrawCurrentBattle();
 			},
 			
 			addBattlescore : function(new_amount, battling_player_id)

@@ -32,7 +32,7 @@ define(
 				//console.log("page::onClickStackTileUI()");
 				//console.log(event);
 				
-				if(gameui.selected_army == null)
+				if(window.gameui.selected_army == null)
 				{
 					console.log("ERROR: Trying to select tile while selected_army is null");
 					return;
@@ -42,13 +42,13 @@ define(
 				var cur_tile_id = this.GetTileIdFromImage(event.target.id);
 				//console.log(event.target.id);
 				//console.log(cur_tile_id);
-				//console.log(gameui.selected_army.tiles);
+				//console.log(window.gameui.selected_army.tiles);
 				
 				//only active players in move mode can split off tiles
 				if(this.isCurrentPlayerMoveMode())
 				{
 					//we can't split off a tile if this is the last one
-					if(gameui.selected_army.items.length <= 1)
+					if(window.gameui.selected_army.items.length <= 1)
 					{
 						return;
 					}
@@ -57,24 +57,24 @@ define(
 					this.ui_busy = true;
 					
 					//check if this army has already moved
-					if(this.queued_moving_armies.includes(gameui.selected_army))
+					if(this.queued_moving_armies.includes(window.gameui.selected_army))
 					{
 						//visual helper animation from the player's hand to the army stack on the map
-						this.SelectedArmySplitAnimation(cur_tile_id, gameui.selected_army.id_num);
+						this.SelectedArmySplitAnimation(cur_tile_id, window.gameui.selected_army.id_num);
 						
 						//we have already started moving, so record this split as a new action
-						var temp_army_info = {army_id: this.getTempArmyId(), player_id: gameui.selected_army.player_id, province_id: gameui.selected_army.province_id, tiles: []};
+						var temp_army_info = {army_id: this.getTempArmyId(), player_id: window.gameui.selected_army.player_id, province_id: window.gameui.selected_army.province_id, tiles: []};
 						var temp_army = this.CreateArmy(temp_army_info, null);
-						this.TransferArmyTiles(gameui.selected_army.id_num, temp_army.id_num, [cur_tile_id], SELECT_ARMY_SOURCE);
-						this.QueueArmySplit(gameui.selected_army, [cur_tile_id], temp_army);
+						this.TransferArmyTiles(window.gameui.selected_army.id_num, temp_army.id_num, [cur_tile_id], SELECT_ARMY_SOURCE);
+						this.QueueArmySplit(window.gameui.selected_army, [cur_tile_id], temp_army);
 					}
 					else
 					{
 						//we havent started moving so execute this split immediately
-						this.ServerArmySplit(gameui.selected_army, [cur_tile_id]);
+						this.ServerArmySplit(window.gameui.selected_army, [cur_tile_id]);
 						
 						//visual helper animation from the player's hand to the army stack on the map
-						this.SelectedArmySplitAnimation(cur_tile_id, gameui.selected_army.id_num);
+						this.SelectedArmySplitAnimation(cur_tile_id, window.gameui.selected_army.id_num);
 					}
 					this.ui_busy = false;
 				}
@@ -83,7 +83,7 @@ define(
 					//this is almost entirely duplicate code but it's easy and simple enough that the tech debt is minimal
 					
 					//we can't split off a tile if this is the last one
-					if(gameui.selected_army.items.length <= 1)
+					if(window.gameui.selected_army.items.length <= 1)
 					{
 						return;
 					}
@@ -92,24 +92,24 @@ define(
 					this.ui_busy = true;
 					
 					//check if this army has already moved
-					if(this.queued_undead_moves[gameui.selected_army.id_string])
+					if(this.queued_undead_moves[window.gameui.selected_army.id_string])
 					{
 						this.showMessage(this.GetSplitFailMoveString(), 'error');
 					}
 					else
 					{
 						//we havent started moving so execute this split immediately
-						this.ServerArmySplit(gameui.selected_army, [cur_tile_id]);
+						this.ServerArmySplit(window.gameui.selected_army, [cur_tile_id]);
 						
 						//visual helper animation from the player's hand to the army stack on the map
-						this.SelectedArmySplitAnimation(cur_tile_id, gameui.selected_army.id_num);
+						this.SelectedArmySplitAnimation(cur_tile_id, window.gameui.selected_army.id_num);
 					}
 					this.ui_busy = false;
 				}
 				
 				/*
 				//toggle selection of this tile
-				var clicked_tile = gameui.selected_army.tiles[cur_tile_id];
+				var clicked_tile = window.gameui.selected_army.tiles[cur_tile_id];
 				//console.log(clicked_tile);
 				if(clicked_tile.selected == 1)
 				{
@@ -129,16 +129,16 @@ define(
 			
 			lockArmyTileSelection : function()
 			{
-				if(gameui.selected_army != null)
+				if(window.gameui.selected_army != null)
 				{
 					//first, make all tiles in the army selected
 					//domClass.contains("someNode", "aSillyClassName"))
 					
-					//console.log(gameui.selected_army.tiles);
-					for(var i in gameui.selected_army.tiles)
+					//console.log(window.gameui.selected_army.tiles);
+					for(var i in window.gameui.selected_army.tiles)
 					{
 						//console.log(i);
-						var cur_tile = gameui.selected_army.tiles["" + i];
+						var cur_tile = window.gameui.selected_army.tiles["" + i];
 						//console.log(cur_tile);
 						var cur_tile_div = $("selected_army_uitile_" + cur_tile.id);
 						//console.log(cur_tile_div);
@@ -161,16 +161,16 @@ define(
 			
 			unlockArmyTileSelection : function()
 			{
-				if(gameui.selected_army != null)
+				if(window.gameui.selected_army != null)
 				{
 					//first, make all tiles in the army selected
 					//domClass.contains("someNode", "aSillyClassName"))
 					
-					//console.log(gameui.selected_army.tiles);
-					for(var i in gameui.selected_army.tiles)
+					//console.log(window.gameui.selected_army.tiles);
+					for(var i in window.gameui.selected_army.tiles)
 					{
 						//console.log(i);
-						var cur_tile = gameui.selected_army.tiles["" + i];
+						var cur_tile = window.gameui.selected_army.tiles["" + i];
 						//console.log(cur_tile);
 						var cur_tile_div = $("selected_army_uitile_" + cur_tile.id);
 						//console.log(cur_tile_div);

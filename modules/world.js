@@ -36,10 +36,10 @@ define(
 				
 				//setup the map click and drag
 				gamemap.draggable = true;
-				gamemap.ondragstart = gameui.MapDragStart;
-				gamemap.ondrag = gameui.MapDrag;
-				//gamemap.ondragend = gameui.MapDragEnd;
-				//gamemap.ondrop = gameui.MapDragDrop;
+				gamemap.ondragstart = window.gameui.MapDragStart;
+				gamemap.ondrag = window.gameui.MapDrag;
+				//gamemap.ondragend = window.gameui.MapDragEnd;
+				//gamemap.ondrop = window.gameui.MapDragDrop;
 				
 				this.map_drag_prev_x = -1;
 				this.map_drag_prev_y = -1;
@@ -50,8 +50,8 @@ define(
 			{
 				//const gamemap = dojo.byId("gamemap");
 				//event.dataTransfer.setData("text/plain", "gamemap");
-				gameui.map_drag_prev_x = event.pageX;
-				gameui.map_drag_prev_y = event.pageY;
+				window.gameui.map_drag_prev_x = event.pageX;
+				window.gameui.map_drag_prev_y = event.pageY;
 			},
 			
 			MapDrag : function(event)
@@ -61,23 +61,23 @@ define(
 				//this is a hacky way to prevent that, but i think it should be safe
 				if(event.pageX != 0 && event.pageY != 0)
 				{
-					var deltaX = gameui.map_drag_prev_x - event.pageX;
-					var deltaY = gameui.map_drag_prev_y - event.pageY;
+					var deltaX = window.gameui.map_drag_prev_x - event.pageX;
+					var deltaY = window.gameui.map_drag_prev_y - event.pageY;
 					//console.log("MapDrag() deltaX:" + deltaX + ", deltaY:" + deltaY);
 
-					var coords = {x: gameui.camera_coords_world.x + deltaX, y: gameui.camera_coords_world.y + deltaY};
-					coords = gameui.applyBoundedCoords(coords);
+					var coords = {x: window.gameui.camera_coords_world.x + deltaX, y: window.gameui.camera_coords_world.y + deltaY};
+					coords = window.gameui.applyBoundedCoords(coords);
 					
 					//console.log(coords);
-					//console.log(gameui.camera_coords_world);
-					if(coords.x != gameui.camera_coords_world.x || coords.y != gameui.camera_coords_world.y)
+					//console.log(window.gameui.camera_coords_world);
+					if(coords.x != window.gameui.camera_coords_world.x || coords.y != window.gameui.camera_coords_world.y)
 					{
-						gameui.MoveCameraWorld(coords.x, coords.y);
+						window.gameui.MoveCameraWorld(coords.x, coords.y);
 						//console.log("new camera: (" + coords.x + "," + coords.y + ")");
 						//console.log(event);
 						
-						gameui.map_drag_prev_x = event.pageX;
-						gameui.map_drag_prev_y = event.pageY;
+						window.gameui.map_drag_prev_x = event.pageX;
+						window.gameui.map_drag_prev_y = event.pageY;
 					}
 				}
 			},

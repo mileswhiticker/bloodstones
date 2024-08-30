@@ -78,11 +78,11 @@ define(
 				//console.log("onClickFactionLogo() faction_id:" + faction_id);
 				if(this.info_faction_id != faction_id)
 				{
-					gameui.SetFactionInfoUI(faction_id);
+					window.gameui.SetFactionInfoUI(faction_id);
 				}
 				else
 				{
-					gameui.SetFactionInfoUI(-1);
+					window.gameui.SetFactionInfoUI(-1);
 				}
 			},
 			
@@ -96,18 +96,18 @@ define(
 					//only allow buttons to be clicked
 					return;
 				}
-				var current_player_id = gameui.getCurrentPlayerId();
-				var current_faction_id = gameui.getPlayerFactionId(current_player_id);
+				var current_player_id = window.gameui.getCurrentPlayerId();
+				var current_faction_id = window.gameui.getPlayerFactionId(current_player_id);
 				//console.log("current_faction_id: " + current_faction_id);
 				if(faction_id == current_faction_id)
 				{
 					this.SetPlayerFactionChoice(current_player_id, -1, current_faction_id)
-					gameui.ServerUnchooseFaction(faction_id);
+					window.gameui.ServerUnchooseFaction(faction_id);
 				}
 				else
 				{
 					this.SetPlayerFactionChoice(current_player_id, faction_id, current_faction_id)
-					gameui.ServerChooseFaction(faction_id);
+					window.gameui.ServerChooseFaction(faction_id);
 				}
 			},
 			
@@ -226,14 +226,14 @@ define(
 				//console.log("page::ServerChooseFaction(" + faction_id_arg + ")");
 				//this move allows players to 'un-pass' and become active again
 				//therefore we wont check if this action is allowed here
-				//if(gameui.checkAction('action_chooseFaction'))
+				//if(window.gameui.checkAction('action_chooseFaction'))
 				{
 					//console.log("success...");
-					gameui.ajaxcall("/bloodstones/bloodstones/action_chooseFaction.html", {
+					window.gameui.ajaxcall("/bloodstones/bloodstones/action_chooseFaction.html", {
 						faction_id: faction_id_arg,
 						lock: true
 						}, 
-						 gameui, function( result ) {
+						 window.gameui, function( result ) {
 							
 							// What to do after the server call if it succeeded
 							// (most of the time: nothing)
@@ -252,14 +252,14 @@ define(
 			ServerUnchooseFaction : function(faction_id_arg)
 			{
 				//console.log("page::ServerUnchooseFaction(" + faction_id_arg + ")");
-				//if(gameui.checkAction('action_unchooseFaction'))
+				//if(window.gameui.checkAction('action_unchooseFaction'))
 				{
 					//console.log("success...");
-					gameui.ajaxcall("/bloodstones/bloodstones/action_unchooseFaction.html", {
+					window.gameui.ajaxcall("/bloodstones/bloodstones/action_unchooseFaction.html", {
 						faction_id: faction_id_arg,
 						lock: true
 						}, 
-						 gameui, function( result ) {
+						 window.gameui, function( result ) {
 							
 							// What to do after the server call if it succeeded
 							// (most of the time: nothing)

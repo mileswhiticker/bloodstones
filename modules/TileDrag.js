@@ -41,7 +41,7 @@ define(
 					//move above all other elements
 					//GameLayerFloat() returns 9999
 					old_z = dojo.style(tile, 'zIndex');
-					dojo.style(tile, 'zIndex', gameui.GameLayerFloat());
+					dojo.style(tile, 'zIndex', window.gameui.GameLayerFloat());
 				}
 
 				function elementDrag(e) {

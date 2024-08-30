@@ -217,9 +217,9 @@ define(
 				//console.log("page::notif_cycleHand()");
 				if(parseInt(notif.args.target_player_id) == this.getCurrentPlayer())
 				{
-					gameui.DiscardPlayerHandTiles();
-					gameui.gamedatas.hand = notif.args.new_hand;
-					gameui.CreatePlayerHandTiles();
+					window.gameui.DiscardPlayerHandTiles();
+					window.gameui.gamedatas.hand = notif.args.new_hand;
+					window.gameui.CreatePlayerHandTiles();
 				}
 			},
 			
@@ -279,7 +279,7 @@ define(
 				/*
 				var dropX = -moving_army.item_width/2;
 				var dropY = -moving_army.item_height/2;
-				var dojo_anim = gameui.slideToObjectPos(moving_army.container_div.id, notif.args.dest_province_id, dropX, dropY);
+				var dojo_anim = window.gameui.slideToObjectPos(moving_army.container_div.id, notif.args.dest_province_id, dropX, dropY);
 				dojo_anim.play();
 				*/
 				this.MoveArmy(moving_army, notif.args.dest_province_id);
@@ -297,9 +297,9 @@ define(
 			notif_playerMoveFail : function(notif)
 			{
 				console.log("page::notif_playerMoveFail()");
-				if(gameui.isCurrentPlayerResetMode())
+				if(window.gameui.isCurrentPlayerResetMode())
 				{
-					gameui.enterSmallPhase(STATE_MAIN_DEFAULT);
+					window.gameui.enterSmallPhase(STATE_MAIN_DEFAULT);
 				}
 				//todo: reset the move
 			},
@@ -311,7 +311,7 @@ define(
 				for(var army_id in notif.args.built_armies)
 				{
 					var new_army_info = notif.args.built_armies[army_id];
-					var army_stack = gameui.CreateArmy(new_army_info);
+					var army_stack = window.gameui.CreateArmy(new_army_info);
 				}
 				
 				//update any new pending battles
@@ -319,7 +319,7 @@ define(
 				
 				if(notif.args.player_id == this.getCurrentPlayerId())
 				{
-					gameui.CleanupBuildMode(true);
+					window.gameui.CleanupBuildMode(true);
 				}
 			},
 			
@@ -330,7 +330,7 @@ define(
 				//clean up the planned builds
 				if(notif.args.player_id == this.getCurrentPlayerId())
 				{
-					gameui.CleanupBuildMode(false);
+					window.gameui.CleanupBuildMode(false);
 				}
 				
 				/*
@@ -343,7 +343,7 @@ define(
 			{
 				//notif.args.army_id_num, notif.args.province_id, notif.args.player_id
 				var army_info = {army_id: notif.args.army_id, player_id: notif.args.player_id, province_id: notif.args.province_id, tiles: notif.args.tiles};
-				var army_stack = gameui.CreateArmy(army_info, notif.args.from_div_id);
+				var army_stack = window.gameui.CreateArmy(army_info, notif.args.from_div_id);
 				
 				this.gamedatas.pending_battles = notif.args.pending_battles_update;
 			},
@@ -352,14 +352,14 @@ define(
 				//console.log("page::notif_playerArmyTransfer()");
 				//console.log(notif);
 				
-				var source_army = gameui.GetArmyById(notif.args.temp_army_id);
+				var source_army = window.gameui.GetArmyById(notif.args.temp_army_id);
 				if(source_army == undefined)
 				{
-					source_army = gameui.GetArmyById(notif.args.source_army_id);
+					source_army = window.gameui.GetArmyById(notif.args.source_army_id);
 					//console.log("check1");
 				}
 				
-				var target_army = gameui.GetArmyById(notif.args.target_army_id);
+				var target_army = window.gameui.GetArmyById(notif.args.target_army_id);
 				
 				//do we need to create this army?
 				if(target_army == undefined)
@@ -372,19 +372,19 @@ define(
 						//console.log("check3");
 					}
 					var target_army_info = {army_id: notif.args.target_army_id, player_id: source_army.player_id, province_id: spawn_province, tiles: []};
-					target_army = gameui.CreateArmy(target_army_info, null);
+					target_army = window.gameui.CreateArmy(target_army_info, null);
 				}
 				
 				//create a visual hint animation for the player
-				//gameui.SelectedArmySplitAnimation(notif.args.tile_ids[0], source_army.id_num);
+				//window.gameui.SelectedArmySplitAnimation(notif.args.tile_ids[0], source_army.id_num);
 				
 				//now transfer the tiles across
-				//gameui.TransferArmyTiles(notif.args.source_army_id, notif.args.target_army_id, notif.args.tile_ids, notif.args.selection_flag);
-				gameui.TransferArmyTiles(source_army.id_num, target_army.id_num, notif.args.tile_ids, notif.args.selection_flag);
+				//window.gameui.TransferArmyTiles(notif.args.source_army_id, notif.args.target_army_id, notif.args.tile_ids, notif.args.selection_flag);
+				window.gameui.TransferArmyTiles(source_army.id_num, target_army.id_num, notif.args.tile_ids, notif.args.selection_flag);
 			},
 			
 			notif_changePhase : function(notif) {
-				gameui.enterSmallPhase(notif.args.new_phase);
+				window.gameui.enterSmallPhase(notif.args.new_phase);
 			},
 			
 			notif_tileDiscard : function(notif)
@@ -504,7 +504,7 @@ define(
 			{
 				//console.log("page::notif_playerHandDraw()");
 				//console.log(notif);
-				gameui.DrawNewHandTiles(notif.args.tiles_drawn);
+				window.gameui.DrawNewHandTiles(notif.args.tiles_drawn);
 			},
 			
 			notif_newVillages : function(notif)
@@ -659,7 +659,7 @@ define(
 			notif_battleResolve_undead : function(notif)
 			{
 				var new_army_info = notif.args.undead_army;
-				var army_stack = gameui.CreateArmy(new_army_info);
+				var army_stack = window.gameui.CreateArmy(new_army_info);
 			},
 			
 			last_function: function(){

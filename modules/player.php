@@ -726,9 +726,15 @@ trait player_utils
 	public function IsCurrentPlayerChaosHorde()
 	{
 		$current_player_id = $this->getCurrentPlayerId();
-		$faction_id = $this->GetPlayerFaction($current_player_id);
-		
-		return ($faction_id == self::FACTION_CHAOSHORDE);
+		$result = ($this->IsPlayerChaosHorde($current_player_id));
+		return $result;
+	}
+	
+	public function IsPlayerChaosHorde($player_id)
+	{
+		$faction_id = $this->GetPlayerFaction($player_id);
+		$result = ($faction_id == self::FACTION_CHAOSHORDE);
+		return $result;
 	}
 	
 	function CalculateFinalPlayerScores()

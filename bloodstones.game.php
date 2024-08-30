@@ -79,6 +79,7 @@ class bloodstones extends Table
 	const ACTION_FAIL_FRIENDLIES = 9;	//no friendlies present or in adjacent province
 	const ACTION_FAIL_TERRAIN = 11;		//mountain/sea/desert province
 	const ACTION_FAIL_STATE = 12;		//that action isn't allowed in this game state
+	const ACTION_FAIL_LIMITONCE = 13;	//that action can only be done once per turn
 	
 	const SPRITESHEET_ROW_TILES = 13;
 	
@@ -133,7 +134,8 @@ class bloodstones extends Table
 			"attacker_battle_swaps" => 17,
 			"defender_battle_swaps" => 18,
 			"active_player_id" => 19,
-			"placing_citadels" => 20
+			"placing_citadels" => 20,
+			"village_captures_available" => 21,
         ) ); 
 		
 		//create the tile decks for each faction
@@ -285,6 +287,9 @@ class bloodstones extends Table
 		
 		//get any battles that are pending
 		$result['pending_battles'] = $this->GetPendingBattleProvincesAll($attacking_player_id);
+		
+		//make sure the client knows there is only 1 capture action per player per turn
+		$result['village_captures_available'] = $this->getGameStateValue("village_captures_available");
 		
 		//for testing
 		$active_player_id = self::getActivePlayerId();
@@ -1368,14 +1373,20 @@ class bloodstones extends Table
 	
 	function args_playermain()
 	{
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::args_playermain()"));
 		$active_player_id = $this->getActivePlayerId();
 		$args = array(
 			"buildable_provinces" => $this->GetPlayerBuildableProvinces($active_player_id)
 		);
 		
-		if($this->IsCurrentPlayerChaosHorde())
+		if($this->IsPlayerChaosHorde($active_player_id))
 		{
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::args_playermain() active_player_id is chaos horde"));
 			$args["possible_capture_infos"] = $this->GetPendingCaptureArmies($active_player_id);
+		}
+		else
+		{
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::args_playermain() active_player_id is NOT chaos horde"));
 		}
 		
 		return $args;
@@ -1567,7 +1578,6 @@ class bloodstones extends Table
 		//chaos horde dont place a citadel so skip them if they would be first
 		if($this->GetChaosHordePlayer() == $last_player_id)
 		{
-			
 			$last_player_id = $this->getPrevPlayerTable()[$last_player_id];
 		}
 		
@@ -1682,6 +1692,9 @@ class bloodstones extends Table
 		//todo: the current player turn number is already stored as a global variable, it doesnt need to be a game stat
 		$this->incStat(1, "turns_number", $active_player_id);
 		
+		//reset the capture action counter... there is 1 capture action per player per turn
+		$this->setGameStateValue("village_captures_available", 1);
+		
 		//reset the turn timer for the player that just had their turn
 		if($old_active_player_id)
 		{
@@ -1713,7 +1726,7 @@ class bloodstones extends Table
 			$next_state = STATE_GAMEOVER;
 		}
 		
-		else if($this->GetPendingCaptureArmies($active_player_id, true) && !$this->IsCurrentPlayerChaosHorde())
+		else if($this->GetPendingCaptureArmies($active_player_id, true) && !$this->IsPlayerChaosHorde($active_player_id))
 		{
 			//first priority: can this player capture villages?
 			//chaos horde can only capture villages during their main phase

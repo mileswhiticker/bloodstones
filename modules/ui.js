@@ -160,6 +160,12 @@ define(
 						}
 						break;
 					}
+					case 'nextPlayer':
+					{
+						//only 1 capture action allowed per player per turn so reset this value
+						this.gamedatas.village_captures_available = 1;
+						break;
+					}
 					case 'playerCapture':
 					{
 						if(this.isCurrentPlayerActive())

@@ -131,7 +131,14 @@ define(
 				{
 					case STATE_MAIN_DEFAULT:
 					{
-						this.UIActiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_CAPTURE));
+						if(this.gamedatas.village_captures_available > 0)
+						{
+							this.UIActiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_CAPTURE));
+						}
+						else
+						{
+							this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_CAPTURE));
+						}
 						this.UIActiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BUILD));
 						this.UIActiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_MOVE));
 						this.UIActiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BATTLE));

@@ -24,6 +24,12 @@ trait action_capture
 			return $retval;
 		}
 		
+		if($this->getGameStateValue("village_captures_available") < 0)
+		{
+			$retval["failure_reason"] = self::ACTION_FAIL_LIMITONCE;
+			return $retval;
+		}
+		
 		//check the player tiles payment
 		$payment_check_info = $this->checkTilePaymentIds($paid_tile_ids, true);
 		if($payment_check_info["amount_paid"] == 0)
@@ -96,6 +102,9 @@ trait action_capture
 	
 		//move the villages to the 'captured' location for this player
 		$this->villages_deck->moveCards($village_tile_ids, "captured", $active_faction_id);
+		
+		//only allow 1 village capture per turn
+		$this->setGameStateValue("village_captures_available", 0);
 		
 		//tell the players
 		$active_player_name = $this->getActivePlayerName();

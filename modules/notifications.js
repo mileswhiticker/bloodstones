@@ -167,6 +167,10 @@ define(
 				'capture_player_id' => $active_player_id,
 				'captured_village_ids' => $village_tile_ids
 				*/
+				
+				//reset the captures available counter... only 1 capture action allowed per player per turn
+				this.gamedatas.village_captures_available = 0;
+				
 				var new_captured_villages = 0;
 				for(var index in notif.args.captured_village_ids)
 				{

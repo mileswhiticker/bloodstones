@@ -325,7 +325,16 @@ define(
 						
 						//enable the entry for this action phase
 						small_phase_button.innerHTML = this.GetSmallPhaseEntryString(cur_small_phase);
-						dojo.removeClass(small_phase_button, "blst_button_disabled");
+						//dojo.removeClass(small_phase_button, "blst_button_disabled");
+						
+						if(cur_small_phase == STATE_MAIN_CAPTURE && this.gamedatas.village_captures_available < 1)
+						{
+							this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_CAPTURE));
+						}
+						else
+						{
+							this.UIActiveButton(small_phase_button);
+						}
 					}
 					
 					//player can end their turn

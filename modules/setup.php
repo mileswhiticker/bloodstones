@@ -21,6 +21,7 @@ trait setup
 		self::setGameStateInitialValue('player_turn_phase', 0);
 		self::setGameStateInitialValue('battling_province_id', -1);
 		self::setGameStateInitialValue('placing_citadels', 1);
+		self::setGameStateInitialValue('village_captures_available', 1);
 		
 		$this->setupFactionDecks($players, $options);
 		$this->setupPlayers($players, $options);

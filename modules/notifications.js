@@ -78,7 +78,7 @@ define(
 				dojo.subscribe('battleResolve_undead', this, "notif_battleResolve_undead");
 				dojo.subscribe('playerUndeadMove', this, "notif_playerUndeadMove");
 				dojo.subscribe('playerScoreChanged', this, "notif_scoreChanged");
-				dojo.subscribe('captureInfoUpdated', this, "notif_captureInfoUpdated");
+				dojo.subscribe('chaosHordeMoveUpdate', this, "notif_chaosHordeMoveUpdate");
 				
 				//dont display player notifications for our own moves
 				//this.setIgnoreNotificationCheck("playerArmyMove", (notif) => (notif.args.moving_player_id == this.player_id));
@@ -101,23 +101,20 @@ define(
 			
 			*/
 			
-			notif_captureInfoUpdated : function(notif)
+			notif_chaosHordeMoveUpdate : function(notif)
 			{
-				//console.log("page::notif_captureInfoUpdated()");
+				//console.log("page::notif_chaosHordeMoveUpdate()");
 				//console.log(notif);
 				
 				if(this.isCurrentPlayerChaosHorde())
 				{
-					if(this.isCurrentPlayerCaptureMode())
-					{
-						//sanity check: this shouldnt happen
-						console.log("WARNING: page::notif_captureInfoUpdated() while current player is in capture phase");
-						console.log(notif);
-					}
-					else
-					{
-						this.possible_capture_infos = notif.args.possible_capture_infos;
-					}
+					this.possible_capture_infos = notif.args.possible_capture_infos;
+					this.buildable_provinces = notif.args.buildable_provinces;
+				}
+				else
+				{
+					console.log("page::notif_chaosHordeMoveUpdate() ERROR: current player is not chaos horde");
+					console.log(this.gamedatas.players[this.getCurrentPlayerId()]);
 				}
 			},
 			

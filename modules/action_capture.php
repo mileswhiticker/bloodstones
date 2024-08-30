@@ -113,12 +113,6 @@ trait action_capture
 		//move them to discard
 		$player_deck->moveCards($paid_tile_ids, "discard");
 		
-		//chaos horde may trigger a recalculation of capturable villages
-		//im commenting this out because the client should in theory block the player from trying to do a second capture mode...
-		/*if($this->IsCurrentPlayerChaosHorde())
-		{
-			$this->UpdatePendingCaptureArmies();
-		}*/
 		//update the players
 		self::notifyPlayer($active_player_id, 'tileDiscard', '', array(
 			'discarded_tiles_ids' => $paid_tile_ids,

@@ -150,7 +150,7 @@ trait action_move
 			//chaos horde may trigger a recalculation of capturable villages
 			if($this->IsCurrentPlayerChaosHorde())
 			{
-				$this->UpdatePendingCaptureArmies();
+				$this->ChaosHordeMoveUpdate();
 			}
 		}
 		/*else
@@ -169,5 +169,14 @@ trait action_move
 		}*/
 		
 		return $outcome_info;
+	}
+	
+	function ChaosHordeMoveUpdate()
+	{
+		$active_player_id = self::getActivePlayerId();
+		self::notifyPlayer($active_player_id, 'chaosHordeMoveUpdate', '', array(
+			'possible_capture_infos' => $this->GetPendingCaptureArmies($active_player_id),
+			"buildable_provinces" => $this->GetPlayerBuildableProvinces($active_player_id)
+		));
 	}
 }

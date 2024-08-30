@@ -135,14 +135,6 @@ trait army
 		return self::getCollectionFromDb("SELECT * FROM armies WHERE player_id='$player_id';", false);
 	}
 	
-	function UpdatePendingCaptureArmies()
-	{
-		$active_player_id = self::getActivePlayerId();
-		self::notifyPlayer($active_player_id, 'captureInfoUpdated', '', array(
-			'possible_capture_infos' => $this->GetPendingCaptureArmies($active_player_id)
-		));
-	}
-	
 	function GetPendingCaptureArmiesAll()
 	{
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::GetPendingCaptureArmiesAll()"));

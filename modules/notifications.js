@@ -125,6 +125,8 @@ define(
 			{
 				var player_score_div = dojo.byId(this.GetPlayerScoreDivId(notif.args.player_id));
 				player_score_div.innerHTML = notif.args.new_score;
+				
+				this.scoreCtrl[notif.args.player_id].toValue(notif.args.new_score);
 			},
 			
 			notif_debug : function(notif) {

@@ -1346,6 +1346,13 @@ class bloodstones extends Table
 	{
 		$args = [];
 		$args["players"] = self::getCollectionFromDb("SELECT player_id, player_factionid FROM player ");
+		
+		//updte this value
+		//i could default this on the client to starting at '20' but that could introduce subtle client misinfo down the line
+		foreach($args['players'] as $player_id => &$player)
+		{
+			$player['villages_available'] = $this->countPlayerVillagesAvailable($player_id);
+		}
 		return $args;
 	}
 	

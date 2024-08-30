@@ -73,6 +73,7 @@ define(
 					//get the locally stored info about the player and update the saved faction id
 					var player = this.gamedatas.players[player_id];
 					player.factionid = player_info.player_factionid;
+					player.villages_available = player_info.villages_available;
 				}
 			},
 			

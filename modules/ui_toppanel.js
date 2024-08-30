@@ -25,6 +25,14 @@ define(
 				const toppanel = dojo.byId("toppanel");
 				dojo.style(toppanel, 'zIndex', this.GameLayerUIOver());
 				
+				const button_zoomin = dojo.place("<div id=\"button_zoomin\"></div>","toppanel");
+				dojo.addClass(button_zoomin, "blst_button topbutton");
+				dojo.connect(button_zoomin, "click", dojo.hitch(this, this.onClickZoomIn));
+				
+				const button_zoomout = dojo.place("<div id=\"button_zoomout\"></div>","toppanel");
+				dojo.addClass(button_zoomout, "blst_button topbutton");
+				dojo.connect(button_zoomout, "click", dojo.hitch(this, this.onClickZoomOut));
+				/*
 				const button_spawnbattle = dojo.place("<div id=\"button_spawnbattle\"></div>","toppanel");
 				dojo.addClass(button_spawnbattle, "blst_button topbutton");
 				dojo.connect(button_spawnbattle, "click", dojo.hitch(this, this.spawnBattle));
@@ -42,14 +50,6 @@ define(
 				dojo.addClass(button_spawn, "blst_button topbutton");
 				dojo.connect(button_spawn, "click", dojo.hitch(this, this.playerSpawnTestArmy));
 				
-				const button_zoomin = dojo.place("<div id=\"button_zoomin\"></div>","toppanel");
-				dojo.addClass(button_zoomin, "blst_button topbutton");
-				dojo.connect(button_zoomin, "click", dojo.hitch(this, this.onClickZoomIn));
-				
-				const button_zoomout = dojo.place("<div id=\"button_zoomout\"></div>","toppanel");
-				dojo.addClass(button_zoomout, "blst_button topbutton");
-				dojo.connect(button_zoomout, "click", dojo.hitch(this, this.onClickZoomOut));
-				
 				const button_up = dojo.place("<div id=\"button_up\"></div>","toppanel");
 				dojo.addClass(button_up, "blst_button topbutton");
 				dojo.connect(button_up, "click", dojo.hitch(this, this.onClickScrollUp));
@@ -65,6 +65,7 @@ define(
 				const button_right = dojo.place("<div id=\"button_right\"></div>","toppanel");
 				dojo.addClass(button_right, "blst_button topbutton");
 				dojo.connect(button_right, "click", dojo.hitch(this, this.onClickScrollRight));
+				*/
 			},
 			
 			spawnBattle : function(event)

@@ -1564,6 +1564,13 @@ class bloodstones extends Table
 		$first_player_id = $this->getNextPlayerTable()[0];
 		$last_player_id = $this->getPrevPlayerTable()[$first_player_id];
 		
+		//chaos horde dont place a citadel so skip them if they would be first
+		if($this->GetChaosHordePlayer() == $last_player_id)
+		{
+			
+			$last_player_id = $this->getPrevPlayerTable()[$last_player_id];
+		}
+		
 		//then activate the last player to place their citadel first
 		$this->gamestate->changeActivePlayer($last_player_id);
 		

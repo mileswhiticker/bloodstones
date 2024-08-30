@@ -711,18 +711,24 @@ trait player_utils
 		return self::getUniqueValueFromDB("SELECT player_id FROM player WHERE player_factionid='$faction_id'");;
 	}
 	
+	public function GetNecromancersPlayer()
+	{
+		$faction_id = self::FACTION_NECROMANCERS;
+		return self::getUniqueValueFromDB("SELECT player_id FROM player WHERE player_factionid='$faction_id'");;
+	}
+	
+	public function GetChaosHordePlayer()
+	{
+		$faction_id = self::FACTION_CHAOSHORDE;
+		return self::getUniqueValueFromDB("SELECT player_id FROM player WHERE player_factionid='$faction_id'");;
+	}
+	
 	public function IsCurrentPlayerChaosHorde()
 	{
 		$current_player_id = $this->getCurrentPlayerId();
 		$faction_id = $this->GetPlayerFaction($current_player_id);
 		
 		return ($faction_id == self::FACTION_CHAOSHORDE);
-	}
-	
-	public function GetNecromancersPlayer()
-	{
-		$faction_id = self::FACTION_NECROMANCERS;
-		return self::getUniqueValueFromDB("SELECT player_id FROM player WHERE player_factionid='$faction_id'");;
 	}
 	
 	function CalculateFinalPlayerScores()

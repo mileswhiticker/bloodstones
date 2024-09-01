@@ -19,6 +19,7 @@
 //at some point ill clean up and standardise them but roughly my concept is:
 //each constant represents a game state, except for STATE_MAIN which has client only states linked to player actions
 //STATE_ refers to game states (which sometimes have a single action associated with them)
+/*
 const STATE_INVALID = -1;
 const STATE_MIN = -1;
 const STATE_CAPTURE = 0;
@@ -35,7 +36,8 @@ const STATE_MAIN_MAX = 7;
 
 const STATE_BUILDVILLAGE = 8;
 const STATE_MAX = 8;
-
+*/
+/*
 const ACTION_UNKNOWN = 0;
 const ACTION_MOVE = 1;
 const ACTION_SPLIT = 2;
@@ -44,19 +46,23 @@ const ACTION_SWAP = 4;
 const ACTION_BUILDVILLAGE = 5;
 const ACTION_CAPTURE = 6;
 const ACTION_UNDEAD = 7;
-
+*/
+/*
 const SELECT_ARMY_NONE = 0;
 const SELECT_ARMY_SOURCE = 1;
 const SELECT_ARMY_TARGET = 2;
-
+*/
+/*
 const FACTION_HORSELORDS = 0;
 const FACTION_HILLFOLK = 1;
 const FACTION_DRAGONRIDERS = 2;
 const FACTION_CORSAIRS = 3;
 const FACTION_NECROMANCERS = 4;
 const FACTION_CHAOSHORDE = 5;
+*/
 
 //todo: change these village outcome flags into action outcome flags
+/*
 const VILLAGE_SUCCESS = 0;
 const VILLAGE_SKIP = 1;
 const VILLAGE_FAIL_UNKNOWN = 2;
@@ -71,6 +77,7 @@ const VILLAGE_FAIL_CITADEL = 10;	//friendly/any citadel present
 const VILLAGE_FAIL_TERRAIN = 11;	//mountain/sea/desert province
 const VILLAGE_FAIL_DISTANCE = 12;
 const ACTION_FAIL_CAPTUREMAX = 13;	//only one capture per turn
+*/
 
 define([
 	//dojo modules
@@ -254,12 +261,63 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			//this.cards_height = 341;
 			
 			
+			/* Named constants - these usually correspond to named constants in PHP */
+			
+			this.FACTION_HORSELORDS = 0;
+			this.FACTION_HILLFOLK = 1;
+			this.FACTION_DRAGONRIDERS = 2;
+			this.FACTION_CORSAIRS = 3;
+			this.FACTION_NECROMANCERS = 4;
+			this.FACTION_CHAOSHORDE = 5;
+			
+			this.ACTION_UNKNOWN = 0;
+			this.ACTION_MOVE = 1;
+			this.ACTION_SPLIT = 2;
+			this.ACTION_BUILD = 3;
+			this.ACTION_SWAP = 4;
+			this.ACTION_BUILDVILLAGE = 5;
+			this.ACTION_CAPTURE = 6;
+			this.ACTION_UNDEAD = 7;
+			
+			this.VILLAGE_SUCCESS = 0;
+			this.VILLAGE_SKIP = 1;
+			this.VILLAGE_FAIL_UNKNOWN = 2;
+			this.VILLAGE_FAIL_PIPS = 3;			//not enough tiles paid
+			this.VILLAGE_FAIL_PROV = 4;			//wrong province type
+			this.VILLAGE_FAIL_AVAIL = 5;		//no free villages avail
+			this.VILLAGE_FAIL_HAND = 6;			//trying to pay with tile not in hand
+			this.VILLAGE_FAIL_SLOTS = 7;		//too many villages already there
+			this.VILLAGE_FAIL_ENEMIES = 8;		//enemy units present
+			this.VILLAGE_FAIL_FRIENDLIES = 9;	//no friendlies present or in adjacent province
+			this.VILLAGE_FAIL_CITADEL = 10;		//friendly/any citadel present 
+			this.VILLAGE_FAIL_TERRAIN = 11;		//mountain/sea/desert province
+			this.VILLAGE_FAIL_DISTANCE = 12;
+			this.ACTION_FAIL_CAPTUREMAX = 13;	//only one capture per turn
+			
+			this.STATE_INVALID = -1;
+			this.STATE_MIN = -1;
+			this.STATE_CAPTURE = 0;
+			this.STATE_UNDEAD = 1;
+
+			this.STATE_MAIN_MIN = 2;
+			this.STATE_MAIN_DEFAULT = 2;
+			this.STATE_MAIN_CAPTURE = 3;
+			this.STATE_MAIN_BUILD = 4;
+			this.STATE_MAIN_MOVE = 5;
+			this.STATE_MAIN_BATTLE = 6;
+			this.STATE_MAIN_RESET = 7;
+			this.STATE_MAIN_MAX = 7;
+
+			this.STATE_BUILDVILLAGE = 8;
+			this.STATE_MAX = 8;
+			
+			
 			/* General UI */
 			
 			this.current_phase_id = null;
-			this.payment_mode = STATE_INVALID;
+			this.payment_mode = this.STATE_INVALID;
 			this.player_phases_all = ["villages","undead","main","build","move","battle","end","reset"];
-			this.player_phases_small = [STATE_MAIN_CAPTURE, STATE_MAIN_BUILD, STATE_MAIN_MOVE, STATE_MAIN_BATTLE];
+			this.player_phases_small = [this.STATE_MAIN_CAPTURE, this.STATE_MAIN_BUILD, this.STATE_MAIN_MOVE, this.STATE_MAIN_BATTLE];
 			//this.exit_phase_strings = [];
 			this.colour_cycle = Colour(5,10,15,255);
 			this.next_debug_colour = Colour(30,20,10,255);
@@ -276,13 +334,6 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			this.callback_HandTileDragEnd = null;
 			this.callback_HandTileDrop = null;
 			this.action_info = null;
-			
-			this.FACTION_HORSELORDS = 0;
-			this.FACTION_HILLFOLK = 1;
-			this.FACTION_DRAGONRIDERS = 2;
-			this.FACTION_CORSAIRS = 3;
-			this.FACTION_NECROMANCERS = 4;
-			this.FACTION_CHAOSHORDE = 5;
 			
 			
 			/* Armies */
@@ -352,6 +403,7 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			//note: ive got two pulsing systems here, ill need to merge them at some point
 			//the "pulsing_province_id" and the prov_info.is_pulsing
 			this.all_pulsing_provinces = [];
+			
 			
 			/* Battle mode */
 			
@@ -584,7 +636,7 @@ function (dojo, declare, lang, fx, on, domAttr) {
 		
 		isCurrentPlayerChaosHorde : function()
 		{
-			return (this.getCurrentPlayerFactionId() == FACTION_CHAOSHORDE);
+			return (this.getCurrentPlayerFactionId() == this.FACTION_CHAOSHORDE);
 		},
 		
         /* Example:

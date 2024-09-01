@@ -120,22 +120,22 @@ define(
 					
 					switch(cur_small_phase)
 					{
-						case STATE_MAIN_CAPTURE:
+						case gameui.STATE_MAIN_CAPTURE:
 						{
 							dojo.connect(actionbutton, "click", dojo.hitch(this, this.onClickCapturePhaseButton));
 							break;
 						}
-						case STATE_MAIN_BUILD:
+						case gameui.STATE_MAIN_BUILD:
 						{
 							dojo.connect(actionbutton, "click", dojo.hitch(this, this.onClickBuildModeButton));
 							break;
 						}
-						case STATE_MAIN_MOVE:
+						case gameui.STATE_MAIN_MOVE:
 						{
 							dojo.connect(actionbutton, "click", dojo.hitch(this, this.onClickMoveModeButton));
 							break;
 						}
-						case STATE_MAIN_BATTLE:
+						case gameui.STATE_MAIN_BATTLE:
 						{
 							dojo.connect(actionbutton, "click", dojo.hitch(this, this.onClickBattleModeButton));
 							break;
@@ -156,7 +156,7 @@ define(
 					_("End turn"),
 					_("Please wait...")
 				];
-				if(gamedatas.player_turn_phase > STATE_MIN && this.gamedatas.player_turn_phase < STATE_MAX)
+				if(gamedatas.player_turn_phase > gameui.STATE_MIN && this.gamedatas.player_turn_phase < gameui.STATE_MAX)
 				{
 					this.phase_buttons[phase_name]["string"] = this.exit_phase_strings[gamedatas.player_turn_phase];
 				}
@@ -282,7 +282,7 @@ define(
 			enterSmallPhase : function(new_phase_id)
 			{
 				//if we are not the current player, this entire panel will get disabled
-				//console.log("page::enterSmallPhase(" + new_phase_id + ")");
+				console.log("page::enterSmallPhase(" + new_phase_id + ")");
 				if(!this.isCurrentPlayerActive())
 				{
 					console.log("WARNING: attempted to enter phase " + new_phase_id + " but current player is not active.");
@@ -301,9 +301,9 @@ define(
 				//update the bottom ui panel button
 				//note: small phases represent the available actions for the player during the main turn state
 				var end_phase_button = dojo.byId("end_phase_button");
-				//var small_phases = [STATE_MAIN_CAPTURE, STATE_MAIN_BUILD, STATE_MAIN_MOVE, STATE_MAIN_BATTLE];
+				//var small_phases = [gameui.STATE_MAIN_CAPTURE, gameui.STATE_MAIN_BUILD, gameui.STATE_MAIN_MOVE, gameui.STATE_MAIN_BATTLE];
 				
-				if(new_phase_id == STATE_MAIN_RESET)
+				if(new_phase_id == gameui.STATE_MAIN_RESET)
 				{
 					//disable small phase transitions
 					this.UIInactiveButton_smallPhases();
@@ -312,10 +312,10 @@ define(
 					dojo.addClass(end_phase_button, "blst_button_disabled");
 					
 					//lock payment window
-					//in theory we might not have a payment bucket every time we enter STATE_MAIN_RESET
+					//in theory we might not have a payment bucket every time we enter gameui.STATE_MAIN_RESET
 					//this.LockPaymentBucket();
 				}
-				else if(new_phase_id == STATE_MAIN_DEFAULT)
+				else if(new_phase_id == gameui.STATE_MAIN_DEFAULT)
 				{
 					//loop over the small phases for the player
 					for(var i=0; i<this.player_phases_small.length; i++)
@@ -327,9 +327,9 @@ define(
 						small_phase_button.innerHTML = this.GetSmallPhaseEntryString(cur_small_phase);
 						//dojo.removeClass(small_phase_button, "blst_button_disabled");
 						
-						if(cur_small_phase == STATE_MAIN_CAPTURE && this.gamedatas.village_captures_available < 1)
+						if(cur_small_phase == gameui.STATE_MAIN_CAPTURE && this.gamedatas.village_captures_available < 1)
 						{
-							this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_CAPTURE));
+							this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_CAPTURE));
 						}
 						else
 						{
@@ -367,7 +367,7 @@ define(
 				/*
 				switch(new_phase_id)
 				{
-					case STATE_MAIN_DEFAULT:
+					case gameui.STATE_MAIN_DEFAULT:
 					{
 						var small_phase_button;
 						small_phase_button = dojo.byId("button_move");
@@ -383,10 +383,10 @@ define(
 						dojo.removeClass(end_phase_button, "blst_button_disabled");
 						break;
 					}
-					case STATE_CAPTURE:
+					case gameui.STATE_CAPTURE:
 					{
 						small_phase_button = dojo.byId("button_capture");
-						small_phase_button.innerHTML = this.exit_phase_strings[STATE_CAPTURE];
+						small_phase_button.innerHTML = this.exit_phase_strings[gameui.STATE_CAPTURE];
 						small_phase_button = dojo.byId("button_move");
 						small_phase_button.innerHTML = "Move";
 						dojo.addClass(small_phase_button, "blst_button_disabled");
@@ -398,10 +398,10 @@ define(
 						dojo.addClass(end_phase_button, "blst_button_disabled");
 						break;
 					}
-					case STATE_MAIN_MOVE:
+					case gameui.STATE_MAIN_MOVE:
 					{
 						small_phase_button = dojo.byId("button_move");
-						small_phase_button.innerHTML = this.exit_phase_strings[STATE_MAIN_MOVE];
+						small_phase_button.innerHTML = this.exit_phase_strings[gameui.STATE_MAIN_MOVE];
 						small_phase_button = dojo.byId("button_build");
 						dojo.addClass(small_phase_button, "blst_button_disabled");
 						small_phase_button = dojo.byId("button_battle");
@@ -410,10 +410,10 @@ define(
 						dojo.addClass(end_phase_button, "blst_button_disabled");
 						break;
 					}
-					case STATE_MAIN_BUILD:
+					case gameui.STATE_MAIN_BUILD:
 					{
 						small_phase_button = dojo.byId("button_build");
-						small_phase_button.innerHTML = this.exit_phase_strings[STATE_MAIN_BUILD];
+						small_phase_button.innerHTML = this.exit_phase_strings[gameui.STATE_MAIN_BUILD];
 						small_phase_button = dojo.byId("button_move");
 						dojo.addClass(small_phase_button, "blst_button_disabled");
 						small_phase_button = dojo.byId("button_battle");
@@ -422,10 +422,10 @@ define(
 						dojo.addClass(end_phase_button, "blst_button_disabled");
 						break;
 					}
-					case STATE_MAIN_BATTLE:
+					case gameui.STATE_MAIN_BATTLE:
 					{
 						small_phase_button = dojo.byId("button_battle");
-						small_phase_button.innerHTML = this.exit_phase_strings[STATE_MAIN_BATTLE];
+						small_phase_button.innerHTML = this.exit_phase_strings[gameui.STATE_MAIN_BATTLE];
 						small_phase_button = dojo.byId("button_build");
 						dojo.addClass(small_phase_button, "blst_button_disabled");
 						small_phase_button = dojo.byId("button_move");
@@ -434,7 +434,7 @@ define(
 						dojo.addClass(end_phase_button, "blst_button_disabled");
 						break;
 					}
-					case STATE_MAIN_RESET:
+					case gameui.STATE_MAIN_RESET:
 					{
 						small_phase_button = dojo.byId("button_battle");
 						dojo.addClass(small_phase_button, "blst_button_disabled");

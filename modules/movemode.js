@@ -114,10 +114,10 @@ define(
 						
 					if(army_planned_moves.length == 0)
 					{
-						var move_step = {step_type: ACTION_MOVE, prov_name: start_province_info.name, sea_transit_chain: []};
+						var move_step = {step_type: this.ACTION_MOVE, prov_name: start_province_info.name, sea_transit_chain: []};
 						army_planned_moves.push(move_step);
 					}
-					var move_step = {step_type: ACTION_MOVE, prov_name: target_province_name.name, sea_transit_chain: []};
+					var move_step = {step_type: this.ACTION_MOVE, prov_name: target_province_name.name, sea_transit_chain: []};
 					army_planned_moves.push(move_step);
 					*/
 					//console.log(target_province_info.move_info);
@@ -132,13 +132,13 @@ define(
 						this.queued_action_steps[moving_army.id_string] = [];
 						army_action_steps = this.queued_action_steps[moving_army.id_string];
 						var start_prov_id = this.GetProvinceIdFromName(start_province_info.name);
-						var start_move_step = {step_type: ACTION_MOVE, prov_name: start_province_info.name, prov_id: start_prov_id, sea_transit_chain: sea_transit_chain_steps};
+						var start_move_step = {step_type: this.ACTION_MOVE, prov_name: start_province_info.name, prov_id: start_prov_id, sea_transit_chain: sea_transit_chain_steps};
 						//console.log(start_province_info);
 						//console.log(move_step)
 						army_action_steps.push(start_move_step);
 					}
 					var target_prov_id = this.GetProvinceIdFromName(target_province_name);
-					var move_step = {step_type: ACTION_MOVE, prov_name: target_province_name, prov_id: target_prov_id, sea_transit_chain: sea_transit_chain_steps};
+					var move_step = {step_type: this.ACTION_MOVE, prov_name: target_province_name, prov_id: target_prov_id, sea_transit_chain: sea_transit_chain_steps};
 					army_action_steps.push(move_step);
 					
 					//console.log("this.queued_province_moves_by_army:");
@@ -182,7 +182,7 @@ define(
 				{
 					var cur_tile_id = splitting_tile_ids[i];
 					var split_prov_id = this.GetProvinceIdFromName(source_army.province_id);
-					var split_step = {step_type: ACTION_SPLIT, prov_name: source_army.province_id, prov_id: split_prov_id, tile_id: cur_tile_id, temp_army_id_num: temp_army.id_num};
+					var split_step = {step_type: this.ACTION_SPLIT, prov_name: source_army.province_id, prov_id: split_prov_id, tile_id: cur_tile_id, temp_army_id_num: temp_army.id_num};
 					
 					//this is what gets sent to the server for processing
 					var army_action_steps = this.queued_action_steps[source_army.id_string];

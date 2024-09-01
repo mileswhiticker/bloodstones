@@ -135,7 +135,7 @@ define(
 					}
 					case("freeBuild"):
 					{
-						if(this.getCurrentPlayerFactionId() != FACTION_CHAOSHORDE)
+						if(this.getCurrentPlayerFactionId() != this.FACTION_CHAOSHORDE)
 						{
 							var current_player_id = this.getCurrentPlayer();
 							this.buildable_provinces = args.args.buildable_provinces[current_player_id];
@@ -148,7 +148,7 @@ define(
 					}
 					case("freeBuild_chaosHorde"):
 					{
-						if(this.getCurrentPlayerFactionId() == FACTION_CHAOSHORDE)
+						if(this.getCurrentPlayerFactionId() == this.FACTION_CHAOSHORDE)
 						{
 							var current_player_id = this.getCurrentPlayer();
 							this.buildable_provinces = args.args.buildable_provinces[current_player_id];
@@ -194,7 +194,7 @@ define(
 							this.possible_capture_infos = args.args.possible_capture_infos;
 							
 							this.buildable_provinces = args.args.buildable_provinces;
-							this.UIStatePlayerMain(STATE_MAIN_DEFAULT);
+							this.UIStatePlayerMain(gameui.STATE_MAIN_DEFAULT);
 						}
 						break;
 					}

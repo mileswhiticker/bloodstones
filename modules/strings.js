@@ -126,31 +126,31 @@ define(
 			{
 				switch(action_mode)
 				{
-					case STATE_CAPTURE:
+					case gameui.STATE_CAPTURE:
 					{
 						return _("Drag tiles here from your hand to pay for village capturing (maximum of one tile)");
 					}
-					case STATE_MAIN_CAPTURE:
+					case gameui.STATE_MAIN_CAPTURE:
 					{
 						return _("Drag tiles here from your hand to pay for village capturing (maximum of one tile)");
 					}
-					case STATE_MAIN_MOVE:
+					case gameui.STATE_MAIN_MOVE:
 					{
 						return _("Drag tiles here from your hand to pay for movement");
 					}
-					case STATE_MAIN_BUILD:
+					case gameui.STATE_MAIN_BUILD:
 					{
 						return _("Drag tiles here from your hand to pay for building");
 					}
-					case STATE_MAIN_BATTLE:
+					case gameui.STATE_MAIN_BATTLE:
 					{
 						return _("Drag a tile here from your hand to improve your battle score (maximum of one tile)");
 					}
-					case STATE_BUILDVILLAGE:
+					case gameui.STATE_BUILDVILLAGE:
 					{
 						return _("You can drag one tile here from your hand to pay for village building (maximum of one tile)");
 					}
-					case STATE_UNDEAD:
+					case gameui.STATE_UNDEAD:
 					{
 						return _("You cannot pay for more undead movement");
 					}
@@ -165,27 +165,27 @@ define(
 			{
 				switch(action_mode)
 				{
-					case STATE_CAPTURE:
+					case gameui.STATE_CAPTURE:
 					{
 						return _("Capture cost");
 					}
-					case STATE_MAIN_CAPTURE:
+					case gameui.STATE_MAIN_CAPTURE:
 					{
 						return _("Capture cost");
 					}
-					case STATE_MAIN_MOVE:
+					case gameui.STATE_MAIN_MOVE:
 					{
 						return _("Movement cost");
 					}
-					case STATE_MAIN_BUILD:
+					case gameui.STATE_MAIN_BUILD:
 					{
 						return _("Build cost");
 					}
-					case STATE_BUILDVILLAGE:
+					case gameui.STATE_BUILDVILLAGE:
 					{
 						return _("Build cost");
 					}
-					case STATE_UNDEAD:
+					case gameui.STATE_UNDEAD:
 					{
 						return _("Moves remaining:");
 					}
@@ -200,7 +200,7 @@ define(
 			{
 				switch(action_mode)
 				{
-					case STATE_UNDEAD:
+					case gameui.STATE_UNDEAD:
 					{
 						return "";
 					}
@@ -216,31 +216,31 @@ define(
 			{
 				switch(action_mode)
 				{
-					case STATE_CAPTURE:
+					case gameui.STATE_CAPTURE:
 					{
 						return _("Skip capturing and end turn");
 					}
-					case STATE_MAIN_CAPTURE:
+					case gameui.STATE_MAIN_CAPTURE:
 					{
 						return _("Cancel capturing");
 					}
-					case STATE_MAIN_MOVE:
+					case gameui.STATE_MAIN_MOVE:
 					{
 						return _("Cancel Movement");
 					}
-					case STATE_MAIN_BUILD:
+					case gameui.STATE_MAIN_BUILD:
 					{
 						return _("Cancel Building");
 					}
-					case STATE_MAIN_BATTLE:
+					case gameui.STATE_MAIN_BATTLE:
 					{
 						return _("Withdraw from battle");
 					}
-					case STATE_BUILDVILLAGE:
+					case gameui.STATE_BUILDVILLAGE:
 					{
 						return _("Skip building and end turn");
 					}
-					case STATE_UNDEAD:
+					case gameui.STATE_UNDEAD:
 					{
 						return _("Reset queued undead movement");
 					}
@@ -255,31 +255,31 @@ define(
 			{
 				switch(action_mode)
 				{
-					case STATE_CAPTURE:
+					case gameui.STATE_CAPTURE:
 					{
 						return _("Approve Capturing");
 					}
-					case STATE_MAIN_CAPTURE:
+					case gameui.STATE_MAIN_CAPTURE:
 					{
 						return _("Approve capturing");
 					}
-					case STATE_MAIN_MOVE:
+					case gameui.STATE_MAIN_MOVE:
 					{
 						return _("Approve Movement");
 					}
-					case STATE_MAIN_BUILD:
+					case gameui.STATE_MAIN_BUILD:
 					{
 						return _("Approve Building");
 					}
-					case STATE_MAIN_BATTLE:
+					case gameui.STATE_MAIN_BATTLE:
 					{
 						return _("Fight battle!");
 					}
-					case STATE_BUILDVILLAGE:
+					case gameui.STATE_BUILDVILLAGE:
 					{
 						return _("Build villages");
 					}
-					case STATE_UNDEAD:
+					case gameui.STATE_UNDEAD:
 					{
 						return _("Finish all undead movement");
 					}
@@ -294,23 +294,23 @@ define(
 			{
 				switch(fail_reason)
 				{
-					case STATE_CAPTURE:
+					case gameui.STATE_CAPTURE:
 					{
 						return _("You must pay more pips to capture those villages");
 					}
-					case STATE_MAIN_CAPTURE:
+					case gameui.STATE_MAIN_CAPTURE:
 					{
 						return _("You must pay more pips to capture those villages");
 					}
-					case STATE_MAIN_MOVE:
+					case gameui.STATE_MAIN_MOVE:
 					{
 						return _("You must pay more pips for that movement");
 					}
-					case STATE_MAIN_BUILD:
+					case gameui.STATE_MAIN_BUILD:
 					{
 						return _("You must pay more pips to build those tiles");
 					}
-					case STATE_BUILDVILLAGE:
+					case gameui.STATE_BUILDVILLAGE:
 					{
 						return _("You must pay more pips to build those villages");
 					}
@@ -330,7 +330,7 @@ define(
 			{
 				switch(action_mode)
 				{
-					case STATE_UNDEAD:
+					case gameui.STATE_UNDEAD:
 					{
 						return "";
 					}
@@ -345,7 +345,7 @@ define(
 			{
 				switch(action_mode)
 				{
-					case STATE_UNDEAD:
+					case gameui.STATE_UNDEAD:
 					{
 						return "";
 					}
@@ -360,23 +360,23 @@ define(
 			{
 				switch(action_mode)
 				{
-					case STATE_CAPTURE:
+					case gameui.STATE_CAPTURE:
 					{
 						return "action_currency_icon_pip";
 					}
-					case STATE_MAIN_CAPTURE:
+					case gameui.STATE_MAIN_CAPTURE:
 					{
 						return "action_currency_icon_pip";
 					}
-					case STATE_MAIN_MOVE:
+					case gameui.STATE_MAIN_MOVE:
 					{
 						return "action_currency_icon_pip";
 					}
-					case STATE_MAIN_BUILD:
+					case gameui.STATE_MAIN_BUILD:
 					{
 						return "action_currency_icon_tile";
 					}
-					case STATE_BUILDVILLAGE:
+					case gameui.STATE_BUILDVILLAGE:
 					{
 						return "action_currency_icon_pip";
 					}
@@ -391,15 +391,15 @@ define(
 			{
 				switch(action_mode)
 				{
-					case STATE_CAPTURE:
+					case gameui.STATE_CAPTURE:
 					{
 						return _("Villages cost 1 pip to capture in Plains and Forest. Hills cost 2 pip.");
 					}
-					case STATE_MAIN_CAPTURE:
+					case gameui.STATE_MAIN_CAPTURE:
 					{
 						return _("Villages cost 1 pip to capture in Plains and Forest. Hills cost 2 pip.");
 					}
-					case STATE_BUILDVILLAGE:
+					case gameui.STATE_BUILDVILLAGE:
 					{
 						return _("Villages cost 1 pip to build in Plains and Forest. Hills cost 2 pip.");
 					}
@@ -428,25 +428,25 @@ define(
 					{
 						return _("Insufficient villages available to place one there.");
 					}
-					case VILLAGE_FAIL_SLOTS:
+					case this.VILLAGE_FAIL_SLOTS:
 					{
 						return _("That province is already full of villages.");
 					}
-					case VILLAGE_FAIL_TERRAIN:
+					case this.VILLAGE_FAIL_TERRAIN:
 					{
 						return _("You cannot build villages there.");
 					}
-					case VILLAGE_FAIL_ENEMIES:
+					case this.VILLAGE_FAIL_ENEMIES:
 					{
 						return _("You cannot build a village with that enemy army there.");
 					}
-					case VILLAGE_FAIL_DISTANCE:
+					case this.VILLAGE_FAIL_DISTANCE:
 					{
 						return _("You can only build in provinces connected to your existing villages or citadels.");
 					}
 					default:
 					{
-						return _("UNKNOWN_VILLAGE_FAIL_REASON");
+						return "UNKNOWN_VILLAGE_FAIL_REASON";
 					}
 				}
 				
@@ -456,19 +456,19 @@ define(
 			{
 				switch(phase_id)
 				{
-					case STATE_MAIN_CAPTURE:
+					case gameui.STATE_MAIN_CAPTURE:
 					{
 						return _("Capture villages");
 					}
-					case STATE_MAIN_BUILD:
+					case gameui.STATE_MAIN_BUILD:
 					{
 						return _("Build tiles");
 					}
-					case STATE_MAIN_MOVE:
+					case gameui.STATE_MAIN_MOVE:
 					{
 						return _("Move/split armies");
 					}
-					case STATE_MAIN_BATTLE:
+					case gameui.STATE_MAIN_BATTLE:
 					{
 						return _("Battle enemies");
 					}
@@ -483,19 +483,19 @@ define(
 			{
 				switch(phase_id)
 				{
-					case STATE_MAIN_CAPTURE:
+					case gameui.STATE_MAIN_CAPTURE:
 					{
 						return _("Finish capturing");
 					}
-					case STATE_MAIN_BUILD:
+					case gameui.STATE_MAIN_BUILD:
 					{
 						return _("Finish building");
 					}
-					case STATE_MAIN_MOVE:
+					case gameui.STATE_MAIN_MOVE:
 					{
 						return _("Finish moving");
 					}
-					case STATE_MAIN_BATTLE:
+					case gameui.STATE_MAIN_BATTLE:
 					{
 						return _("Finish battles");
 					}
@@ -530,7 +530,7 @@ define(
 					{
 						switch(this.getCurrentPlayerFactionId())
 						{
-							case FACTION_CHAOSHORDE:
+							case this.FACTION_CHAOSHORDE:
 							{
 								return _("You can only build where you have units.");
 							}

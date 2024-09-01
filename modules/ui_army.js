@@ -461,16 +461,16 @@ define(
 				//toggle stack selection to refresh the ui
 				switch(selection_flag)
 				{
-					case SELECT_ARMY_NONE:
+					case this.SELECT_ARMY_NONE:
 					{
 						break;
 					}
-					case SELECT_ARMY_SOURCE:
+					case this.SELECT_ARMY_SOURCE:
 					{
 						this.SelectArmyStack(source_army);
 						break;
 					}
-					case SELECT_ARMY_TARGET:
+					case this.SELECT_ARMY_TARGET:
 					{
 						this.SelectArmyStack(target_army);
 						break;

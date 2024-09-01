@@ -26,10 +26,10 @@ define(
 					this.queued_province_moves = [];
 					this.queued_province_moves_by_army = [];
 					this.queued_action_steps = {};
-					this.enterSmallPhase(STATE_MAIN_MOVE);
+					this.enterSmallPhase(gameui.STATE_MAIN_MOVE);
 					this.AddMoveModeUI();
-					this.EnablePaymentBucket(STATE_MAIN_MOVE);
-					//this.ResetActionInfo(ACTION_MOVE);	//todo: im not sure what this function was meant to be or do, movemode needs a bunch of work to clean it up
+					this.EnablePaymentBucket(gameui.STATE_MAIN_MOVE);
+					//this.ResetActionInfo(this.ACTION_MOVE);	//todo: im not sure what this function was meant to be or do, movemode needs a bunch of work to clean it up
 				}
 				/*else if(this.isCurrentPlayerMoveMode())
 				{
@@ -62,7 +62,7 @@ define(
 					//console.log("move approved");
 					//lock in the army stack movement by sending it to the server 
 					//note: this includes army splits as well as moves
-					this.ServerPayAction(ACTION_MOVE);
+					this.ServerPayAction(this.ACTION_MOVE);
 				}
 				else
 				{
@@ -81,7 +81,7 @@ define(
 						var cur_split_action = this.queued_splitting_armies[i];
 						//console.log("Reversing army split:");
 						//console.log(cur_split_action);
-						this.TransferArmyTiles(cur_split_action.temp_army_id_num, cur_split_action.source_army_id_num, [cur_split_action.tile_id], SELECT_ARMY_TARGET);
+						this.TransferArmyTiles(cur_split_action.temp_army_id_num, cur_split_action.source_army_id_num, [cur_split_action.tile_id], this.SELECT_ARMY_TARGET);
 					}
 					this.queued_splitting_armies = [];
 					
@@ -120,11 +120,11 @@ define(
 					
 					if(approved)
 					{
-						this.enterSmallPhase(STATE_MAIN_RESET);
+						this.enterSmallPhase(gameui.STATE_MAIN_RESET);
 					}
 					else
 					{
-						this.enterSmallPhase(STATE_MAIN_DEFAULT);
+						this.enterSmallPhase(gameui.STATE_MAIN_DEFAULT);
 					}
 				}
 				else

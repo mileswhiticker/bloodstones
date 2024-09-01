@@ -174,7 +174,7 @@ define(
 							//shade in the province a colour
 							var action_step = army_action_steps[k];
 							
-							if(action_step.step_type != ACTION_MOVE)
+							if(action_step.step_type != this.ACTION_MOVE)
 							{
 								continue;
 							}
@@ -241,7 +241,7 @@ define(
 				dojo.query(".province_move_cost").forEach(dojo.destroy);
 				
 				//todo: cancel any queued movement
-				//this.enterPhase(STATE_MAIN_DEFAULT);
+				//this.enterPhase(gameui.STATE_MAIN_DEFAULT);
 			},
 			
 			RefreshMoveModeUI : function()

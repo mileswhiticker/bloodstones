@@ -26,6 +26,7 @@ define(
 			
 			EndCitadelState : function(province_name)
 			{
+				console.log("page::EndCitadelState(" + province_name + ")");
 				if(this.possible_citadel_provinces.includes(province_name))
 				{
 					this.UIFinishPlaceCitadel();

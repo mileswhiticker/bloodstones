@@ -28,8 +28,8 @@ define(
 					//console.log(args.args.possible_capture_infos);
 					//this.UIInterfacePlayerCapture();
 					//this.BeginCaptureState();
-					this.enterSmallPhase(STATE_MAIN_CAPTURE);
-					this.EnablePaymentBucket(STATE_MAIN_CAPTURE);
+					this.enterSmallPhase(gameui.STATE_MAIN_CAPTURE);
+					this.EnablePaymentBucket(gameui.STATE_MAIN_CAPTURE);
 					this.UICanvasRenderCaptureOverlay();		//run once before the animation kicks in
 					this.StartAnimatedCanvas(this.UICanvasRenderCaptureOverlay)
 				}
@@ -57,8 +57,8 @@ define(
 					//lock in the army stack movement by sending it to the server 
 					//note: this includes army splits as well as moves
 					this.LockPaymentBucket();
-					this.ServerPayAction(ACTION_CAPTURE);
-					this.enterSmallPhase(STATE_MAIN_RESET);
+					this.ServerPayAction(this.ACTION_CAPTURE);
+					this.enterSmallPhase(gameui.STATE_MAIN_RESET);
 				}
 				else
 				{
@@ -67,7 +67,7 @@ define(
 					this.CancelAllPlannedVillageCaptures();
 					this.RefundPaystackTiles();
 					this.DestroyPayWindow();
-					this.enterSmallPhase(STATE_MAIN_DEFAULT);
+					this.enterSmallPhase(gameui.STATE_MAIN_DEFAULT);
 				}
 				
 				//update the ui

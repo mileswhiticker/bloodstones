@@ -103,7 +103,7 @@ define(
 						//console.log("current player is defender: " + this.player_id);
 					}
 					var tileswap_bucket = dojo.place("<div id=\"paybucket_battle\" class=\"" + extraClass + "\">" + "" + "</div>", "battlewindow");
-					var payment_string = this.GetTileDropPayString(STATE_MAIN_BATTLE);
+					var payment_string = this.GetTileDropPayString(gameui.STATE_MAIN_BATTLE);
 					this.CreatePaymentBucket("paybucket_battle", payment_string);
 					
 					//enable the battle proceed button

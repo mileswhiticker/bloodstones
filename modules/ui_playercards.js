@@ -90,7 +90,7 @@ define(
 					dojo.addClass(player_villages_icon,'village' + factionid);
 					
 					//chaos horde cannot build villages
-					if(factionid == FACTION_CHAOSHORDE)
+					if(factionid == this.FACTION_CHAOSHORDE)
 					{
 						dojo.addClass(player_villages_text,"display_none");
 						dojo.addClass(player_villages_icon,"display_none");
@@ -123,7 +123,7 @@ define(
 						var captured_factionid = captured_player.factionid;
 						
 						//chaos horde cannot build villages
-						if(captured_factionid == FACTION_CHAOSHORDE)
+						if(captured_factionid == this.FACTION_CHAOSHORDE)
 						{
 							continue;
 						}

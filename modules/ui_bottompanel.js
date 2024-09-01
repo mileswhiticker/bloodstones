@@ -68,7 +68,7 @@ define(
 					dojo.addClass(actionbutton, "blst_button");
 					dojo.addClass(actionbutton, "blst_button_disabled");
 					
-					if(cur_small_phase == STATE_MAIN_CAPTURE && !this.isCurrentPlayerChaosHorde())
+					if(cur_small_phase == gameui.STATE_MAIN_CAPTURE && !this.isCurrentPlayerChaosHorde())
 					{
 						dojo.addClass(actionbutton, "display_none");
 					}
@@ -162,25 +162,25 @@ define(
 			{
 				switch(small_phase_id)
 				{
-					case STATE_MAIN_CAPTURE:
+					case gameui.STATE_MAIN_CAPTURE:
 					{
 						return this.onClickCapturePhaseButton;
 						//dojo.connect(actionbutton, "click", dojo.hitch(this, this.onClickCapturePhaseButton));
 						break;
 					}
-					case STATE_MAIN_BUILD:
+					case gameui.STATE_MAIN_BUILD:
 					{
 						return this.onClickBuildModeButton;
 						//dojo.connect(actionbutton, "click", dojo.hitch(this, this.onClickBuildModeButton));
 						break;
 					}
-					case STATE_MAIN_MOVE:
+					case gameui.STATE_MAIN_MOVE:
 					{
 						return this.onClickMoveModeButton;
 						//dojo.connect(actionbutton, "click", dojo.hitch(this, this.onClickMoveModeButton));
 						break;
 					}
-					case STATE_MAIN_BATTLE:
+					case gameui.STATE_MAIN_BATTLE:
 					{
 						return this.onClickBattleModeButton;
 						//dojo.connect(actionbutton, "click", dojo.hitch(this, this.onClickBattleModeButton));

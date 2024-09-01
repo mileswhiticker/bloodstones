@@ -25,7 +25,9 @@ define(
 			
 			isCurrentPlayerCitadelState : function()
 			{
-				return this.isCurrentPlayerActiveState("citadelPlacement")
+				var result = this.isCurrentPlayerActiveState("citadelPlacement");
+				console.log("page::isCurrentPlayerCitadelState() " + result);
+				return result;
 			},
 			
 			isCurrentPlayerCaptureState : function()
@@ -60,18 +62,18 @@ define(
 			
 			isCurrentPlayerResetMode : function()
 			{
-				return (this.isCurrentPlayerActive() && this.current_phase_id == STATE_MAIN_RESET);
+				return (this.isCurrentPlayerActive() && this.current_phase_id == gameui.STATE_MAIN_RESET);
 			},
 			
 			isCurrentPlayerCaptureMode : function()
 			{
 				//only chaos horde can do this
-				return (this.isCurrentPlayerMainState() && this.current_phase_id == STATE_MAIN_CAPTURE);
+				return (this.isCurrentPlayerMainState() && this.current_phase_id == gameui.STATE_MAIN_CAPTURE);
 			},
 			
 			isCurrentPlayerBuildMode : function()
 			{
-				return (this.isCurrentPlayerActive() && this.current_phase_id == STATE_MAIN_BUILD) || this.isCurrentPlayerActiveState("freeBuild") || this.isCurrentPlayerActiveState("freeBuild_chaosHorde");
+				return (this.isCurrentPlayerActive() && this.current_phase_id == gameui.STATE_MAIN_BUILD) || this.isCurrentPlayerActiveState("freeBuild") || this.isCurrentPlayerActiveState("freeBuild_chaosHorde");
 			},
 			
 			isCurrentPlayerFreeBuildMode : function()
@@ -81,12 +83,14 @@ define(
 			
 			isCurrentPlayerMoveMode : function()
 			{
-				return (this.isCurrentPlayerActive() && this.current_phase_id == STATE_MAIN_MOVE);
+				var is_active = this.isCurrentPlayerActive();
+				console.log("page::isCurrentPlayerMoveMode() is_active:" + is_active + " | this.current_phase_id:" + this.current_phase_id + " | gameui.STATE_MAIN_MOVE:" + gameui.STATE_MAIN_MOVE);
+				//return (this.isCurrentPlayerActive() && this.current_phase_id == gameui.STATE_MAIN_MOVE);
 			},
 			
 			isCurrentPlayerBattleMode : function()
 			{
-				return (this.isCurrentPlayerActive() && this.current_phase_id == STATE_MAIN_BATTLE);
+				return (this.isCurrentPlayerActive() && this.current_phase_id == gameui.STATE_MAIN_BATTLE);
 			},
 			
 		});

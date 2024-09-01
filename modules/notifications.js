@@ -183,7 +183,7 @@ define(
 				//chaos horde capture during their main phase, so they need ui updates here
 				if(this.isCurrentPlayerResetMode())
 				{
-					this.enterSmallPhase(STATE_MAIN_DEFAULT);
+					this.enterSmallPhase(gameui.STATE_MAIN_DEFAULT);
 				}
 			},
 			
@@ -191,7 +191,7 @@ define(
 			{
 				switch(notif.args.failure_reason)
 				{
-					case ACTION_FAIL_CAPTUREMAX:
+					case this.ACTION_FAIL_CAPTUREMAX:
 					{
 						this.showMessage(this.GetFailCaptureMaxString(), "info");
 						break;
@@ -290,7 +290,7 @@ define(
 				//update the ui
 				if(this.isCurrentPlayerResetMode())
 				{
-					this.enterSmallPhase(STATE_MAIN_DEFAULT);
+					this.enterSmallPhase(gameui.STATE_MAIN_DEFAULT);
 				}
 			},
 			
@@ -299,7 +299,7 @@ define(
 				console.log("page::notif_playerMoveFail()");
 				if(window.gameui.isCurrentPlayerResetMode())
 				{
-					window.gameui.enterSmallPhase(STATE_MAIN_DEFAULT);
+					window.gameui.enterSmallPhase(gameui.STATE_MAIN_DEFAULT);
 				}
 				//todo: reset the move
 			},
@@ -567,7 +567,7 @@ define(
 					//these messages should never be reached... safety checks should have stopped them before now
 					//it probably indicates a player is cheating
 
-					case VILLAGE_FAIL_PIPS:
+					/*case VILLAGE_FAIL_PIPS:
 					{
 						this.showMessage(_("Insufficient tile pips paid to build those villages"), "error");
 						break;
@@ -576,7 +576,7 @@ define(
 					{
 						this.showMessage(_("Unable to build villages there"), "error");
 						break;
-					}
+					}*/
 					default://const VILLAGE_FAIL_UNKNOWN = 0
 					{
 						this.showMessage("ERROR: Build villages failed with code: " + notif.args.failure_reason, "error");

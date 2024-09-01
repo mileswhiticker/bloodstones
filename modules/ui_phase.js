@@ -24,42 +24,42 @@ define(
 			{
 				switch(ui_state_id)
 				{
-					case STATE_CAPTURE:
+					case gameui.STATE_CAPTURE:
 					{
 						this.UIStatePlayerCapture();
 						break;
 					}
-					case STATE_UNDEAD:
+					case gameui.STATE_UNDEAD:
 					{
 						this.UIStatePlayerUndead();
 						break;
 					}
-					case STATE_MAIN_DEFAULT:
+					case gameui.STATE_MAIN_DEFAULT:
 					{
 						this.UIStatePlayerMain();
 						break;
 					}
-					case STATE_MAIN_BUILD:
+					case gameui.STATE_MAIN_BUILD:
 					{
 						break;
 					}
-					case STATE_MAIN_MOVE:
+					case gameui.STATE_MAIN_MOVE:
 					{
 						break;
 					}
-					case STATE_MAIN_BATTLE:
+					case gameui.STATE_MAIN_BATTLE:
 					{
 						break;
 					}
-					case STATE_MAIN_RESET:
+					case gameui.STATE_MAIN_RESET:
 					{
 						break;
 					}
-					case STATE_MAIN_CAPTURE:
+					case gameui.STATE_MAIN_CAPTURE:
 					{
 						break;
 					}
-					case STATE_BUILDVILLAGE:
+					case gameui.STATE_BUILDVILLAGE:
 					{
 						this.UIStatePlayerVillages();
 						break;
@@ -69,7 +69,7 @@ define(
 			
 			IsStateIdMain : function(ui_state_id)
 			{
-				return (ui_state_id >= STATE_MAIN_MIN && ui_state_id <= STATE_MAIN_MAX)
+				return (ui_state_id >= gameui.STATE_MAIN_MIN && ui_state_id <= this.gameui.STATE_MAIN_MAX)
 			},
 			
 			UIStatePlayerCapture : function()
@@ -88,7 +88,7 @@ define(
 				this.UIActiveButton("end_phase_button");
 				
 				//special handling for undead phase
-				if(this.getPlayerFactionId(this.getCurrentPlayer()) == FACTION_NECROMANCERS)
+				if(this.getPlayerFactionId(this.getCurrentPlayer()) == this.FACTION_NECROMANCERS)
 				{
 					this.UIActiveButton("title_undead");
 				}
@@ -112,7 +112,7 @@ define(
 				this.UIActiveButton("end_phase_button");
 			},
 			
-			UIStatePlayerMain : function(ui_state_id = STATE_MAIN_DEFAULT)
+			UIStatePlayerMain : function(ui_state_id = gameui.STATE_MAIN_DEFAULT)
 			{
 				//console.log("page::UIStatePlayerMain(" + ui_state_id + ")");
 				
@@ -129,51 +129,51 @@ define(
 				
 				switch(ui_state_id)
 				{
-					case STATE_MAIN_DEFAULT:
+					case gameui.STATE_MAIN_DEFAULT:
 					{
 						if(this.gamedatas.village_captures_available > 0)
 						{
-							this.UIActiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_CAPTURE));
+							this.UIActiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_CAPTURE));
 						}
 						else
 						{
-							this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_CAPTURE));
+							this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_CAPTURE));
 						}
-						this.UIActiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BUILD));
-						this.UIActiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_MOVE));
-						this.UIActiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BATTLE));
+						this.UIActiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_BUILD));
+						this.UIActiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_MOVE));
+						this.UIActiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_BATTLE));
 						break;
 					}
-					case STATE_MAIN_CAPTURE:
+					case gameui.STATE_MAIN_CAPTURE:
 					{
-						this.UIActiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_CAPTURE));
-						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BUILD));
-						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_MOVE));
-						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BATTLE));
+						this.UIActiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_CAPTURE));
+						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_BUILD));
+						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_MOVE));
+						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_BATTLE));
 						break;
 					}
-					case STATE_MAIN_BUILD:
+					case gameui.STATE_MAIN_BUILD:
 					{
-						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_CAPTURE));
-						this.UIActiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BUILD));
-						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_MOVE));
-						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BATTLE));
+						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_CAPTURE));
+						this.UIActiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_BUILD));
+						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_MOVE));
+						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_BATTLE));
 						break;
 					}
-					case STATE_MAIN_MOVE:
+					case gameui.STATE_MAIN_MOVE:
 					{
-						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_CAPTURE));
-						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BUILD));
-						this.UIActiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_MOVE));
-						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BATTLE));
+						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_CAPTURE));
+						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_BUILD));
+						this.UIActiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_MOVE));
+						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_BATTLE));
 						break;
 					}
-					case STATE_MAIN_BATTLE:
+					case gameui.STATE_MAIN_BATTLE:
 					{
-						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_CAPTURE));
-						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BUILD));
-						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_MOVE));
-						this.UIActiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BATTLE));
+						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_CAPTURE));
+						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_BUILD));
+						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_MOVE));
+						this.UIActiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_BATTLE));
 						break;
 					}
 				}
@@ -227,10 +227,10 @@ define(
 			UIInactiveButton_smallPhases : function()
 			{
 				//console.log("page::UIInactiveButton_smallPhases()");
-				this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_CAPTURE));
-				this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BUILD));
-				this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_MOVE));
-				this.UIInactiveButton(this.GetSmallPhaseButtonDivId(STATE_MAIN_BATTLE));
+				this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_CAPTURE));
+				this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_BUILD));
+				this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_MOVE));
+				this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_BATTLE));
 			},
 			
 			UIInactiveButton : function(div_id)

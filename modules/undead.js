@@ -21,7 +21,7 @@ define(
 			BeginUndeadState : function()
 			{
 				this.queued_undead_moves = [];
-				this.EnablePaymentBucket(STATE_UNDEAD);
+				this.EnablePaymentBucket(gameui.STATE_UNDEAD);
 				this.SetActionPaid(-1);
 				this.SetPaymodeUndeadUnselect();
 			},

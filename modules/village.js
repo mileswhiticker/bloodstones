@@ -44,7 +44,7 @@ define(
 				
 				if(approved)
 				{
-					this.ServerPayAction(ACTION_BUILDVILLAGE);
+					this.ServerPayAction(this.ACTION_BUILDVILLAGE);
 				}
 				else
 				{
@@ -74,7 +74,7 @@ define(
 				//is this valid terrain?
 				if(this.getProvinceVillageMaxSlots(prov_info) == 0)
 				{
-					this.showMessage(this.GetVillageFailString(VILLAGE_FAIL_TERRAIN), "error");
+					this.showMessage(this.GetVillageFailString(this.VILLAGE_FAIL_TERRAIN), "error");
 					return; 
 				}
 				
@@ -83,7 +83,7 @@ define(
 				//are there free slots to build?
 				if(slots_available <= 0)
 				{
-					this.showMessage(this.GetVillageFailString(VILLAGE_FAIL_SLOTS), "error");
+					this.showMessage(this.GetVillageFailString(this.VILLAGE_FAIL_SLOTS), "error");
 					return; 
 					/*
 					//todo: this is not working, it's meant to drag a ghost image of the village back to the player hand
@@ -119,13 +119,13 @@ define(
 				
 				if(this.DoesProvContainEnemyArmy(prov_info, active_player_id))
 				{
-					this.showMessage(this.GetVillageFailString(VILLAGE_FAIL_ENEMIES), "error");
+					this.showMessage(this.GetVillageFailString(this.VILLAGE_FAIL_ENEMIES), "error");
 					return; 
 				}
 				
 				if(!this.buildable_province_names.includes(prov_info.name))
 				{
-					this.showMessage(this.GetVillageFailString(VILLAGE_FAIL_DISTANCE), "error");
+					this.showMessage(this.GetVillageFailString(this.VILLAGE_FAIL_DISTANCE), "error");
 					return; 
 				}
 				
@@ -136,7 +136,7 @@ define(
 				//console.log(this.temp_villages);
 				if(villages_available - villages_temp <= 0)
 				{
-					this.showMessage(this.GetVillageFailString(VILLAGE_FAIL_AVAIL), "error");
+					this.showMessage(this.GetVillageFailString(this.VILLAGE_FAIL_AVAIL), "error");
 					return;
 				}
 				

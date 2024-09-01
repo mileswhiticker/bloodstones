@@ -298,7 +298,7 @@ define(
 						}
 						
 						//is the player a hill folk faction?
-						if(this.getActivePlayerFactionId() == FACTION_HILLFOLK)
+						if(this.getActivePlayerFactionId() == this.FACTION_HILLFOLK)
 						{
 							//unit can move here
 							return true;

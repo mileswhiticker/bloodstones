@@ -21,7 +21,7 @@ define(
 			//CreateBuildVillagesUI
 			UIBeginBuildVillages : function()
 			{
-				this.EnablePaymentBucket(STATE_BUILDVILLAGE);
+				this.EnablePaymentBucket(gameui.STATE_BUILDVILLAGE);
 				
 				//run once before the anim frame kicks in
 				this.UICanvasRenderBuildVillagesOverlay();

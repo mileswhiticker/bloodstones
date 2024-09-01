@@ -20,7 +20,7 @@ define(
 			BeginCaptureState : function()
 			{
 				console.log("page::BeginCaptureState()");
-				this.EnablePaymentBucket(STATE_CAPTURE);
+				this.EnablePaymentBucket(gameui.STATE_CAPTURE);
 				this.UICanvasRenderCaptureOverlay();		//run once before the animation kicks in
 				this.StartAnimatedCanvas(this.UICanvasRenderCaptureOverlay)
 			},
@@ -52,7 +52,7 @@ define(
 					//lock in the army stack movement by sending it to the server 
 					//note: this includes army splits as well as moves
 					this.LockPaymentBucket();
-					this.ServerPayAction(ACTION_CAPTURE);
+					this.ServerPayAction(this.ACTION_CAPTURE);
 				}
 				else
 				{

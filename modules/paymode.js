@@ -28,22 +28,22 @@ define(
 					var action_info_JSON = "";
 					switch(action_type_arg)
 					{
-						case ACTION_CAPTURE:
+						case this.ACTION_CAPTURE:
 						{
 							action_info_JSON = JSON.stringify(this.queued_capture_village_ids);
 							break;
 						}
-						case ACTION_MOVE:
+						case this.ACTION_MOVE:
 						{
 							action_info_JSON = JSON.stringify(this.queued_action_steps);
 							break;
 						}
-						case ACTION_BUILD:
+						case this.ACTION_BUILD:
 						{
 							action_info_JSON = JSON.stringify(this.queued_builds);
 							break;
 						}
-						case ACTION_BUILDVILLAGE:
+						case this.ACTION_BUILDVILLAGE:
 						{
 							//NOTE: the ajax call here is only for the generic "action_tryPayAction" 
 							//however states.inc.php also lists "action_playerBuildVillages" which i use as a safety check on the server (see)

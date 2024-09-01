@@ -110,7 +110,7 @@ define(
 				var action_payment_bucket = dojo.place("<div id=\"action_payment_bucket\">" + payment_string + "</div>", container_id);
 				switch(this.payment_mode)
 				{
-					case STATE_UNDEAD:
+					case gameui.STATE_UNDEAD:
 					{
 						//cant pay for extra undead movement
 						break;
@@ -208,15 +208,15 @@ define(
 				var refund_previous = false;
 				switch(this.payment_mode)
 				{
-					case STATE_BUILDVILLAGE:
+					case gameui.STATE_BUILDVILLAGE:
 					{
 						refund_previous = true;
 					}
-					case STATE_CAPTURE:
+					case gameui.STATE_CAPTURE:
 					{
 						refund_previous = true;
 					}
-					case STATE_MAIN_CAPTURE:
+					case gameui.STATE_MAIN_CAPTURE:
 					{
 						refund_previous = true;
 					}
@@ -243,37 +243,37 @@ define(
 				
 				switch(this.payment_mode)
 				{
-					case STATE_CAPTURE:
+					case gameui.STATE_CAPTURE:
 					{
 						this.AddActionPaidAmount(this.GetTilePips(tile_info.type_arg));
 						break;
 					}
-					case STATE_MAIN_CAPTURE:
+					case gameui.STATE_MAIN_CAPTURE:
 					{
 						this.AddActionPaidAmount(this.GetTilePips(tile_info.type_arg));
 						break;
 					}
-					case STATE_MAIN_MOVE:
+					case gameui.STATE_MAIN_MOVE:
 					{
 						this.AddActionPaidAmount(this.GetTilePips(tile_info.type_arg));
 						break;
 					}
-					case STATE_BUILDVILLAGE:
+					case gameui.STATE_BUILDVILLAGE:
 					{
 						this.AddActionPaidAmount(this.GetTilePips(tile_info.type_arg));
 						break;
 					}
-					case STATE_MAIN_BUILD:
+					case gameui.STATE_MAIN_BUILD:
 					{
 						this.AddActionPaidAmount(1);
 						break;
 					}
-					case STATE_MAIN_BATTLE:
+					case gameui.STATE_MAIN_BATTLE:
 					{
 						//i'm leaving this in for now but im pretty sure it's using a different system
 						//see battle_states.js
 						//this.trySwapBattleTile(tile_info);
-						console.log("ERROR: page::PayTile(" + tile_id + ") during STATE_MAIN_BATTLE, should be using ServerSwapTile() instead");
+						console.log("ERROR: page::PayTile(" + tile_id + ") during gameui.STATE_MAIN_BATTLE, should be using ServerSwapTile() instead");
 						break;
 					}
 					default:
@@ -289,24 +289,24 @@ define(
 				//console.log("page::CancelAction()");
 				switch(this.payment_mode)
 				{
-					case STATE_CAPTURE:
+					case gameui.STATE_CAPTURE:
 					{
 						//all factions except chaos horde capturing villages
 						this.EndCaptureState(false);
 						break;
 					}
-					case STATE_MAIN_CAPTURE:
+					case gameui.STATE_MAIN_CAPTURE:
 					{
 						//chaos horde capturing villages
 						this.ExitCaptureMode(false);
 						break;
 					}
-					case STATE_MAIN_MOVE:
+					case gameui.STATE_MAIN_MOVE:
 					{
 						this.EndMoveMode(false);
 						break;
 					}
-					case STATE_MAIN_BUILD:
+					case gameui.STATE_MAIN_BUILD:
 					{
 						this.ExitBuildMode(false);
 						if(this.isCurrentPlayerFreeBuildMode())
@@ -316,12 +316,12 @@ define(
 						}
 						break;
 					}
-					case STATE_BUILDVILLAGE:
+					case gameui.STATE_BUILDVILLAGE:
 					{
 						this.EndVillageState(false);
 						break;
 					}
-					case STATE_UNDEAD:
+					case gameui.STATE_UNDEAD:
 					{
 						this.ResetUndeadState(true);
 						break;
@@ -355,26 +355,26 @@ define(
 				var from_location = "paystack";
 				switch(this.payment_mode)
 				{
-					case STATE_MAIN_MOVE:
+					case gameui.STATE_MAIN_MOVE:
 					{
 						this.AddActionPaidAmount(-this.GetTilePips(tile_info.type_arg));
 						break;
 					}
-					case STATE_BUILDVILLAGE:
+					case gameui.STATE_BUILDVILLAGE:
 					{
 						this.AddActionPaidAmount(-this.GetTilePips(tile_info.type_arg));
 						break;
 					}
-					case STATE_MAIN_BUILD:
+					case gameui.STATE_MAIN_BUILD:
 					{
 						this.AddActionPaidAmount(-1);
 						break;
 					}
-					case STATE_MAIN_BATTLE:
+					case gameui.STATE_MAIN_BATTLE:
 					{
 						//nothing else needs to be done here
 						from_location = "paybucket_battle";
-						//console.log("WARNING: page::RefundPaystackTile() unfinished code case STATE_MAIN_BATTLE");
+						//console.log("WARNING: page::RefundPaystackTile() unfinished code case gameui.STATE_MAIN_BATTLE");
 						break;
 					}
 				}
@@ -393,17 +393,17 @@ define(
 				{
 					switch(this.payment_mode)
 					{
-						case STATE_CAPTURE:
+						case gameui.STATE_CAPTURE:
 						{
 							this.EndCaptureState(true);
 							break;
 						}
-						case STATE_MAIN_CAPTURE:
+						case gameui.STATE_MAIN_CAPTURE:
 						{
 							this.ExitCaptureMode(true);
 							break;
 						}
-						case STATE_MAIN_MOVE:
+						case gameui.STATE_MAIN_MOVE:
 						{
 							//todo: send request to server for tile payment
 							//for now, just refreshing the page will "refund" these tiles anyway
@@ -412,7 +412,7 @@ define(
 							this.EndMoveMode(true);
 							break;
 						}
-						case STATE_MAIN_BUILD:
+						case gameui.STATE_MAIN_BUILD:
 						{
 							//todo: send request to server for tile payment
 							//for now, just refreshing the page will "refund" these tiles anyway
@@ -421,20 +421,20 @@ define(
 							this.ExitBuildMode(true);
 							break;
 						}
-						case STATE_BUILDVILLAGE:
+						case gameui.STATE_BUILDVILLAGE:
 						{
 							this.EndVillageState(true);
 							break;
 						}
-						case STATE_MAIN_BATTLE:
+						case gameui.STATE_MAIN_BATTLE:
 						{
 							//todo
 							//actually this is fine, for some reason i handle this ui flow elsewhere
 							//i should still probably clean it up for consistency
-							console.log("WARNING: page::PayAction() unfinished code case STATE_MAIN_BATTLE");
+							console.log("WARNING: page::PayAction() unfinished code case gameui.STATE_MAIN_BATTLE");
 							break;
 						}
-						case STATE_UNDEAD:
+						case gameui.STATE_UNDEAD:
 						{
 							this.EndUndeadState(true);
 							break;
@@ -446,7 +446,7 @@ define(
 			DestroyPayWindow : function()
 			{
 				dojo.destroy(dojo.byId("paywindow"));
-				this.payment_mode = STATE_INVALID;
+				this.payment_mode = gameui.STATE_INVALID;
 			},
 			
 			SetActionCost : function(new_value)

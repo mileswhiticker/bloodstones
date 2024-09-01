@@ -29,7 +29,7 @@ define(
 					//console.log("page::EnterBattleMode()");
 					
 					//update the ui
-					this.enterSmallPhase(STATE_MAIN_BATTLE);
+					this.enterSmallPhase(gameui.STATE_MAIN_BATTLE);
 					this.CreatePendingBattleCircles();
 				}
 			},
@@ -40,7 +40,7 @@ define(
 				if(this.battle_preview_province_name == null)
 				{
 					this.DestroyPendingBattleCircles();
-					this.enterSmallPhase(STATE_MAIN_DEFAULT);
+					this.enterSmallPhase(gameui.STATE_MAIN_DEFAULT);
 				}
 				else
 				{

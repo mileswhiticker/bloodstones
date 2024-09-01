@@ -75,7 +75,7 @@ define(
 					//create the bucket to drop tiles in
 					if(this.isParticipant())
 					{
-						this.payment_mode = STATE_MAIN_BATTLE;
+						this.payment_mode = gameui.STATE_MAIN_BATTLE;
 						this.current_player_paystack = this.CreateTempTileStack(this.isAttacker());
 					}
 					

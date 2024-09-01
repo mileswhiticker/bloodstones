@@ -40,7 +40,7 @@ trait action_build
 				
 				$tile_ids = $build_action_prov["tiles"];
 				$player_deck = $this->player_decks[$current_player_id];
-				$player_hand = $player_deck->getCardsInLocation('hand', null, "card_id");
+				//$player_hand = $player_deck->getCardsInLocation('hand', null, "card_id");
 				$built_tile_infos = [];
 				$built_tile_ids = [];
 				

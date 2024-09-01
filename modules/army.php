@@ -46,8 +46,17 @@ trait army
 			//move the list of card ids over to the new army
 			//if they are already in another army, this will automatically update them
 			$player_deck->moveCards($starting_unit_ids, 'army', $new_army_id);
-			$starting_tiles = $player_deck->getCards($starting_unit_ids);
-			$newarmy["tiles"] = array_merge($newarmy["tiles"], $starting_tiles);
+			try
+			{
+				$starting_tiles = $player_deck->getCards($starting_unit_ids);
+				$newarmy["tiles"] = array_merge($newarmy["tiles"], $starting_tiles);
+			}
+			catch(Exception $e)
+			{
+				self::notifyAllPlayers("debug", "", array('debugmessage' => "Exception caught in call to getCards() inside server::createArmy(), the problem was most likely \$starting_unit_ids"));
+				self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($e, true)));
+				self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($starting_unit_ids, true)));
+			}
 		}
 		
 		//insert the newly created army into the database

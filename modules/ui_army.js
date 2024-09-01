@@ -39,7 +39,16 @@ define(
 					var selected_army_div = dojo.byId("selected_army");
 					
 					//title
-					var title_div = dojo.place("<h1>Selected Army</h1>", selected_army_div);
+					var title_div;
+					if(new_selected_army.player_id == this.getCurrentPlayer())
+					{
+						title_div = dojo.place("<h1>Your Army</h1>", selected_army_div);
+					}
+					else
+					{
+						title_div = dojo.place("<h1>Enemy Army</h1>", selected_army_div);
+					}
+					
 					dojo.addClass(title_div, "ui_stack_title");
 					dojo.addClass(title_div, "selected_stack_element");
 					

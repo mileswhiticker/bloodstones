@@ -31,7 +31,14 @@ define(
 				const leftpanel = dojo.byId("gamewindow");
 				
 				//create the basic panel
-				var paywindow = dojo.place("<div id=\"paywindow\"></div>", "centrepanel", "after");
+				var paywindow = dojo.byId("paywindow");
+				if(paywindow)
+				{
+					dojo.destroy(dojo.byId("paywindow"));
+				}
+				paywindow = dojo.place("<div id=\"paywindow\"></div>", "centrepanel", "after");
+				dojo.addClass("paywindow","paywindow_slidein");
+				
 				//dojo.style(paywindow, 'zIndex', this.GameLayerUIMiddle());
 				//dojo.style(paywindow, 'left', "10px");	//move this to help with testing
 				//dojo.style(paywindow, 'top', "500px");	//move this to help with testing
@@ -445,7 +452,9 @@ define(
 			
 			DestroyPayWindow : function()
 			{
-				dojo.destroy(dojo.byId("paywindow"));
+				dojo.removeClass("paywindow","paywindow_slidein");
+				dojo.addClass("paywindow","paywindow_slideout");
+				//dojo.destroy(dojo.byId("paywindow"));
 				this.payment_mode = gameui.STATE_INVALID;
 			},
 			

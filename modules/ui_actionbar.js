@@ -282,7 +282,7 @@ define(
 			enterSmallPhase : function(new_phase_id)
 			{
 				//if we are not the current player, this entire panel will get disabled
-				console.log("page::enterSmallPhase(" + new_phase_id + ")");
+				//console.log("page::enterSmallPhase(" + new_phase_id + ")");
 				if(!this.isCurrentPlayerActive())
 				{
 					console.log("WARNING: attempted to enter phase " + new_phase_id + " but current player is not active.");

@@ -20,9 +20,9 @@ define(
 			
 			onClickProvince : function(event)
 			{
-				console.log("page::onClickProvince()");
+				//console.log("page::onClickProvince()");
+				//console.log(event);
 				event.stopPropagation();
-				console.log(event);
 				
 				var province_area_element = $(event.target.id);
 				var province_name = province_area_element.dataset.province_id;
@@ -34,26 +34,21 @@ define(
 				
 				if(window.gameui.isCurrentPlayerActive())
 				{
-					console.log("check1");
 					//im doing if..else chains here instead of string defines because it's a little easier and isn't much harder to read
 					if(window.gameui.isCurrentPlayerUndeadState())
 					{
-						console.log("check1.1");
 						window.gameui.TryQueueProvinceMoveUndead(province_name);
 					}
 					else if(window.gameui.isCurrentPlayerMoveMode())
 					{
-						console.log("check1.2");
 						window.gameui.TryQueueProvinceMove(province_name);
 					}
 					else if(window.gameui.isCurrentPlayerCitadelState())
 					{
-						console.log("check1.3");
 						window.gameui.EndCitadelState(province_name);
 					}
 					else if(window.gameui.isCurrentPlayerRetreatState())
 					{
-						console.log("check1.4");
 						//is this a valid retreat province?
 						for(var index in window.gameui.retreat_prov_options)
 						{
@@ -68,7 +63,6 @@ define(
 					}
 					else if(window.gameui.isCurrentPlayerWithdrawState())
 					{
-						console.log("check1.5");
 						//is this a valid retreat province?
 						for(var index in window.gameui.retreat_prov_options)
 						{
@@ -83,20 +77,17 @@ define(
 					}
 					else if(window.gameui.isCurrentPlayerVillagesState())
 					{
-						console.log("check1.6");
 						var province_info = window.gameui.provinces_by_name[province_name];
 						window.gameui.TryQueueVillageBuild(province_info);
 					}
 					else
 					{
-						console.log("check1.7");
 						//just unselect the current army, if there is one selected
 						window.gameui.UnselectArmyStack();
 					}
 				}
 				else
 				{
-					console.log("check2");
 					//just unselect the current army, if there is one selected
 					window.gameui.UnselectArmyStack();
 				}

@@ -19,7 +19,7 @@ define(
 			
 			BeginCaptureState : function()
 			{
-				console.log("page::BeginCaptureState()");
+				//console.log("page::BeginCaptureState()");
 				this.EnablePaymentBucket(gameui.STATE_CAPTURE);
 				this.UICanvasRenderCaptureOverlay();		//run once before the animation kicks in
 				this.StartAnimatedCanvas(this.UICanvasRenderCaptureOverlay)
@@ -27,7 +27,7 @@ define(
 			
 			EndCaptureState : function(approved)
 			{
-				console.log("page::EndCaptureState(" + approved + ")");
+				//console.log("page::EndCaptureState(" + approved + ")");
 				
 				this.StopAnimatedCanvas();
 				this.ClearCanvas();

@@ -286,7 +286,7 @@ define(
 			
 			CancelAction : function()
 			{
-				//console.log("page::CancelAction()");
+				//console.log("page::CancelAction() this.payment_mode:" + this.payment_mode);
 				switch(this.payment_mode)
 				{
 					case gameui.STATE_CAPTURE:

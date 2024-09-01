@@ -507,7 +507,7 @@ trait player_utils
 	{
 		//todo: should this function be merged with playerSkipAction() ?
 		$state_name = $this->getStateName();
-		self::notifyAllPlayers("debug", "", array('debugmessage' => "server::activePlayerCompleteState($player_id) state_name:$state_name"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::activePlayerCompleteState($player_id) state_name:$state_name"));
 		if(!$player_id)
 		{
 			$player_id = self::getCurrentPlayerId();

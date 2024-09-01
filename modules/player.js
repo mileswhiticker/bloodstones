@@ -26,7 +26,7 @@ define(
 			isCurrentPlayerCitadelState : function()
 			{
 				var result = this.isCurrentPlayerActiveState("citadelPlacement");
-				console.log("page::isCurrentPlayerCitadelState() " + result);
+				//console.log("page::isCurrentPlayerCitadelState() " + result);
 				return result;
 			},
 			
@@ -84,8 +84,8 @@ define(
 			isCurrentPlayerMoveMode : function()
 			{
 				var is_active = this.isCurrentPlayerActive();
-				console.log("page::isCurrentPlayerMoveMode() is_active:" + is_active + " | this.current_phase_id:" + this.current_phase_id + " | gameui.STATE_MAIN_MOVE:" + gameui.STATE_MAIN_MOVE);
-				//return (this.isCurrentPlayerActive() && this.current_phase_id == gameui.STATE_MAIN_MOVE);
+				//console.log("page::isCurrentPlayerMoveMode() is_active:" + is_active + " | this.current_phase_id:" + this.current_phase_id + " | gameui.STATE_MAIN_MOVE:" + gameui.STATE_MAIN_MOVE);
+				return (this.isCurrentPlayerActive() && this.current_phase_id == gameui.STATE_MAIN_MOVE);
 			},
 			
 			isCurrentPlayerBattleMode : function()

@@ -61,8 +61,8 @@ define(
 			
 			ResetPlayerInfo : function(players)
 			{
-				console.log("page::ResetPlayerInfo()");
-				console.log(players);
+				//console.log("page::ResetPlayerInfo()");
+				//console.log(players);
 				for(var player_id in players)
 				{
 					//get the updated faction id for this player from the server

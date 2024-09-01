@@ -195,12 +195,12 @@ define(
 					if(this.isAttacker())
 					{
 						losing_player_id = this.defending_player_id;
-						message = _("Attacker must sacrifice a tile...");
+						message = _("Defender must sacrifice a tile...");
 					}
 					else if(this.isDefender())
 					{
 						losing_player_id = this.attacking_player_id;
-						message = _("Defender must sacrifice a tile...");
+						message = _("Attacker must sacrifice a tile...");
 					}
 					else
 					{

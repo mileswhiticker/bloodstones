@@ -529,7 +529,7 @@ trait player_utils
 			{
 				//wipe out any remaining player build points if they are unused
 				self::DbQuery("UPDATE player SET player_freebuildpoints=0 WHERE player_id='$player_id'");
-				$this->gamestate->setPlayerNonMultiactive($player_id, "playerMain");
+				$this->gamestate->setPlayerNonMultiactive($player_id, "freeBuild_chaosHorde_setup");
 				break;
 			}
 			case "freeBuild_chaosHorde":

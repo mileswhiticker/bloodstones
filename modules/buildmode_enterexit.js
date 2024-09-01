@@ -119,6 +119,10 @@ define(
 							this.current_player_hand.SpawnTileInStack(tile_info);
 						}
 					}
+					else
+					{
+						cur_army.SetBuilding(false);
+					}
 					
 					//do we need to unselect this army?
 					if(window.gameui.selected_army == cur_army)

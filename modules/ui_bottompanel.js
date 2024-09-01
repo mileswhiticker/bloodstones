@@ -135,6 +135,9 @@ define(
 				//console.log("page::EarlyEndTurn()");
 				if(window.gameui.checkAction('action_earlyEndTurn'))
 				{
+					//just in case they have an action payment dialog open
+					this.CancelAction();
+					
 					window.gameui.ajaxcall( "/bloodstones/bloodstones/action_earlyEndTurn.html", {
 						lock: true
 						}, 

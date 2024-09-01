@@ -146,6 +146,9 @@ define(
 					//player can exit directly from build mode
 					//console.log("WARNING: CleanupBuildMode() but not in gameui.STATE_MAIN_RESET");
 				}
+				
+				//this is needed for replay mode 
+				this.RemoveBuildModeUI();
 			},
 			/*
 			HandRestoreTileAnimation : function(sliding_tile_id, target_army_id)

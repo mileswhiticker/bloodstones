@@ -185,6 +185,10 @@ define(
 				{
 					this.enterSmallPhase(gameui.STATE_MAIN_DEFAULT);
 				}
+				
+				//we need another ui clear here in case the player is in replay mode
+				this.StopAnimatedCanvas();
+				this.ClearCanvas();
 			},
 			
 			notif_playerCaptureFail : function(notif)
@@ -253,6 +257,9 @@ define(
 				
 				//close this window if it's still open
 				this.DestroyPayWindow();
+				
+				//in case of replay mode
+				this.RemoveUndeadStateUI();
 			},
 			
 			notif_playerArmyMove : function(notif)
@@ -292,10 +299,14 @@ define(
 				{
 					this.enterSmallPhase(gameui.STATE_MAIN_DEFAULT);
 				}
+				
+				//in case of replay mode
+				this.RemoveMoveModeUI();
 			},
 			
 			notif_playerMoveFail : function(notif)
 			{
+				//this is redundant and should only get called in case of cheating
 				console.log("page::notif_playerMoveFail()");
 				if(window.gameui.isCurrentPlayerResetMode())
 				{
@@ -325,6 +336,7 @@ define(
 			
 			notif_playerBuildFail : function(notif)
 			{
+				//this should never get called unless something breaks or the player is cheating, so it's redundnat
 				//console.log("page::notif_playerBuildFail()");
 				
 				//clean up the planned builds
@@ -554,10 +566,13 @@ define(
 				
 				//update gamedatas
 				this.gamedatas.players[owner_player_id].villages_built = notif.args.villages_built;
+				
+				this.UIClearBuildVillages();
 			},
 			
 			notif_newVillagesFail : function(notif)
 			{
+				//todo: this should never get called except for bugs or player cheating
 				//something went wrong and we need to cancel/refund the player action
 				console.log("page::notif_newVillagesFail()");
 				console.log(notif.args);
@@ -601,6 +616,9 @@ define(
 				
 				//var player_id = this.getFactionPlayerId(notif.args.faction_id);
 				this.CreateCitadel(notif.args.province_name, notif.args.player_id);
+				
+				//for replay mode
+				this.UIFinishPlaceCitadel();
 			},
 			
 			notif_desert_tiles : function(notif)

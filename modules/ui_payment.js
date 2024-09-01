@@ -462,11 +462,24 @@ define(
 					{
 						node.innerHTML = new_value;
 					}
+					this.UpdateActionPayButton();
 				}
 				else
 				{
 					//this triggers when we are destroying the pay window, so it's ok
 					//console.log("WARNING: page::SetActionCost(" + new_value + ") but could not find node \"action_cost_current\"");
+				}
+			},
+			
+			UpdateActionPayButton : function()
+			{
+				if(this.HasActionPaidEnough())
+				{
+					dojo.removeClass("approve_button","blst_button_disabled");
+				}
+				else
+				{
+					dojo.addClass("approve_button","blst_button_disabled");
 				}
 			},
 			
@@ -497,6 +510,7 @@ define(
 					{
 						node.innerHTML = new_value;
 					}
+					this.UpdateActionPayButton();
 				}
 			},
 			

@@ -20,7 +20,7 @@ define(
 			
 			SetupLeftUI : function(gamedatas)
 			{
-				console.log("page::SetupLeftUI()");
+				//console.log("page::SetupLeftUI()");
 				this.SetupPlayercards(gamedatas);
 				
 				//add a hint telling the player they can select an army there

@@ -914,6 +914,23 @@ define(
 				return !this.DoesArmyContainShip();
 			},
 			
+			GetNumLeaders : function()
+			{
+				var num_leaders = 0;
+				if(this.stack_type == STACK_ARMY)
+				{
+					for(var index in this.items)
+					{
+						var item = this.items[index];
+						if(window.gameui.IsTileTypeLeader(item.type))
+						{
+							num_leaders++;
+						}
+					}
+				}
+				return num_leaders;
+			},
+			
 			SetGhosted : function(is_ghosted)
 			{
 				//console.log("page::SetGhosted(" + is_ghosted + ")");

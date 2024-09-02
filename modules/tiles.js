@@ -116,6 +116,11 @@ define(
 				return (this.getBaseTileType(tile_type) == 7);
 			},
 			
+			IsTileTypeLeader : function(tile_type)
+			{
+				return (this.getBaseTileType(tile_type) == 10);
+			},
+			
 			IsTileTypeBuildable : function(tile_type)
 			{
 				if(this.IsTileTypeUndead(tile_type))

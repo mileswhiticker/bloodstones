@@ -97,6 +97,10 @@ define(
 				//now check over other tiles in the army for standard movement rules
 				//console.log("doing standard checks");
 				var highest_move_cost = 0;
+				
+				//calculate how many tiles can get a free leader move
+				var leader_bonus_left = moving_army.GetNumLeaders();
+				
 				for(var k in moving_army.tiles)
 				{
 					var tile_info = moving_army.tiles[k];
@@ -125,12 +129,21 @@ define(
 						//console.log("army_endangered");
 					}
 					
-					var tile_move_cost = this.GetTileMoveCost(tile_info.type_arg, province_info.type);
-					//console.log("tile_move_cost:" + tile_move_cost);
-					move_info.total_move_cost += tile_move_cost;
-					if(tile_move_cost > highest_move_cost)
+					//at least one tile must pay for movement
+					//note: this assumes all tiles pay the same move cost... dragons are currently the only case where this doesnt apply
+					if(leader_bonus_left > 0 && move_info.total_move_cost > 0)
 					{
-						highest_move_cost = tile_move_cost;
+						leader_bonus_left--;
+					}
+					else
+					{
+						var tile_move_cost = this.GetTileMoveCost(tile_info.type_arg, province_info.type);
+						//console.log("tile_move_cost:" + tile_move_cost);
+						move_info.total_move_cost += tile_move_cost;
+						if(tile_move_cost > highest_move_cost)
+						{
+							highest_move_cost = tile_move_cost;
+						}
 					}
 				}
 				

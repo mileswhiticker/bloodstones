@@ -121,7 +121,12 @@ define(
 				];
 				
 			},
-
+			
+			GetUnselectedArmyHintString : function()
+			{
+				return _("Select an army to show its units here");
+			},
+			
 			GetTileDropPayString : function(action_mode)
 			{
 				switch(action_mode)

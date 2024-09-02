@@ -18,6 +18,15 @@ define(
 		var instance = declare("_ui_leftpanel", null, {
 			//put your functions here
 			
+			SetupLeftUI : function(gamedatas)
+			{
+				console.log("page::SetupLeftUI()");
+				this.SetupPlayercards(gamedatas);
+				
+				//add a hint telling the player they can select an army there
+				this.CreateArmySelectPanelTitle();
+			},
+			
 			CreatePlayerHand : function(hand_player_id)
 			{
 				//ui element to show the tiles in a player's hand

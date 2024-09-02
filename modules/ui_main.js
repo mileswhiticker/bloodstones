@@ -69,9 +69,9 @@ define(
 				this.SetupBackgroundMap(canvas);
 				this.SetupProvinceUI(canvas);
 				this.SetupArmies(gamedatas);
-				this.SetupPlayercards(gamedatas);
 				this.SetupVillages(gamedatas);
 				this.SetupCitadels(gamedatas);
+				this.SetupLeftUI(gamedatas);
 			},
 			
 			SetupProvinces : function()

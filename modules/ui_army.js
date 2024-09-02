@@ -38,6 +38,9 @@ define(
 					//update the ui to show more info about this selected army stack
 					var selected_army_div = dojo.byId("selected_army");
 					
+					//remove the old title 
+					dojo.query(".selected_stack_element").forEach(dojo.destroy);
+					
 					//title
 					var title_div;
 					if(new_selected_army.player_id == this.getCurrentPlayer())
@@ -189,6 +192,9 @@ define(
 					
 					//clean up the ui
 					dojo.query(".selected_stack_element").forEach(dojo.destroy);
+					
+					//add a hint telling the player they can select an army there
+					this.CreateArmySelectPanelTitle();
 				}
 				else
 				{
@@ -196,6 +202,11 @@ define(
 				}
 				
 				return old_selected_army;
+			},
+			
+			CreateArmySelectPanelTitle : function()
+			{
+				dojo.place("<h1 class=\"ui_stack_title selected_stack_element\">" + this.GetUnselectedArmyHintString() + "</h1>", "selected_army");
 			},
 			
 			TileSelectionUpdated : function()

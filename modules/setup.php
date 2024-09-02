@@ -69,6 +69,7 @@ trait setup
 		$this->initStat("player", "vp_villages", 0);
 		$this->initStat("player", "vp_captures", 0);
 		$this->initStat("player", "vp_battles", 0);
+		$this->initStat("player", "vp_citadels", 0);
 		
         /************ End of the game initialization *****/
     }

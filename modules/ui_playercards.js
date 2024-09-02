@@ -96,12 +96,56 @@ define(
 						dojo.addClass(player_villages_icon,"display_none");
 					}
 					
+					//captured citadels container
+					let captured_citadels_container_id = this.GetCitadelsCapturedContainerId(player_id);
+					let captured_citadels_container = dojo.place("<div id=\"" + captured_citadels_container_id + "\" class=\"blst_captured_citadels_container playercard_element\"></div>", playercard.id);
+					
+					//captured citadels text
+					console.log("creating playercard for:");
+					console.log(player);
+					let captured_citadels_text_id = this.GetCitadelsCapturedTextNodeId(player_id);
+					let captured_citadels_text = dojo.place("<div id=\"" + captured_citadels_text_id + "\" class=\"blst_captured_citadels_text\">" + player.captured_citadels + "</div>", captured_citadels_container_id);
+					dojo.addClass(captured_citadels_text,faction_color_css);
+					
+					//create a custom image showing citadels from all the other players
+					var current_left_offset = 0;
+					for(var captured_player_id in gamedatas.players)
+					{
+						//skip ourselves, we can't capture our own citadels!
+						if(captured_player_id == player_id)
+						{
+							continue;
+						}
+						
+						//grab info about this player
+						var captured_player = gamedatas.players[captured_player_id];
+						var captured_factionid = captured_player.factionid;
+						
+						//chaos horde cannot build citadels
+						if(captured_factionid == this.FACTION_CHAOSHORDE)
+						{
+							continue;
+						}
+						
+						//create the div element to show a town for this player
+						let player_captured = document.createElement("div");
+						captured_citadels_container.appendChild(player_captured,true);
+						
+						dojo.addClass(player_captured, 'blst_captured_citadels_icon');
+						dojo.addClass(player_captured, 'citadel' + captured_factionid);
+						dojo.style(player_captured, "left", current_left_offset + "px");
+						current_left_offset += 10;
+					}
+					
+					
+					
+					
 					//villages captured by this player from enemy players
 					let player_villages_container_id = this.GetVillagesCapturedContainerId(player_id);
 					let player_captured_villages = dojo.place("<div id=\"" + player_villages_container_id + "\"class=\"player_captured_villages playercard_element\"></div>", playercard.id);
 					
 					//text for the number of villages captured
-					let player_captured_villages_text = dojo.place("<div id=\"" + this.GetVillagesCapturedTextId(player_id) + "\"class=\"\">" + player.villages_captured + "</div>", player_villages_container_id);
+					let player_captured_villages_text = dojo.place("<div id=\"" + this.GetVillagesCapturedTextId(player_id) + "\">" + player.villages_captured + "</div>", player_villages_container_id);
 					//player_captured_villages.style.color = this.faction_strings[factionid].fontColour;
 					dojo.addClass(player_captured_villages,faction_color_css);
 					
@@ -343,6 +387,27 @@ define(
 				player.villages_captured += num_new_villages;
 				var player_captured_villages = dojo.byId(this.GetVillagesCapturedTextId(player_id));
 				player_captured_villages.innerHTML = player.villages_captured;
+			},
+			
+			GetCitadelsCapturedContainerId : function(player_id)
+			{
+				return "citadels_captured_" + player_id;
+			},
+			
+			GetCitadelsCapturedTextNodeId : function(player_id)
+			{
+				return "citadels_captured_text_" + player_id;
+			},
+			
+			AddCitadelsCaptured : function(player_id, captured_faction)
+			{
+				console.log("page::AddCitadelsCaptured(" + player_id + "," + captured_faction + ")");
+				/*var player = this.gamedatas.players[player_id];
+				console.log(player);
+				player.villages_captured = Number(player.villages_captured);
+				player.villages_captured += num_new_villages;
+				var player_captured_villages = dojo.byId(this.GetVillagesCapturedTextId(player_id));
+				player_captured_villages.innerHTML = player.villages_captured;*/
 			},
 			
 			UpdateHiddenHandTiles : function(player_id)

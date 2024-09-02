@@ -62,9 +62,29 @@ define(
 				citadel_stack.addCitadel(this.getPlayerFactionId(owner_player_id));
 			},
 			
-			DestroyCitadel : function()
+			DestroyPlayerCitadel : function(player_id)
 			{
-				//todo
+				//update the gamedatas
+				var player_info = this.gamedatas.players[player_id];
+				player_info.citadel_prov = -1;
+				
+				//remove it from the map
+				for(var i=0; i<this.citadel_stacks.length; i++)
+				{
+					var check_citadel = this.citadel_stacks[i];
+					if(check_citadel.player_id == player_id)
+					{
+						//remove it from the list
+						this.citadel_stacks.splice(i, 1);
+						
+						//remove the node
+						dojo.destroy(check_citadel.container_div);
+						
+						//handle cleanup
+						check_citadel.destroy();
+						break;
+					}
+				}
 			},
 			
 			ServerPlaceCitadel : function(province_name)

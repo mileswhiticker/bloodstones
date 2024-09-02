@@ -74,6 +74,7 @@ define(
 				dojo.subscribe('playerCaptureFail', this, "notif_playerCaptureFail");
 				dojo.subscribe('desert_tiles', this, "notif_desert_tiles");
 				dojo.subscribe('battleResolve', this, "notif_battleResolve");
+				dojo.subscribe('battleResolveCitadel', this, "notif_battleResolveCitadel");
 				dojo.subscribe('battleResolve_dragons', this, "notif_battleResolve_dragons");
 				dojo.subscribe('battleResolve_undead', this, "notif_battleResolve_undead");
 				dojo.subscribe('playerUndeadMove', this, "notif_playerUndeadMove");
@@ -642,6 +643,18 @@ define(
 					}
 					//todo: some kind of ui feedback
 				}
+			},
+			
+			notif_battleResolveCitadel : function(notif)
+			{
+				//a player's citadel has been captured by another
+				this.DestroyPlayerCitadel(notif.args.losing_player);
+				
+				//the winner gets a ui symbol to show many they have captured
+				//todo
+				
+				//pass on the notification as normal
+				this.notif_battleResolve(notif);
 			},
 			
 			notif_battleResolve : function(notif)

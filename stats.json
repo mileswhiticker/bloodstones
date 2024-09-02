@@ -198,6 +198,13 @@
 			"id": 29,
 			"name": "Number of victory points scored from winning battles",
 			"type": "int"
+			},
+
+		"vp_citadels":
+		{
+			"id": 30,
+			"name": "Number of victory points scored from capturing citadels",
+			"type": "int"
 			}
 
 	},

@@ -705,10 +705,16 @@ trait player_utils
 		}
 	}
 	
+	public function IsPlayerCorsair($player_id)
+	{
+		$corsair_player_id = self::getUniqueValueFromDB("SELECT player_id FROM player WHERE player_factionid='$faction_id'");
+		return ($corsair_player_id == $player_id);
+	}
+	
 	public function GetCorsairPlayer()
 	{
 		$faction_id = self::FACTION_CORSAIRS;
-		return self::getUniqueValueFromDB("SELECT player_id FROM player WHERE player_factionid='$faction_id'");;
+		return self::getUniqueValueFromDB("SELECT player_id FROM player WHERE player_factionid='$faction_id'");
 	}
 	
 	public function GetNecromancersPlayer()
@@ -746,17 +752,24 @@ trait player_utils
 		$players = $this->getCollectionFromDb("SELECT player_id, player_factionid FROM player");
 		foreach($players as $player_id => $player)
 		{
-			$num_captured = $this->countPlayerVillagesCaptured($player_id);
+			$captured_villages_score = $this->countPlayerVillagesCaptured($player_id);
 			
 			//chaos horde score double VP for captured villages
 			if($player["player_factionid"] == self::FACTION_CHAOSHORDE)
 			{
-				$num_captured = $num_captured * 2;
+				$captured_villages_score = $num_captured * 2;
 			}
 			
-			//add the VP
-			$this->dbIncScore($player_id, $num_captured);
-			$this->incStat($num_captured, "vp_captures", $player_id);
+			//add the VP for captured villages
+			$this->dbIncScore($player_id, $captured_villages_score);
+			$this->incStat($captured_villages_score, "vp_captures", $player_id);
+			
+			//calculate VP for captured citadels
+			$captured_citadels_score = $this->GetCapturedCitadels($player_id) * 5;
+			
+			//add the VP for captured citadels
+			$this->dbIncScore($player_id, $captured_citadels_score);
+			$this->incStat($captured_citadels_score, "vp_citadels", $player_id);
 			
 			//calculate the tie breaker
 			$num_villages_built = count($this->getPlayerVillagesBuilt($player_id));

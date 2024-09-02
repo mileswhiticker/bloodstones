@@ -29,6 +29,12 @@ trait citadel
 		$this->gamestate->nextState('nextCitadel');
 	}
 	
+	public function GetCapturedCitadels($player_id)
+	{
+		$captured_citadels = $this->getUniqueValueFromDB("SELECT captured_citadels FROM player WHERE player_id='$player_id'");
+		return $captured_citadels;
+	}
+	
 	public function GetPossibleCitadelProvinces($player_id, $use_prov_names = true)
 	{
 		if($player_id == 0)

@@ -198,7 +198,7 @@ class bloodstones extends Table
 		
         // Get public information about players
         // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
-        $sql_players = "SELECT player_id id, player_score score, player_factionid factionid, player_regroups regroups, player_citadel_prov citadel_prov FROM player ";
+        $sql_players = "SELECT player_id id, player_score score, player_factionid factionid, player_regroups regroups, player_citadel_prov citadel_prov, captured_citadels FROM player ";
         $result['players'] = self::getCollectionFromDb($sql_players);
 		
 		//calculate some useful info about the player hands here
@@ -1881,6 +1881,7 @@ class bloodstones extends Table
 			$this->setGameStateValue("last_battle_loser", $losing_player);
 			
 			//merge together all the loser armies so they can retreat
+			//todo: armies on the client arent properly merging and retreating together
 			$battling_province_id = $this->getGameStateValue("battling_province_id");
 			$loser_army = $this->MergePlayerArmiesInProvince($battling_province_id, $losing_player);
 			
@@ -1893,10 +1894,36 @@ class bloodstones extends Table
 			
 			//function dbIncScore($player_id, $inc)
 			$victory_vp = count($loser_tiles);
+			
+			//corsair player gets 1 bonus VP from winning battles
+			if($this->IsPlayerCorsair($winning_player))
+			{
+				$victory_vp += 1;
+			}
+			
 			//self::notifyAllPlayers("debug", "", array('debugmessage' => "victory_vp: $victory_vp"));
 			$this->dbIncScore($winning_player, $victory_vp);
 			
 			$this->incStat($victory_vp, "vp_battles", $winning_player);
+			
+			//did the loser have a citadel here?
+			$loser_citadel_prov_id = $this->GetPlayerCitadelProvId($losing_player);
+			if($loser_citadel_prov_id >= 0)
+			{
+				//update the database
+				//todo: check the build code to make sure citadel prov id -1 wont break anything
+				$captured_citadels = $this->GetCapturedCitadels($winning_player) + 1;
+				$this->DbQuery("UPDATE player SET captured_citadels='$captured_citadels' WHERE player_id='$winning_player'");
+				$this->DbQuery("UPDATE player SET player_citadel_prov='-1' WHERE player_id='$losing_player'");
+				
+				//tell the clients
+				self::notifyAllPlayers("battleResolveCitadel", clienttranslate('${player_name1} has defeated ${player_name2} in battle and captured their citadel.'), array(
+					'player_name1' => $this->getLastBattleWinnerPlayerName(),
+					'player_name2' => $this->getLastBattleLoserPlayerName(),
+					'winning_player' => $winning_player,
+					'losing_player' => $losing_player
+					));
+			}
 			
 			self::notifyAllPlayers("battleResolve", clienttranslate('${player_name1} has defeated ${player_name2} in battle.'), array(
 				'player_name1' => $this->getLastBattleWinnerPlayerName(),

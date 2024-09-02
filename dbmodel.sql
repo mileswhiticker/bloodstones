@@ -125,6 +125,7 @@ ALTER TABLE `player` ADD `player_citadel_prov` SMALLINT NOT NULL DEFAULT -1;
 ALTER TABLE `player` ADD `player_regroups` TINYINT NOT NULL DEFAULT 0;
 ALTER TABLE `player` ADD `player_freebuildpoints` TINYINT NOT NULL DEFAULT 5;
 ALTER TABLE `player` ADD `withdraw_provs` varchar(16) NOT NULL DEFAULT "";
+ALTER TABLE `player` ADD `captured_citadels` TINYINT NOT NULL DEFAULT 0;
 
 CREATE TABLE IF NOT EXISTS `armies` (
   `army_id` int(10) unsigned NOT NULL,

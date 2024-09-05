@@ -101,8 +101,8 @@ define(
 					let captured_citadels_container = dojo.place("<div id=\"" + captured_citadels_container_id + "\" class=\"blst_captured_citadels_container playercard_element\"></div>", playercard.id);
 					
 					//captured citadels text
-					console.log("creating playercard for:");
-					console.log(player);
+					//console.log("creating playercard for:");
+					//console.log(player);
 					let captured_citadels_text_id = this.GetCitadelsCapturedTextNodeId(player_id);
 					let captured_citadels_text = dojo.place("<div id=\"" + captured_citadels_text_id + "\" class=\"blst_captured_citadels_text\">" + player.captured_citadels + "</div>", captured_citadels_container_id);
 					dojo.addClass(captured_citadels_text,faction_color_css);

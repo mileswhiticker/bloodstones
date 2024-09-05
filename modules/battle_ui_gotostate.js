@@ -229,8 +229,8 @@ define(
 			
 			UIStateBattleRetreat : function(args)
 			{
-				console.log("page::UIStateBattleRetreat()");
-				console.log(args);
+				//console.log("page::UIStateBattleRetreat()");
+				//console.log(args);
 				
 				//the basic info
 				this.battling_province_name = args.args.battling_province_name;

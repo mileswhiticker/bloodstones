@@ -215,12 +215,6 @@ define(
 						this.UIStateBattleTile(args);
 						break;
 					}
-					case 'battleWait':
-					{
-						//update the battle tiles
-						this.UIStateBattleTile(args);
-						break;
-					}
 					case 'battleEnd':
 					{
 						//update the titles

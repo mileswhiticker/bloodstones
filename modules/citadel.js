@@ -38,55 +38,6 @@ define(
 				}
 			},
 			
-			SetupCitadels : function(gamedatas)
-			{
-				for(var player_id in gamedatas.players)
-				{
-					var player_info = gamedatas.players[player_id];
-					if(player_info.citadel_prov != -1)
-					{
-						var citadel_prov_name = this.GetProvinceNameFromId(player_info.citadel_prov);
-						this.CreateCitadel(citadel_prov_name, player_id);
-					}
-				}
-			},
-			
-			CreateCitadel : function(province_name, owner_player_id)
-			{
-				//console.log("page::CreateCitadel(" + province_name + "," + owner_player_id + ")");
-				var citadel_info = {player_id: owner_player_id, province_id: province_name, tiles: {}, army_id: this.getTempArmyId()};
-				var citadel_stack = new modules.TileStack();
-				citadel_stack.createAsCitadel(this, "centrepanel", citadel_info);	//node id formerly "gamemap"
-				//this.villagestacks_by_province[province_name] = villagestack;
-				this.citadel_stacks.push(citadel_stack);
-				citadel_stack.addCitadel(this.getPlayerFactionId(owner_player_id));
-			},
-			
-			DestroyPlayerCitadel : function(player_id)
-			{
-				//update the gamedatas
-				var player_info = this.gamedatas.players[player_id];
-				player_info.citadel_prov = -1;
-				
-				//remove it from the map
-				for(var i=0; i<this.citadel_stacks.length; i++)
-				{
-					var check_citadel = this.citadel_stacks[i];
-					if(check_citadel.player_id == player_id)
-					{
-						//remove it from the list
-						this.citadel_stacks.splice(i, 1);
-						
-						//remove the node
-						dojo.destroy(check_citadel.container_div);
-						
-						//handle cleanup
-						check_citadel.destroy();
-						break;
-					}
-				}
-			},
-			
 			ServerPlaceCitadel : function(province_name)
 			{
 				//console.log("page::ServerPlaceCitadel()");

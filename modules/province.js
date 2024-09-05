@@ -293,7 +293,7 @@ define(
 			{
 				//console.log("page::TileCanMove(" + tile_type + "," + province_type + ")");
 				//castles simply cant move
-				if(this.IsTileTypeCastle(tile_type))
+				if(this.IsTileTypeCastle(tile_type) || this.IsTileTypeCitadel(tile_type))
 				{
 					return false;
 				}
@@ -443,9 +443,9 @@ define(
 				return 1;
 			},
 			
-			CanProvinceBuildTile : function(province_id, tile_info)
+			CanProvinceBuildTile : function(province_name, tile_info)
 			{
-				var prov_name = this.GetProvinceNameFromId(province_id);
+				var prov_name = this.GetProvinceNameFromId(province_name);
 				var prov_info = this.provinces_by_name[prov_name];
 				
 				if(!this.IsTileTypeBuildable(tile_info.type_arg))
@@ -473,7 +473,7 @@ define(
 				//var base_tile_type = this.getBaseTileType();
 				
 				//this shouldn't be reached
-				console.log("WARNING: page::CanProvinceBuildTile(" + province_id + "," + tile_info.type_arg + ") reached unexpected end state");
+				console.log("WARNING: page::CanProvinceBuildTile(" + province_name + "," + tile_info.type_arg + ") reached unexpected end state");
 				return true;
 			},
 			
@@ -564,7 +564,7 @@ define(
 				for(var i in this.all_armies)
 				{
 					var army_stack = this.all_armies[i];
-					if(army_stack.province_id == province_name)
+					if(army_stack.prov_name == province_name)
 					{
 						found_armies.push(army_stack);
 					}
@@ -579,7 +579,7 @@ define(
 				for(var i in this.all_armies)
 				{
 					var army_stack = this.all_armies[i];
-					if(army_stack.province_id == province_name)
+					if(army_stack.prov_name == province_name)
 					{
 						if(army_stack.player_id == player_id)
 						{
@@ -603,7 +603,7 @@ define(
 				{
 					var army_stack = this.all_armies[i];
 					//console.log(army_stack);
-					if(army_stack.province_id == province_name)
+					if(army_stack.prov_name == province_name)
 					{
 						if(army_stack.player_id != player_id)
 						{
@@ -646,7 +646,7 @@ define(
 					if(this.DoesActivePlayerOwnArmy(army_stack))
 					{
 						//console.log(army_stack.id_string + " is owned by active player");
-						if(army_stack.province_id == prov_info.name)
+						if(army_stack.prov_name == prov_info.name)
 						{
 							//console.log(army_stack.id_string + " is present in adj Sea province " + prov_info.name);
 							

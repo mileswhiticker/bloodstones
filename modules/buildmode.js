@@ -50,11 +50,22 @@ define(
 			QueueArmyBuild : function(target_prov_name, tile_id)
 			{
 				//console.log("page::QueueArmyBuild(" + target_prov_name + "," + tile_id + ")");
+				//console.log(tile_id);
 				const target_province_info = this.provinces_by_name[target_prov_name];
 				
 				//todo: legality checks here if the build is allowed
 				
-				//CreateArmy : function(army_info, from_div_id)	//army_id, starting_province_id, owner_player_id
+				//is this tile already queued? apparently this is a bug which is occurring occasionally
+				var build_action_prov = this.queued_builds[target_prov_name];
+				if(build_action_prov && build_action_prov != undefined)
+				{
+					//console.log(build_action_prov);
+					if(build_action_prov.tiles.includes(tile_id))
+					{
+						console.log("WARNING: page::QueueArmyBuild(" + target_prov_name + "," + tile_id + ") trying to queue tile again but it is already queued");
+						return;
+					}
+				}
 				
 				//get or create an army here to hold the planned build tile
 				var new_army = this.GetTargetBuildArmy(target_prov_name);
@@ -80,7 +91,6 @@ define(
 				this.AddActionCostAmount(new_cost);
 				
 				//store some info for the server
-				var build_action_prov = this.queued_builds[target_prov_name];
 				if(build_action_prov == null || build_action_prov == undefined)
 				{
 					build_action_prov = {prov_name: target_prov_name, tiles: [], temp_army_id: new_army.id_num};
@@ -115,16 +125,23 @@ define(
 				this.current_player_hand.SpawnTileInStack(tile_info);
 				
 				//if there are no tiles left here, clean up the build army stack
-				if(army_build_stack.items.length == 0)
+				//the stack length should be 0, but there is a 1ms delay before the removal is processed so we instead check for 1
+				//console.log(army_build_stack.items);
+				if(army_build_stack.items.length < 1)
 				{
+					//console.log("destroying temp army");
 					//do we need to unselect this army?
 					if(this.selected_army == army_build_stack)
 					{
 						this.UnselectArmyStack();
 					}
 					
-					//finally clean up the army
-					//this.DestroyArmy(army_build_stack.id_num);
+					//untrack this province queued build
+					delete this.queued_builds[army_build_stack.prov_name];
+					delete this.queued_build_armies_by_province[army_build_stack.prov_name];
+					
+					//clean up the army
+					this.DestroyArmy(army_build_stack.id_num);
 					
 					//if we are in chaos horde mode, they can now choose a new province to deploy their starting horde in
 					if(this.gamedatas.gamestate.name == "freeBuild_chaosHorde")
@@ -132,6 +149,10 @@ define(
 						this.UnlimitChaosHordeBuildableProvinces();
 						window.gameui.showMessage(window.gameui.GetChaosHordeRechooseStartingProvString(),"info");
 					}
+				}
+				else
+				{
+					//console.log("there are still build tiles queued in this army");
 				}
 			},
 			
@@ -142,7 +163,7 @@ define(
 				if(target_army == null || target_army == undefined)
 				{
 					//console.log("creating new build army");
-					var army_info = {player_id: this.getActivePlayerId(), province_id: target_prov_name, tiles: {}, army_id: this.getTempArmyId()};
+					var army_info = {player_id: this.getActivePlayerId(), prov_name: target_prov_name, tiles: {}, army_id: this.getTempArmyId()};
 					target_army = this.CreateArmy(army_info);
 					target_army.SetBuilding(true);
 					this.queued_build_armies_by_province[target_prov_name] = target_army;

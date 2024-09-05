@@ -123,7 +123,7 @@ define(
 				const target_province_info = this.provinces_by_name[target_province_name];
 				
 				//did we click on the current province?
-				if(target_province_info.name == moving_army.province_id)
+				if(target_province_info.name == moving_army.prov_name)
 				{
 					//console.log("SANITY CHECK: QueueArmyMove() being called for the same province the army is in");
 					return;
@@ -148,7 +148,7 @@ define(
 					//if(!this.queued_undead_moves.includes(moving_army.id_string))
 					if(!this.queued_undead_moves[moving_army.id_string])
 					{
-						var start_prov_info = this.provinces_by_name[moving_army.province_id];
+						var start_prov_info = this.provinces_by_name[moving_army.prov_name];
 						this.queued_undead_moves[moving_army.id_string] = [start_prov_info.name];
 						this.moving_undead_armies.push(moving_army.id_string);
 					}

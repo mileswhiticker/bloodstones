@@ -20,11 +20,18 @@ trait citadel
 		$prov_id = $this->getProvinceIdFromName($prov_name);
 		$this->DbQuery("UPDATE player SET player_citadel_prov='$prov_id' WHERE player_id='$active_player_id'");
 		
+		$citadel_tile_info = $this->GetPlayerCitadelTile($active_player_id);
+		$citadel_tile_id = $citadel_tile_info["id"];
+		$citadel_army_info = $this->createArmy($prov_name, $active_player_id, [$citadel_tile_id]);
+		
 		//notify all the players
-		self::notifyAllPlayers('newCitadel', '', array(
-			'player_id' => $active_player_id,
-			'province_name' => $prov_name
-		));
+		//$player_name = $this->getActivePlayerName();
+		self::notifyAllPlayers('newCitadel', clienttranslate('${player_name} has placed their citadel.'), 
+			array(
+				'player_name' => $this->getActivePlayerName(),
+				'player_id' => $active_player_id,
+				'built_citadel_army' => $citadel_army_info
+			));
 		
 		$this->gamestate->nextState('nextCitadel');
 	}
@@ -33,6 +40,24 @@ trait citadel
 	{
 		$captured_citadels = $this->getUniqueValueFromDB("SELECT captured_citadels FROM player WHERE player_id='$player_id'");
 		return $captured_citadels;
+	}
+	
+	function GetPlayerCitadelTile($playerid)
+	{
+		//this should be safe so long as it's called after faction select
+		$factionid = $this->getPlayerFactionId($playerid);
+		return $this->GetFactionCitadelTile($factionid);
+	}
+	
+	function GetFactionCitadelTile($factionid)
+	{
+		//this should be safe as long as it's called after tile decks are created
+		$faction_deck = $this->faction_decks[$factionid];
+		$citadel_tile_type = self::UNIT_CITADEL + self::SPRITESHEET_ROW_TILES * $factionid;
+		$citadel_tile = $faction_deck->getCardsOfType('unit', $citadel_tile_type);
+		$citadel_tile = array_pop($citadel_tile);
+		
+		return $citadel_tile;
 	}
 	
 	public function GetPossibleCitadelProvinces($player_id, $use_prov_names = true)

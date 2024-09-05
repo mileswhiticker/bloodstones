@@ -185,6 +185,7 @@ trait action_capture
 			$new_army = self::createArmy($province_name, $player_id, [], true);
 		}
 		
-		self::notifyAllPlayers("debug", "", array('debugmessage' => "Created debug capturable villages"));
+		//i couldnt be bothered making the client update itself here... this is a debug function so it's fine
+		self::notifyAllPlayers("debug", "", array('debugmessage' => "Created debug capturable villages, make sure to refresh your window"));
 	}
 }

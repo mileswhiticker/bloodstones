@@ -514,6 +514,7 @@ trait battle
 	
 	function sacrificeUnit($sacrifice_tile_id)
 	{
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::sacrificeUnit($sacrifice_tile_id) gettype:" . gettype($sacrifice_tile_id)));
 		$attacking_player_id = $this->getGameStateValue("attacking_player_id");
 		$defending_player_id = $this->getGameStateValue("defending_player_id");
 		$active_player_id = $this->getActivePlayerId();
@@ -547,8 +548,16 @@ trait battle
 			'player_name' => $losing_player_name,
 			'tile_name' => $this->getTileNameFromType($tile_info["type_arg"]),
 			'sacrifice_tile_id' => $sacrifice_tile_id,
-			'army_id' => $sacrifice_army_id
+			'sacrifice_army_id' => $sacrifice_army_id
 			));
+		
+		//if this is a citadel, special handle it
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "checking if sacrifice tile is a citadel..."));
+		$sacrifice_tile_type = $tile_info['type_arg'];
+		if($this->isTileTypeCitadel($sacrifice_tile_type))
+		{
+			$this->PlayerCaptureCitadel($attacking_player_id, $defending_player_id);
+		}
 		
 		//handle special post retreat abilities
 		if($this->isWinnerNecromancers())
@@ -579,17 +588,17 @@ trait battle
 				$new_army = $this->createArmy($prov_name, $winning_player_id, $undead_tile_ids);
 				
 				//get the info from this newly created army with its lone undead
-				$undead_army = [
+				/*$undead_army = [
 					"army_id" => $new_army["id_num"],
 					"province_id" => $prov_name,
 					"player_id" => $winning_player_id,
 					"tiles" => $new_army["tiles"],
-				];
+				];*/
 				
 				//send this info to the player
 				self::notifyAllPlayers("battleResolve_undead", clienttranslate('The necromancers of ${player_name} have raised the corpses of the slain!'), array(
 					'player_name' => $this->getLastBattleWinnerPlayerName(),
-					'undead_army' => $undead_army));
+					'undead_army' => $new_army));
 			}
 			else
 			{

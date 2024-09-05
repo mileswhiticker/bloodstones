@@ -87,7 +87,7 @@ trait faction
 		return $this->villages_deck->countCardInLocation("captured", $faction_id);
 	}
 	
-	function getVillagesBuiltFaction($faction_id)
+	function getVillagesBuiltFactionInfos($faction_id)
 	{
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::getBuiltVillagesFaction($faction_id)"));
 		//see setupVillagesDeck() on line ~307 of setup.php

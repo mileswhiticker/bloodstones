@@ -22,7 +22,8 @@ define(
 			
 			SelectArmyStack : function(new_selected_army)
 			{
-				//console.log("page::SelectArmyStack(" + new_selected_army.id_num + ")");
+				//console.log("page::SelectArmyStack(" + new_selected_army.id_string + ")");
+				//console.log(new_selected_army);
 				if(window.gameui.selected_army != null)
 				{
 					console.log("ERROR: Trying to select army " + new_selected_army.id_num + " but already selected " + window.gameui.selected_army.id_num);
@@ -54,17 +55,6 @@ define(
 					
 					dojo.addClass(title_div, "ui_stack_title");
 					dojo.addClass(title_div, "selected_stack_element");
-					
-					/*
-					//for debugging
-					//player owner
-					var player_div = dojo.place("<div>Player: <i>" + this.gamedatas.players[new_selected_army.player_id].name + "</i></div>", selected_army_div);
-					//dojo.addClass(player_div, "selected_stack_element");
-					
-					//province location
-					var province_div = dojo.place("<div>Location: <i>" + new_selected_army.province_id + "</i></div>", selected_army_div);
-					//dojo.addClass(province_div, "selected_stack_element");
-					*/
 					
 					//we need to set absolute and calculated positions here in order to do the stack split animation effect 
 					//the "Selected army" title is 34px
@@ -224,6 +214,12 @@ define(
 				return "blstarmystack" + army_id_num;
 			},
 			
+			GetArmyIdNumFromString : function(army_id_num)
+			{
+				var id_num = army_id_num.substring(13);
+				return Number(id_num);
+			},
+			
 			GetArmyById : function(id_num)
 			{
 				//console.log("page::GetArmyById(" + id_num + ")");
@@ -284,20 +280,8 @@ define(
 					var source_army_id_string = this.GetArmyIdString(source_army_id);
 					
 					//loop over provinces and find the old province zone
-					var cur_province = this.provinces_by_name[source_army.province_id];
+					var cur_province = this.provinces_by_name[source_army.prov_name];
 					cur_province.zone.removeFromZone(source_army_id_string, false);
-					/*
-					for(var i in this.provinces)
-					{
-						var cur_province = this.provinces[i];
-						if(cur_province.name == source_army.province_id)
-						{
-							//console.log("removing army " + army_id_string + " from province zone " + moving_army.province_id);
-							cur_province.zone.removeFromZone(source_army_id_string, false);
-							break;
-						}
-					}
-					*/
 					
 					//console.log("check1:");
 					//console.log(this.armies_by_id_string);
@@ -319,7 +303,7 @@ define(
 					source_army.destroy();
 			},
 			
-			MoveArmy : function(army_obj, dest_province_id, do_jump = false, ghost_move = false)
+			MoveArmy : function(army_obj, dest_province_name, do_jump = false, ghost_move = false)
 			{
 				var moving_army = null;
 				var army_id_string = "unknown_army";
@@ -351,30 +335,30 @@ define(
 				}
 				else
 				{
-					console.log("page.MoveArmy(" + army_obj + "," + dest_province_id + ") unknown army_obj type: " + army_obj.toString());
+					console.log("page.MoveArmy(" + army_obj + "," + dest_province_name + ") unknown army_obj type: " + army_obj.toString());
 					return;
 				}
-				//console.log("MoveArmy(" + army_id_string + "," + dest_province_id + ")");
+				//console.log("MoveArmy(" + army_id_string + "," + dest_province_name + ")");
 				
 				//old method: slide it out directly to the target province
-				//console.log("MoveArmy() " + "calling slideToObject(" + moving_army.container_div + "," + dest_province_id + ")");
+				//console.log("MoveArmy() " + "calling slideToObject(" + moving_army.container_div + "," + dest_province_name + ")");
 				//console.log(moving_army);
-				//var dojo_anim = this.slideToObject(moving_army.container_div, dest_province_id);
+				//var dojo_anim = this.slideToObject(moving_army.container_div, dest_province_name);
 				//dojo_anim.play();
 				
 				//loop over provinces and find the old province zone
-				if(moving_army.province_id != "NA")
+				if(moving_army.prov_name != "NA")
 				{
-					//console.log("check1 " + moving_army.province_id);
+					//console.log("check1 " + moving_army.prov_name);
 					for(var i in this.provinces)
 					{
 						var cur_province = this.provinces[i];
 						//console.log("check2 " + cur_province.name);
-						if(cur_province.name == moving_army.province_id)
+						if(cur_province.name == moving_army.prov_name)
 						{
 							cur_province.zone.instantaneous = do_jump;
-							//console.log("removing army " + army_id_string + " from province zone " + moving_army.province_id);
-							cur_province.zone.removeFromZone(army_id_string, false, moving_army.province_id);
+							//console.log("removing army " + army_id_string + " from province zone " + moving_army.prov_name);
+							cur_province.zone.removeFromZone(army_id_string, false, moving_army.prov_name);
 							cur_province.zone.instantaneous = false;
 							//console.log(cur_province.zone)
 							break;
@@ -387,12 +371,12 @@ define(
 				{
 					var cur_province = this.provinces[i];
 					//console.log("check3 " + cur_province.name);
-					if(cur_province.name == dest_province_id)
+					if(cur_province.name == dest_province_name)
 					{
 						//console.log("jumping army to prov " + cur_province.name);
 						//console.log(cur_province);
 						cur_province.zone.instantaneous = do_jump;
-						//console.log("adding army " + army_id_string + " to province zone " + dest_province_id);
+						//console.log("adding army " + army_id_string + " to province zone " + dest_province_name);
 						cur_province.zone.placeInZone(army_id_string);
 						cur_province.zone.instantaneous = false;
 						//console.log(cur_province.zone)
@@ -404,7 +388,7 @@ define(
 				{
 					moving_army.SetMoving(true);
 				}
-				moving_army.province_id = dest_province_id;
+				moving_army.prov_name = dest_province_name;
 				//console.log(moving_army);
 				//console.log(moving_army.container_div);
 				//console.log(moving_army.container_div.parentNode);
@@ -412,7 +396,12 @@ define(
 			
 			TransferArmyTiles : function(source_army_id, target_army_id, tile_ids, selection_flag)
 			{
-				//console.log("page::TransferArmyTiles(" + source_army_id + "," + target_army_id + "," + tile_ids.toString() + ", " + selection_flag + ")");
+				if(tile_ids == null)
+				{
+					tile_ids = [];
+				}
+				//console.log("page::TransferArmyTiles(" + source_army_id + "," + target_army_id + "," + tile_ids.toString() + "," + selection_flag + ")");
+				//console.log("tile_ids:");
 				//console.log(tile_ids);
 				
 				//grab this useful info about the source army stack
@@ -422,6 +411,8 @@ define(
 					//create an empty army stack with everything except no tiles
 					console.log("ERROR: could not find source army to split: \"" + source_army_id + "\"");
 				}
+				//console.log("source_army:");
+				//console.log(source_army);
 				
 				//the target should already exist
 				var target_army = this.GetArmyById(target_army_id);
@@ -430,32 +421,46 @@ define(
 					//create an empty army stack with everything except no tiles
 					console.log("ERROR: could not find or create target army to split: \"" + target_army_id + "\"");
 				}
+				//console.log("target_army:");
+				//console.log(target_army);
 				
 				//next, find the tile infos about the tiles we are moving from the source 
-				var split_tile_infos = [];
-				//console.log("identifying tiles to split...");
-				for(var check_tile_id in source_army.tiles)
+				//if this is an empty or null list, then standard behaviour is to merge everything from source -> target
+				var split_tile_infos;
+				if(tile_ids.length > 0)
 				{
-					//console.log("check_tile_id: " + check_tile_id);
-					//check this tile
-					var checktile = source_army.tiles[check_tile_id];
-					
-					//loop over the tile ids we want to move
-					for(var i in tile_ids)
+					split_tile_infos = [];
+					//console.log("identifying tiles to split...");
+					for(var check_tile_id in source_army.tiles)
 					{
-						var split_tile_id = tile_ids[i];
-						//console.log("checking for match with split_tile_id: " + split_tile_id);
-						//do we want this one?
-						if(check_tile_id == split_tile_id)
+						//console.log("check_tile_id: " + check_tile_id);
+						//check this tile
+						var checktile = source_army.tiles[check_tile_id];
+						
+						//loop over the tile ids we want to move
+						for(var i in tile_ids)
 						{
-							//remember it for later
-							//console.log("found match");
-							//console.log("check3");
-							split_tile_infos.push(checktile);
-							break;
+							var split_tile_id = tile_ids[i];
+							//console.log("checking for match with split_tile_id: " + split_tile_id);
+							//do we want this one?
+							if(check_tile_id == split_tile_id)
+							{
+								//remember it for later
+								//console.log("found match");
+								//console.log("check3");
+								split_tile_infos.push(checktile);
+								break;
+							}
 						}
 					}
 				}
+				else
+				{
+					//console.log("all tiles are transferring across");
+					split_tile_infos = source_army.getTileInfos();
+				}
+				//console.log("split_tile_infos:");
+				//console.log(split_tile_infos);
 				
 				//add items to new army
 				var source_army_id_string = this.GetArmyIdString(source_army_id);
@@ -470,11 +475,13 @@ define(
 				//console.log(source_army);
 				
 				//unselect the old army
-				var old_selected_army = this.UnselectArmyStack();
+				//DONT do this, it breaks other code
+				//var old_selected_army = this.UnselectArmyStack();
 				
 				//if the old army is completely empty?
 				if(source_army.items.length == 0)
 				{
+					//console.log("destroying source army");
 					this.DestroyArmy(source_army_id);
 				}
 				
@@ -567,72 +574,6 @@ define(
 						}
 					}
 				}
-				
-				/*old code from this point on*/
-				/*
-				if(window.gameui.selected_army == null)
-				{
-					//have we already selected an army stack?
-					//enter move mode if it's our army and we are able to
-					if(this.isCurrentPlayerMainState() && !this.isCurrentPlayerMoveMode())
-					{
-						this.EnterMoveMode();
-					}
-					
-					//select this army
-					this.SelectArmyStack(clicked_army);
-					this.RefreshMoveModeUI();
-				}
-				else
-				{
-					var old_selected_army = window.gameui.selected_army;
-					
-					//toggle army selection
-					if(old_selected_army == clicked_army)
-					{
-						this.UnselectArmyStack();
-						if(this.isCurrentPlayerMoveMode())
-						{
-							this.RefreshMoveModeUI();
-						}
-					}
-					else if(this.isCurrentPlayerMoveMode())
-					{
-						//are the armies in the same province?
-						if(old_selected_army.province_id == clicked_army.province_id)
-						{
-							//is it owned by the player?
-							if(old_selected_army.player_id == clicked_army.player_id)
-							{
-								//does this army have queued moves?
-								if(!old_selected_army.IsMoving())
-								{
-									//merge the selected units into the target army
-									var selected_tile_ids = old_selected_army.getSelectedTileIds();
-									this.ServerArmyMerge(old_selected_army, clicked_army, selected_tile_ids);
-									
-									this.RefreshMoveModeUI();
-								}
-								else
-								{
-									this.showMessage(_('You must finish your move before merging armies.'), 'error');
-								}
-							}
-							else
-							{
-								//no error message, it should be obvious to the player
-							}
-						}
-						else
-						{
-							//change the selected army
-							this.UnselectArmyStack();
-							this.SelectArmyStack(clicked_army);
-							this.RefreshMoveModeUI();
-						}
-					}
-				}
-				*/
 			},
 			
 			SelectedArmySplitAnimation : function(sliding_tile_id, target_army_id)
@@ -773,6 +714,12 @@ define(
 					//regular expression to extract the army id number from the node id string
 					var army_id_source = army_source.id_string.replace(/[^0-9]/g,"");
 					var army_id_target = army_target.id_string.replace(/[^0-9]/g,"");
+					
+					//if this is an empty or null list, then standard behaviour is to merge everything from source -> target
+					/*if(!tile_ids_to_merge || tile_ids_to_merge == undefined || tile_ids_to_merge.length == 0)
+					{
+						tile_ids_to_merge = army_source.getSelectedTileIds();
+					}*/
 					var tile_list_JSON = JSON.stringify(tile_ids_to_merge);
 					/*
 					$source_army_id = self::getArg("source_army_id", AT_int, true);

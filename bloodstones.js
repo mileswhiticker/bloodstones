@@ -311,6 +311,41 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			this.STATE_BUILDVILLAGE = 8;
 			this.STATE_MAX = 8;
 			
+			//length of a row on the sprite sheet as measured in number of tiles
+			this.SPRITESHEET_ROW_TILES = 14;
+			this.SPRITESHEET_ROWS = 8;
+			
+			this.TILE_UNIT_MIN = 0;
+			
+			//base unit types (eg a single row of the sprite sheet)
+			this.UNIT_BLANK = 0;
+			this.UNIT_RESOURCES = 1;
+			this.UNIT_ATTACKER = 2;
+			this.UNIT_SWORD = 3;
+			this.UNIT_SHIELD = 4;
+			this.UNIT_ARCHER = 5;
+			this.UNIT_CAVALRY = 6;
+			this.UNIT_CASTLE = 7;
+			this.UNIT_SHIP = 8;
+			this.UNIT_SIEGE = 9;
+			this.UNIT_LEADER = 10;
+			this.UNIT_SPECIALONE = 11;
+			this.UNIT_SPECIALTWO = 12;
+			this.UNIT_CITADEL = 13;
+			
+			//unique tile defines, most of these are specialone or specialtwo (but not all)
+			this.TILE_GIANT = 25;
+			this.TILE_KOBOLD = 30;
+			this.TILE_DRAGON = 39;
+			this.TILE_GOBLIN = 58;
+			this.TILE_NECROMANCER = 67;
+			this.TILE_UNDEAD = 68;
+			
+			this.TILE_UNIT_MAX = 83;
+			
+			//used for battles
+			this.TILE_DICE_MIN = 84;
+			this.TILE_DICE_MAX = 111;
 			
 			/* General UI */
 			
@@ -437,8 +472,8 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			this.num_defender_tiles_rejected = 0;
 			this.max_battle_tiles = 3;
 			
-			this.ATTACKER_TILE_TYPE = 78;
-			this.DEFENDER_TILE_TYPE = 91;
+			this.ATTACKER_TILE_TYPE = 84;
+			this.DEFENDER_TILE_TYPE = 98;
 			
 			
 			/* Build villages state */
@@ -615,6 +650,11 @@ function (dojo, declare, lang, fx, on, domAttr) {
 		getTempArmyId : function()
 		{
 			return this.next_temp_army_id--;
+		},
+		
+		isTempArmyId : function(army_id_num)
+		{
+			return army_id_num < 0;
 		},
 		
 		isValidFactionId : function(faction_id)

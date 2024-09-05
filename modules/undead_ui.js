@@ -56,7 +56,7 @@ define(
 					//console.log("page::AddUndeadStateUI()");
 					this.SetActionCost(moving_army.UndeadMovesRemaining());
 					
-					const start_province_info = this.provinces_by_name[moving_army.province_id];
+					const start_province_info = this.provinces_by_name[moving_army.prov_name];
 					var checked_provinces = [];
 					checked_provinces[start_province_info.id_string] = start_province_info;
 					
@@ -157,7 +157,7 @@ define(
 						this.SetPaymodeUndeadUnselect();
 						this.RefreshUndeadStateUI();
 					}
-					else if(this.selected_army.province_id == clicked_army.province_id)
+					else if(this.selected_army.prov_name == clicked_army.prov_name)
 					{
 						//does the other army have queued moves?
 						if(!clicked_army.IsMoving())

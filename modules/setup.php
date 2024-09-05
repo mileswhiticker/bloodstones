@@ -76,23 +76,15 @@ trait setup
 	
 	protected function setupBattleDecks()
 	{
-		$tiles = array(
-			array( 'type' => 'battle_tile', 'type_arg' => 79, 'nbr' => 2 ),
-			array( 'type' => 'battle_tile', 'type_arg' => 80, 'nbr' => 2 ),
-			array( 'type' => 'battle_tile', 'type_arg' => 81, 'nbr' => 2 ),
-			array( 'type' => 'battle_tile', 'type_arg' => 82, 'nbr' => 2 ),
-			array( 'type' => 'battle_tile', 'type_arg' => 83, 'nbr' => 2 )
-		);
-		$this->attacker_dice_deck->createCards($tiles);
-		
-		$tiles = array(
-			array( 'type' => 'battle_tile', 'type_arg' => 92, 'nbr' => 2 ),
-			array( 'type' => 'battle_tile', 'type_arg' => 93, 'nbr' => 2 ),
-			array( 'type' => 'battle_tile', 'type_arg' => 94, 'nbr' => 2 ),
-			array( 'type' => 'battle_tile', 'type_arg' => 95, 'nbr' => 2 ),
-			array( 'type' => 'battle_tile', 'type_arg' => 96, 'nbr' => 2 )
-		);
-		$this->defender_dice_deck->createCards($tiles);
+		$tiles_attacker = [];
+		$tiles_defender = [];
+		for($i=0; $i<5; $i++)
+		{
+			$tiles_attacker[] = array( 'type' => 'battle_tile', 'type_arg' => self::TILE_DICE_MIN + $i, 'nbr' => 2 );
+			$tiles_defender[] = array( 'type' => 'battle_tile', 'type_arg' => self::TILE_DICE_MIN + $i + self::SPRITESHEET_ROW_TILES, 'nbr' => 2 );
+		}
+		$this->attacker_dice_deck->createCards($tiles_attacker);
+		$this->defender_dice_deck->createCards($tiles_defender);
 	}
 	
 	protected function setupFactionDecks($players, $options)
@@ -100,27 +92,38 @@ trait setup
 		try
 		{
 			//setup the village and citadel tiles... only one type of teach
-			$tiles_citadel = array(array( 'type' => 'citadel', 'type_arg' => 0, 'nbr' => 1));
 			$tiles_villages = array(array( 'type' => 'village', 'type_arg' => 0, 'nbr' => 20));
 			$tiles_undead = array(array('type' => 'unit', 'type_arg' => self::TILE_UNDEAD, 'nbr' => 4));
 			
 			//loop over each faction and create all the tile sets
 			//tile stack types: citadel, village, unit
-			$numtypes = 13;
+			$numtypes = self::SPRITESHEET_ROW_TILES;
 			for($factionid=0; $factionid<6; $factionid++)
 			{
 				//setup the generic unit tiles, there are 12 types of units
+				$tiles_citadel = array();
 				$tiles_units = array();
 				for($basetypeid=0; $basetypeid<$numtypes; $basetypeid++)
 				{
 					//have a unique variant of each base type for each faction
 					//for most factions and types these are cosmetic differences
 					$tile_type = $basetypeid + $factionid * $numtypes;
-					$tiles_units[] = array('type' => 'unit', 'type_arg' => $tile_type, 'nbr' => 0);
+					$new_tiles = array('type' => 'unit', 'type_arg' => $tile_type, 'nbr' => 0);
+					
+					if($this->isTileTypeCitadel($basetypeid))
+					{
+						$new_tiles['nbr'] = 1;
+						$tiles_citadel[] = $new_tiles;
+					}
+					else
+					{
+						$tiles_units[] = $new_tiles;
+					}
 				}
 				
 				//customise the tilesets for each faction
 				//unit types (0-10): blank, militia, sword, shield, archer, horse, castle, ship, siege, leader, special, special2 (zombies for necromancer faction)
+				//note: if 'nbr' is 0 that tile isnt created... i'm leaving those entries in for symmetry and easeier maintenance
 				switch($factionid)
 				{
 					case(0):
@@ -247,9 +250,9 @@ trait setup
 				//finally, create the tile sets
 				//todo: make this one big function call as recommended for optimisation
 				//note for later: when picking cards for armies, set $location to 'player_army' and $location_arg to the integer army id
+				$this->faction_decks[$factionid]->createCards($tiles_units, 'bag');
 				$this->faction_decks[$factionid]->createCards($tiles_citadel, 'citadel_available');
 				$this->faction_decks[$factionid]->createCards($tiles_villages, 'villages_available');
-				$this->faction_decks[$factionid]->createCards($tiles_units, 'bag');
 				if($factionid == self::FACTION_NECROMANCERS)
 				{
 					//we will only spawn these as needed for now

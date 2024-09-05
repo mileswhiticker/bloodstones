@@ -69,7 +69,8 @@ define(
 				this.spawn_fadeout = true;
 				
 				this.player_id = -1;
-				this.province_id = "NA";
+				this.province_id = -1;
+				this.prov_name = "NA";
 				this.ghosted = false;
 				this.isBuilding = false;
 				this.isMoving = false;
@@ -97,15 +98,15 @@ define(
 				this.use_vertical_overlap_as_offset = false;
 				
 				//settings for loading the sprite sheet
-				this.image_items_per_row = 13;
-				this.number_of_rows = 8;
+				this.image_items_per_row = gameui.SPRITESHEET_ROW_TILES;
+				this.number_of_rows = gameui.SPRITESHEET_ROWS;
 				this.backgroundSize = (this.image_items_per_row*100) + "% " + (this.number_of_rows*100) + "%";
 				
 				//create the potential units to go in this stack
 				this.max_faction_id = 6;	//number of factions
 				this.max_unit_type = this.max_faction_id * this.image_items_per_row;
-				this.battle_tiles_offset = 13 * this.max_faction_id;		//the position in the sprite sheet
-				this.citadel_type_offset = this.battle_tiles_offset + 6;	//the position in the sprite sheet
+				this.battle_tiles_offset = gameui.TILE_DICE_MIN;		//the position in the sprite sheet
+				//this.citadel_type_offset = this.battle_tiles_offset + 6;	//the position in the sprite sheet
 				this.village_tiles_offset = this.battle_tiles_offset + 13 * 2;	//in separate images but should be part of the sprite sheet. this type number pretends they are another bottom row
 				if(!initialised_statics)
 				{
@@ -123,11 +124,11 @@ define(
 						
 						//create citadels for first five factions: different handling because they are different dimensions
 						//chaos faction doesn't have a citadel
-						if(cur_faction_id <= 4)
+						/*if(cur_faction_id <= 4)
 						{
 							var tile_type = this.citadel_type_offset + cur_faction_id;
 							this.addItemType(tile_type, 0, g_gamethemeurl + 'img/citadel' + cur_faction_id + '.png', tile_type);
-						}
+						}*/
 						
 						//create villages
 						//this is messy but should work
@@ -155,9 +156,14 @@ define(
 				//console.log(this);
 			},
 			
-			createAsArmy: function(page, host_div_id, army_info, from_div_id)//army_id, player_id, starting_province_id)
+			createAsArmy: function(page, host_div_id, army_info, from_div_id)
 			{
 				//console.log("TileStack::createAsArmy(page," + host_div_id + ",army_info," + from_div_id + ")");
+				//container_div
+				
+				//this doesnt need to be passed in as argument
+				host_div_id = "centrepanel";
+				
 				//console.log(army_info);
 				//override the default toString() method so we can do type checking on the object
 				Object.getPrototypeOf(this).toString = function tileStackToString()
@@ -196,14 +202,6 @@ define(
 				dojo.style(this.selected_div, 'left', '-' + this.apparenceBorderWidth + "px");
 				dojo.style(this.selected_div, 'top', '-' + this.apparenceBorderWidth + "px");
 				
-				/*if(starting_province_id != undefined)
-				{
-					//todo: why does this function place it in an unusual spot?
-					//offset (60,-90) is so it looks like it's coming from the place i want it to (centre of "bag" div)
-					//page.placeOnObjectPos(this.container_div, $(starting_province_id), 60, -90);
-					page.placeOnObjectPos(this.container_div, $(starting_province_id), 0, 0);
-				}*/
-				
 				if(from_div_id != null && typeof from_div_id != 'undefined')
 				{
 					//console.log("spawning army " + this.id_num + " from_div_id: " + from_div_id);
@@ -213,7 +211,7 @@ define(
 				this.SpawnTilesInStack(army_info["tiles"]);
 
 				//this method will "slide" it out across the board to the starting provine
-				window.gameui.MoveArmy(this, army_info.province_id,  true);
+				window.gameui.MoveArmy(this, army_info.prov_name,  true);
 			},
 			
 			createAsVillage: function(page, host_div_id, village_info)
@@ -265,7 +263,7 @@ define(
 				}*/
 				
 				//this method will "slide" it out across the board to the starting provine
-				window.gameui.MoveArmy(this, village_info.province_id,  true);
+				window.gameui.MoveArmy(this, village_info.prov_name,  true);
 			},
 			
 			addVillage(new_faction_id)
@@ -273,41 +271,6 @@ define(
 				var village_type = Number(this.village_tiles_offset) + Number(new_faction_id);
 				//console.log("page::addVillage(" + new_faction_id + ") this.village_tiles_offset:" + this.village_tiles_offset + " | village_type:" + village_type);
 				this.addToStock(village_type);
-			},
-			
-			createAsCitadel: function(page, host_div_id, citadel_info)
-			{
-				//so we can do type checks on generic objects
-				Object.getPrototypeOf(this).toString = function tileStackToString()
-				{
-					return "CitadelTileStack";
-				};
-				this.id_num = citadel_info.army_id;
-				this.id_string = page.GetArmyIdString(citadel_info.army_id);
-				this.player_id = citadel_info.player_id;
-				this.create(page, host_div_id);
-				//this.container_div.dataset.blstplayerid = citadel_info.player_id;
-				
-				this.stack_type = STACK_CITADEL;
-				
-				this.item_margin = 0;
-				this.item_width = 75;
-				this.item_height = 75;
-				//this.backgroundSize = (this.image_items_per_row*100) + "% " + (0.5*this.number_of_rows*100) + "%";
-				this.backgroundSize = "100% 100%";
-				//this.container_div.style.width = "50px";
-				//this.container_div.style.height = "50px";		//this is automatically overriden
-				this.setSelectionMode(0);
-				window.gameui.MoveArmy(this, citadel_info.province_id,  true);
-			},
-			
-			addCitadel(new_faction_id)
-			{
-				var extra_offset = this.image_items_per_row * 2;
-				var citadel_type = Number(this.citadel_type_offset) + Number(new_faction_id);
-				//console.log("page::addCitadel(" + new_faction_id + ") this.citadel_type_offset:" + this.citadel_type_offset + " | citadel_type:" + citadel_type);
-				this.addToStock(citadel_type);
-				//console.log(this);
 			},
 			
 			GenericInitialiseUI : function(page, host_div_id, player_id, tilestack_type)
@@ -620,6 +583,8 @@ define(
 			
 			SpawnTilesInStack : function(tile_infos, source_div_id = undefined, selected = true)
 			{
+				//console.log("page::SpawnTilesInStack()");
+				//console.log(tile_infos);
 				for(var i in tile_infos)
 				{
 					var tile_info = tile_infos[i];
@@ -804,10 +769,21 @@ define(
 				return selected_tile_ids;
 			},
 			
+			getTileInfos : function()
+			{
+				var tile_infos = [];
+				for(var i in this.tiles)
+				{
+					var tile = this.tiles[i];
+					tile_infos.push(tile);
+				}
+				return tile_infos;
+			},
+			
 			StartQueuedMove : function()
 			{
-				//console.log("page::StartQueuedMove() this.province_id:" + this.province_id);
-				this.starting_province_location = this.province_id;
+				//console.log("page::StartQueuedMove() this.prov_name:" + this.prov_name);
+				this.starting_province_location = this.prov_name;
 				window.gameui.queued_moving_armies.push(this);
 			},
 			

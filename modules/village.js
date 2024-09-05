@@ -141,7 +141,7 @@ define(
 				}
 				
 				//create the stack object for the temporary village
-				var village_info = {player_id: active_player_id, province_id: prov_info.name, tiles: {}, id_num: this.getTempArmyId()};
+				var village_info = {player_id: active_player_id, prov_name: prov_info.name, tiles: {}, id_num: this.getTempArmyId()};
 				var new_village = new modules.TileStack();
 				new_village.createAsVillage(this, "centrepanel", village_info);	//node id formerly "gamemap"
 				
@@ -192,7 +192,7 @@ define(
 						//console.log(village);
 						
 						//make a new entry for the json array
-						var village_entry = {province_name: village.province_id, temp_id: village.id_string};
+						var village_entry = {province_name: village.prov_name, temp_id: village.id_string};
 						json.push(village_entry);
 					}
 				}
@@ -232,24 +232,24 @@ define(
 				//console.log(temp_village);
 				
 				//remove it from the map
-				var cur_province = this.provinces_by_name[temp_village.province_id];
+				var cur_province = this.provinces_by_name[temp_village.prov_name];
 				cur_province.zone.removeFromZone(temp_village.id_string, false);
 				
 				//delete the reference from the object
 				delete temp_village;
 				delete this.temp_villages_by_id[temp_village.id_string];
-				for(var i in this.temp_villages_by_province[temp_village.province_id])
+				for(var i in this.temp_villages_by_province[temp_village.prov_name])
 				{
-					//delete this.temp_villages_by_province[temp_village.province_id];
-					var check_village = this.temp_villages_by_province[temp_village.province_id][i];
+					//delete this.temp_villages_by_province[temp_village.prov_name];
+					var check_village = this.temp_villages_by_province[temp_village.prov_name][i];
 					if(check_village.id_string == temp_village.id_string)
 					{
-						this.temp_villages_by_province[temp_village.province_id].splice(i, 1);
+						this.temp_villages_by_province[temp_village.prov_name].splice(i, 1);
 					}
 				}
-				if(!this.temp_villages_by_province[temp_village.province_id].length)
+				if(!this.temp_villages_by_province[temp_village.prov_name].length)
 				{
-					delete this.temp_villages_by_province[temp_village.province_id];
+					delete this.temp_villages_by_province[temp_village.prov_name];
 				}
 				for(var i = 0; i < this.temp_villages.length; i++)
 				{
@@ -265,7 +265,7 @@ define(
 				dojo.destroy(temp_village.container_div);
 				
 				//update the total village build cost
-				var prov_info = window.gameui.provinces_by_name[temp_village.province_id];
+				var prov_info = window.gameui.provinces_by_name[temp_village.prov_name];
 				var new_cost = this.getProvVillageCostType(prov_info.type);
 				this.AddActionCostAmount(-new_cost);
 				

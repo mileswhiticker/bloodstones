@@ -36,9 +36,70 @@ trait player_utils
 	
 	function GetPlayerCitadelProvId($player_id)
 	{
-		$prov_id = $this->getUniqueValueFromDB("SELECT player_citadel_prov FROM player WHERE player_id='$player_id'");
-		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::GetPlayerCitadelProvId($player_id) prov_id:$prov_id"));
+		//not sure why this has to be cast to int, apparently its coming out of the database as a string
+		$prov_id = (int)$this->getUniqueValueFromDB("SELECT player_citadel_prov FROM player WHERE player_id='$player_id'");
+		//$vartype = gettype($prov_id);
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::GetPlayerCitadelProvId($player_id) prov_id:$prov_id vartype:$vartype"));
 		return $prov_id;
+	}
+	
+	function GetPlayerCitadelTileInfo($player_id)
+	{
+		try
+		{
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::GetPlayerCitadelTileInfo($player_id)"));
+			$faction_id = $this->GetPlayerFaction($player_id);
+			$faction_deck = $this->faction_decks[$faction_id];
+			$citadel_type = ($faction_id + 1) * self::UNIT_CITADEL;
+			$tiles = $faction_deck->getCardsOfType('unit', $citadel_type);
+			$citadel_tile_info;
+			$citadel_tile_id = 0;
+			foreach ($tiles as $tile_id => $tile_info)
+			{
+				if($citadel_tile_id != 0)
+				{
+					//sanity check
+					throw new BgaUserException( self::_("GetPlayerCitadelTileInfo($player_id) multiple citadel tiles for this player's faction ($faction_id)") );
+				}
+				$citadel_tile_id = $tile_id;
+				$citadel_tile_info = $tile_info;
+			}
+			
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => "citadel_tile_id:$citadel_tile_id"));
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($tiles, true)));
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($tile_info, true)));
+		}
+		catch (Exception $e)
+		{
+			self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($e, true)));
+		}
+		return $tile_info;
+	}
+	
+	function PlayerCaptureCitadel($attacking_player_id, $defending_player_id)
+	{
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::PlayerCaptureCitadel($attacking_player_id, $defending_player_id)"));
+		
+		//grab some useful info
+		$citadel_tile_info = $this->GetPlayerCitadelTileInfo($defending_player_id);
+		$citadel_tile_id = $citadel_tile_info['id'];
+		$citadel_army_id = $citadel_tile_info['location_arg'];
+		//$citadel_player_deck = $this->player_decks[$defending_player_id];
+		//$citadel_player_deck->moveCard($citadel_tile_id, 'discard');
+		
+		//update the database
+		$num_captured = $this->getUniqueValueFromDB("SELECT captured_citadels FROM player WHERE player_id='$attacking_player_id'") + 1;
+		self::DbQuery("UPDATE player SET captured_citadels='$num_captured' WHERE player_id='$attacking_player_id'");
+		
+		//notify all players
+		self::notifyAllPlayers("citadelCapture", clienttranslate('${player_name1} has captured the citadel of ${player_name2}!'), array(
+			'player_name1' => $this->getPlayerNameById($attacking_player_id),
+			'player_name2' => $this->getPlayerNameById($defending_player_id),
+			'citadel_army_id' => $citadel_army_id,
+			'citadel_tile_id' => $citadel_tile_id,
+			'attacking_player_id' => $attacking_player_id,
+			'defending_player_id' => $defending_player_id
+			));
 	}
 	
 	function IsCurrentPlayerActive()
@@ -66,14 +127,19 @@ trait player_utils
 	}
 
 	// increment score (can be negative too)
-	function dbIncScore($player_id, $inc)
+	function dbIncScore($player_id, $inc, $log_message = true)
 	{
 		$count = $this->dbGetScore($player_id);
 		if ($inc != 0) {
 			$count += $inc;
 			$this->dbSetScore($player_id, $count);
 			$player_name = $this->getPlayerNameById($player_id);
-			self::notifyAllPlayers("logPlayerMessage", clienttranslate('${player_name} has gained ${incscore} Victory Points.'), array("player_name" => $player_name, "incscore" => $inc));
+			
+			if($log_message)
+			{
+				self::notifyAllPlayers("logPlayerMessage", clienttranslate('${player_name} has gained ${incscore} Victory Points.'), array("player_name" => $player_name, "incscore" => $inc));
+			}
+			
 		}
 		return $count;
 	}
@@ -90,10 +156,10 @@ trait player_utils
 		return $this->countFactionVillagesCaptured($faction_id);
 	}
 	
-	function getPlayerVillagesBuilt($player_id)
+	function getPlayerVillagesBuiltInfos($player_id)
 	{
 		$faction_id = $this->GetPlayerFaction($player_id);
-		return $this->getVillagesBuiltFaction($faction_id);
+		return $this->getVillagesBuiltFactionInfos($faction_id);
 	}
 	
 	function setupFreebuildPlayerHands()
@@ -391,12 +457,14 @@ trait player_utils
 		$args = ["initial_buildable_provs" => $initial_buildable_provs];
 		*/
 		//todo: what about if the citadel is destroyed?
-		$citadel_prov_id = (int)$this->GetPlayerCitadelProvId($player_id);
+		$citadel_prov_id = $this->GetPlayerCitadelProvId($player_id);
 		//$type = gettype($citadel_prov_id);
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "type:$type"));
 		if($citadel_prov_id >= 0)
 		{
 			array_push($province_ids, $citadel_prov_id);
+			
+			//add any adjacent sea provinces for building ships
 			$sea_provs = $this->GetAdjSeaProvIds($citadel_prov_id);
 			foreach($sea_provs as $sea_prov_id)
 			{
@@ -417,7 +485,7 @@ trait player_utils
 		);*/
 		
 		//all provinces with a village can build units
-		$built_village_infos = $this->getPlayerVillagesBuilt($player_id);
+		$built_village_infos = $this->getPlayerVillagesBuiltInfos($player_id);
 		$adjacent_provs_to_check = [];
 		foreach($built_village_infos as $village_id => $village_info)
 		{
@@ -472,10 +540,9 @@ trait player_utils
 			}
 		}
 		
-		//todo: chaos horde can build anywhere they have units
-		
-		//finally, add any adjacent sea provinces for building ships
-		
+		$num_found = count($province_ids);
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "num_found:$num_found"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($province_ids, true)));
 		return $province_ids;
 	}
 	
@@ -707,8 +774,8 @@ trait player_utils
 	
 	public function IsPlayerCorsair($player_id)
 	{
-		$corsair_player_id = self::getUniqueValueFromDB("SELECT player_id FROM player WHERE player_factionid='$faction_id'");
-		return ($corsair_player_id == $player_id);
+		$faction_id = $this->GetPlayerFaction($player_id);
+		return ($faction_id == self::FACTION_CORSAIRS);
 	}
 	
 	public function GetCorsairPlayer()
@@ -772,7 +839,7 @@ trait player_utils
 			$this->incStat($captured_citadels_score, "vp_citadels", $player_id);
 			
 			//calculate the tie breaker
-			$num_villages_built = count($this->getPlayerVillagesBuilt($player_id));
+			$num_villages_built = count($this->getPlayerVillagesBuiltInfos($player_id));
 			$aux_score = $num_villages_built * 100 + $num_captured;
 			$this->dbSetAuxScore($player_id, $aux_score);
 		}
@@ -782,6 +849,10 @@ trait player_utils
 	{
 		self::notifyAllPlayers("debug", "", array('debugmessage' => "server::playerDebugAction()"));
 		//note: this triggers a call to the args() function so i dont need to put anything else here
+		
+		$this->GetPlayerCitadelTileInfo(self::getActivePlayerId());
+		//$this->args_playermain();
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export(,true)));
 		
 		//$this->debugCreateUndead();
 		
@@ -807,17 +878,10 @@ trait player_utils
 		$new_army = $this->createArmy($prov_name, $player_id, $undead_tile_ids);
 		
 		//get the info from this newly created army with its lone undead
-		$undead_army = [
-			"army_id" => $new_army["id_num"],
-			"province_id" => $prov_name,
-			"player_id" => $player_id,
-			"tiles" => $new_army["tiles"],
-		];
-		
+
 		//send this info to the player
 		self::notifyAllPlayers("battleResolve_undead", clienttranslate('DEBUG: created undead in ${prov_name}'), array(
 			'prov_name' => $prov_name,
-			'undead_army' => $undead_army));
-		
+			'undead_army' => $new_army));
 	}
 }

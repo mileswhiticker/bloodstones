@@ -45,7 +45,7 @@ define(
 					//armies can move in 1 step at a time, but with ships or bridges they can get adjacency by skipping over several sea provinces
 					
 					//console.log("checking movement_link_paths");
-					const start_province_info = this.provinces_by_name[moving_army.province_id];
+					const start_province_info = this.provinces_by_name[moving_army.prov_name];
 					var this_movemode_iteration = ++this.movemode_iteration;
 					start_province_info.move_prov_previous = null;
 					//start_province_info.move_link_previous = null;

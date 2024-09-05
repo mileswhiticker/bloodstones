@@ -81,16 +81,40 @@ class bloodstones extends Table
 	const ACTION_FAIL_STATE = 12;		//that action isn't allowed in this game state
 	const ACTION_FAIL_LIMITONCE = 13;	//that action can only be done once per turn
 	
-	const SPRITESHEET_ROW_TILES = 13;
+	//length of a row on the sprite sheet as measured in number of tiles
+	const SPRITESHEET_ROW_TILES = 14;
 	
-	const TILE_BASE_CAVALRY = 6;
-	const TILE_BASE_CASTLE = 7;
-	const TILE_GIANT = 24;
-	const TILE_KOBOLD = 28;
-	const TILE_DRAGON = 37;
-	const TILE_GOBLIN = 54;
-	const TILE_NECROMANCER = 63;
-	const TILE_UNDEAD = 64;
+	const TILE_UNIT_MIN = 0;
+	
+	//base unit types (eg a single row of the sprite sheet)
+	const UNIT_BLANK = 0;
+	const UNIT_RESOURCES = 1;
+	const UNIT_ATTACKER = 2;
+	const UNIT_SWORD = 3;
+	const UNIT_SHIELD = 4;
+	const UNIT_ARCHER = 5;
+	const UNIT_CAVALRY = 6;
+	const UNIT_CASTLE = 7;
+	const UNIT_SHIP = 8;
+	const UNIT_SIEGE = 9;
+	const UNIT_LEADER = 10;
+	const UNIT_SPECIALONE = 11;
+	const UNIT_SPECIALTWO = 12;
+	const UNIT_CITADEL = 13;
+	
+	//unique tile defines, most of these are specialone or specialtwo (but not all)
+	const TILE_GIANT = 25;
+	const TILE_KOBOLD = 30;
+	const TILE_DRAGON = 39;
+	const TILE_GOBLIN = 58;
+	const TILE_NECROMANCER = 67;
+	const TILE_UNDEAD = 68;
+	
+	const TILE_UNIT_MAX = 83;
+	
+	//used for battles
+	const TILE_DICE_MIN = 85;
+	const TILE_DICE_MAX = 111;	//this one is unused i think
 	
 	use battle;
 	use province;
@@ -218,7 +242,7 @@ class bloodstones extends Table
 			}
 			
 			//info about villages relevant to this player
-			$player["villages_built"] = $this->getPlayerVillagesBuilt($player_id);
+			$player["villages_built"] = $this->getPlayerVillagesBuiltInfos($player_id);
 			$player['villages_available'] = $this->countPlayerVillagesAvailable($player_id);
 			$player['villages_captured'] = $this->countPlayerVillagesCaptured($player_id);
 		}
@@ -252,18 +276,19 @@ class bloodstones extends Table
 		
 		//get info on the armies on the board
 		//todo: this seems more intricate than it needs to be. i wonder if there's a simpler way to do this? 
-		$armies = self::getCollectionFromDb("SELECT * FROM armies", false);
+		$armies = self::getCollectionFromDb("SELECT army_id, player_id, province_id prov_name FROM armies", false);
 		foreach($armies as $army_id => $army)
 		{
 			//first, get the tile deck for this player's army
 			$army_player_deck = $this->player_decks[$army["player_id"]];
 			
-			//if($army_player_deck != null)
-			{
-				//get the deck's tiles that are in that particular army
-				$army["tiles"] = $army_player_deck->getCardsInLocation('army', $army_id);
-			}
+			//now grab the tiles in this army
+			$army["tiles"] = $army_player_deck->getCardsInLocation('army', $army_id);
+			
+			//link the army id
 			$armies[$army_id] = $army;
+			
+			//correct this... the old convention of "id" was for a string but the new one has "id" as a number and "name" as a string containing the numerical id
 		}
 		
 		//save the final creation
@@ -437,12 +462,13 @@ class bloodstones extends Table
 	{
 		$current_player_id = $this->getCurrentPlayerId();
 		//$current_player = self::getObjectFromDB("SELECT player_id id, player_factionid factionid FROM player WHERE player_id='$current_player_id'");
-		$tile_ids_string = [];
+		$tile_ids_string = "";
 		if(!is_null($tile_ids))
 		{
 			$tile_ids_string = implode(",",$tile_ids);
 		}
-		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::tryArmyStackTransfer(source_army_id:$source_army_id,target_army_id:$target_army_id,tile_ids:$tile_ids_string,target_province_override:$target_province_override,temp_army_id_num:$temp_army_id_num)"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::tryArmyStackTransfer($source_army_id,$target_army_id,$tile_ids_string,$target_province_override,$temp_army_id_num)"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($tile_ids,true)));
 		//
 		$source_army = self::getObjectFromDB("SELECT * FROM armies WHERE army_id=$source_army_id");
 		$target_army = null;
@@ -455,7 +481,7 @@ class bloodstones extends Table
 				$target_province = $source_army['province_id'];
 			}
 			$target_army = $this->createArmy($target_province, $source_army['player_id'], $tile_ids, false);
-			$target_army_id = $target_army["id_num"];
+			$target_army_id = $target_army["army_id"];
 		}
 		else
 		{
@@ -467,7 +493,7 @@ class bloodstones extends Table
 			//we are merging these tiles into an existing army
 			if(is_null($tile_ids) || count($tile_ids) == 0)
 			{
-				//move all cards over
+				//by default, move all cards over
 				$player_deck->moveAllCardsInLocation('army', 'army', $source_army_id, $target_army_id);
 			}
 			else
@@ -506,8 +532,8 @@ class bloodstones extends Table
 		self::checkAction("action_playerSpawnTestArmy");
 		
 		//hijack this debug function rather than create a new one
-		$this->debugCreateCapturableVillages();
-		return;
+		//$this->debugCreateCapturableVillages();
+		//return;
 		
 		//grab some useful info
 		$owner_player_id = $this->getActivePlayerId();
@@ -521,21 +547,23 @@ class bloodstones extends Table
 		if(count($new_army["tiles"]) == 0)
 		{
 			//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($new_army,true)));
-			$new_army_id = $new_army["id_num"];
+			$new_army_id = $new_army["army_id"];
 			self::DbQuery("DELETE FROM armies WHERE army_id='$new_army_id';");
 			self::notifyAllPlayers("debug", "", array('debugmessage' => "Warning: no more tiles in player deck to spawn"));
 		}
 		else
 		{
-			self::notifyAllPlayers('playerCreateArmy', '${player_name} has spawned test Army #${army_id} in ${province_id}', 
+			//var army_info = {army_id: notif.args.army_id, player_id: notif.args.player_id, province_id: notif.args.province_id, tiles: notif.args.tiles};
+			self::notifyAllPlayers('playerCreateArmy', '${player_name} has spawned test army', 
 				array(
 					'player_name' => $this->getPlayerNameById($owner_player_id),
-					'army_id' => $new_army["id_num"],
-					'player_id' => $owner_player_id,
-					'province_id' => $random_province_name,
-					'tiles' => $new_army["tiles"],
+					//'army_id' => $new_army["army_id"],
+					//'player_id' => $owner_player_id,
+					//'province_id' => $random_province_name,
+					//'tiles' => $new_army["tiles"],
 					'pending_battles_update' => $this->GetPendingBattleProvincesAll(),
-					'from_div_id' => "bag"
+					'army_info' => $new_army
+					//'from_div_id' => "bag"
 				));
 		}
 	}
@@ -940,7 +968,7 @@ class bloodstones extends Table
 		self::notifyAllPlayers("regroup", "", array('player_id' => $active_player_id, 'regroups' => $new_regroups));
 		
 		//add score from built villages
-		$num_villages_built = $this->getPlayerVillagesBuilt($active_player_id);
+		$num_villages_built = count($this->getPlayerVillagesBuiltInfos($active_player_id));
 		$this->dbIncScore($active_player_id, $num_villages_built);
 		$this->incStat($num_villages_built, "villages built", $active_player_id);
 		
@@ -948,6 +976,10 @@ class bloodstones extends Table
 		if($this->isGameFinished())
 		{
 			self::notifyAllPlayers("debug", "", array('debugmessage' => "that was the final regroup! The game should now end"));
+		}
+		else
+		{
+			self::notifyAllPlayers("debug", "", array('debugmessage' => "the active player is regrouping..."));
 		}
 	}
 	
@@ -965,29 +997,31 @@ class bloodstones extends Table
 		
 		$new_army = $this->createArmy($prov_name, $owner_player_id, null, true);
 		
-		self::notifyAllPlayers('playerCreateArmy', '${player_name} has spawned test Army #${army_id} in ${province_id}', 
+		self::notifyAllPlayers('playerCreateArmy', '${player_name} has spawned test army #1 for battle', 
 			array(
 				'player_name' => $this->getPlayerNameById($owner_player_id),
-				'army_id' => $new_army["id_num"],
-				'player_id' => $owner_player_id,
-				'province_id' => $prov_name,
-				'tiles' => $new_army["tiles"],
+				//'army_id' => $new_army["army_id"],
+				//'player_id' => $owner_player_id,
+				//'province_id' => $prov_name,
+				//'tiles' => $new_army["tiles"],
 				'pending_battles_update' => $this->GetPendingBattleProvincesAll(),
-				'from_div_id' => "bag"
+				'army_info' => $new_army
+				//'from_div_id' => "bag"
 			));
 			
 		$owner_player_id = self::getPlayerAfter($owner_player_id);
 		$new_army = $this->createArmy($prov_name, $owner_player_id, null, true);
 		
-		self::notifyAllPlayers('playerCreateArmy', '${player_name} has spawned test Army #${army_id} in ${province_id}', 
+		self::notifyAllPlayers('playerCreateArmy', '${player_name} has spawned test army #2 for battle', 
 			array(
 				'player_name' => $this->getPlayerNameById($owner_player_id),
-				'army_id' => $new_army["id_num"],
-				'player_id' => $owner_player_id,
-				'province_id' => $prov_name,
-				'tiles' => $new_army["tiles"],
+				//'army_id' => $new_army["army_id"],
+				//'player_id' => $owner_player_id,
+				//'province_id' => $prov_name,
+				//'tiles' => $new_army["tiles"],
 				'pending_battles_update' => $this->GetPendingBattleProvincesAll(),
-				'from_div_id' => "bag"
+				'army_info' => $new_army
+				//'from_div_id' => "bag"
 			));
 		/*
 		try
@@ -1389,6 +1423,7 @@ class bloodstones extends Table
 			//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::args_playermain() active_player_id is NOT chaos horde"));
 		}
 		
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($args, true)));
 		return $args;
 	}
 	
@@ -1901,44 +1936,20 @@ class bloodstones extends Table
 				$victory_vp += 1;
 			}
 			
+			//update the database
 			//self::notifyAllPlayers("debug", "", array('debugmessage' => "victory_vp: $victory_vp"));
-			$this->dbIncScore($winning_player, $victory_vp);
-			
+			$this->dbIncScore($winning_player, $victory_vp, false);
 			$this->incStat($victory_vp, "vp_battles", $winning_player);
 			
-			//did the loser have a citadel here?
-			$loser_citadel_prov_id = $this->GetPlayerCitadelProvId($losing_player);
-			if($loser_citadel_prov_id >= 0)
-			{
-				//update the database
-				//todo: check the build code to make sure citadel prov id -1 wont break anything
-				$captured_citadels = $this->GetCapturedCitadels($winning_player) + 1;
-				$this->DbQuery("UPDATE player SET captured_citadels='$captured_citadels' WHERE player_id='$winning_player'");
-				$this->DbQuery("UPDATE player SET player_citadel_prov='-1' WHERE player_id='$losing_player'");
-				
-				//tell the clients
-				self::notifyAllPlayers("battleResolveCitadel", clienttranslate('${player_name1} has defeated ${player_name2} in battle and captured their citadel.'), array(
-					'player_name1' => $this->getLastBattleWinnerPlayerName(),
-					'player_name2' => $this->getLastBattleLoserPlayerName(),
-					'winning_player' => $winning_player,
-					'losing_player' => $losing_player
-					));
-			}
-			
-			self::notifyAllPlayers("battleResolve", clienttranslate('${player_name1} has defeated ${player_name2} in battle.'), array(
+			//tell the clients
+			self::notifyAllPlayers("battleResolve", clienttranslate('${player_name1} has defeated ${player_name2} in battle, gaining ${victory_vp} victory points.'), array(
 				'player_name1' => $this->getLastBattleWinnerPlayerName(),
 				'player_name2' => $this->getLastBattleLoserPlayerName(),
+				'losing_player_id' => $losing_player,
+				'loser_army_id' => $loser_army["army_id"],
+				'victory_vp' => $victory_vp
 				));
-			/*
-			//merge together all retreating armies in this province 
-			$this->MergePlayerArmiesInProvince($retreat_prov_id, $retreat_player_id);
 			
-			//get some info about the retreating army
-			$retreating_army = self::getObjectFromDB("SELECT * FROM armies WHERE province_id='$battle_prov_name' AND player_id=$retreat_player_id LIMIT 1");
-			$retreating_army_id = $retreating_army["army_id"];
-			$retreating_deck = $this->player_decks[$retreat_player_id];
-			$retreating_tiles = $retreating_deck->getCardsInLocation("army", $retreating_army_id);
-			*/
 			//go to the battleEnd state to handle retreating
 			$this->gamestate->changeActivePlayer($losing_player);
 			$this->gamestate->nextState('battleEnd');

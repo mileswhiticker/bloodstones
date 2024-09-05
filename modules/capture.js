@@ -98,7 +98,7 @@ define(
 				dojo.addClass(villagestack.id_string, "capturing_village");
 				
 				//the capture cost depends on the province type
-				var village_province_name = villagestack.province_id;
+				var village_province_name = villagestack.prov_name;
 				var village_province_info = this.provinces_by_name[village_province_name];
 				var capture_cost = this.getProvVillageCostType(village_province_info.type);
 				this.AddActionCostAmount(capture_cost);
@@ -116,7 +116,7 @@ define(
 				dojo.removeClass(villagestack.id_string, "capturing_village");
 				
 				//the capture cost depends on the province type
-				var village_province_name = villagestack.province_id;
+				var village_province_name = villagestack.prov_name;
 				var village_province_info = this.provinces_by_name[village_province_name];
 				var capture_cost = this.getProvVillageCostType(village_province_info.type);
 				this.AddActionCostAmount(-capture_cost);

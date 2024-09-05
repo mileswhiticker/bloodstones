@@ -74,12 +74,13 @@ define(
 				dojo.subscribe('playerCaptureFail', this, "notif_playerCaptureFail");
 				dojo.subscribe('desert_tiles', this, "notif_desert_tiles");
 				dojo.subscribe('battleResolve', this, "notif_battleResolve");
-				dojo.subscribe('battleResolveCitadel', this, "notif_battleResolveCitadel");
 				dojo.subscribe('battleResolve_dragons', this, "notif_battleResolve_dragons");
 				dojo.subscribe('battleResolve_undead', this, "notif_battleResolve_undead");
+				dojo.subscribe('citadelCapture', this, "notif_citadelCapture");
 				dojo.subscribe('playerUndeadMove', this, "notif_playerUndeadMove");
 				dojo.subscribe('playerScoreChanged', this, "notif_scoreChanged");
 				dojo.subscribe('chaosHordeMoveUpdate', this, "notif_chaosHordeMoveUpdate");
+				//dojo.subscribe('combineProvinceArmies', this, "notif_combineProvinceArmies");
 				
 				//dont display player notifications for our own moves
 				//this.setIgnoreNotificationCheck("playerArmyMove", (notif) => (notif.args.moving_player_id == this.player_id));
@@ -329,10 +330,26 @@ define(
 				//update any new pending battles
 				this.gamedatas.pending_battles = notif.args.pending_battles_update;
 				
+				//todo: does replay mode need some cleanup here too?
 				if(notif.args.player_id == this.getCurrentPlayerId())
 				{
 					window.gameui.CleanupBuildMode(true);
 				}
+			},
+			
+			notif_newCitadel : function(notif)
+			{
+				//console.log("page::notif_newCitadel()");
+				//console.log(notif);
+				
+				//notif.args.player_id
+				//this.CreateCitadel(notif.args.province_name, notif.args.player_id);
+				window.gameui.CreateArmy(notif.args.built_citadel_army);
+				
+				//console.log(this.all_armies);
+				
+				//for replay mode
+				this.UIFinishPlaceCitadel();
 			},
 			
 			notif_playerBuildFail : function(notif)
@@ -355,8 +372,8 @@ define(
 			notif_playerCreateArmy : function(notif)
 			{
 				//notif.args.army_id_num, notif.args.province_id, notif.args.player_id
-				var army_info = {army_id: notif.args.army_id, player_id: notif.args.player_id, province_id: notif.args.province_id, tiles: notif.args.tiles};
-				var army_stack = window.gameui.CreateArmy(army_info, notif.args.from_div_id);
+				//var army_info = {army_id: notif.args.army_id, player_id: notif.args.player_id, province_id: notif.args.province_id, tiles: notif.args.tiles};
+				var army_stack = window.gameui.CreateArmy(notif.args.army_info);
 				
 				this.gamedatas.pending_battles = notif.args.pending_battles_update;
 			},
@@ -371,20 +388,22 @@ define(
 					source_army = window.gameui.GetArmyById(notif.args.source_army_id);
 					//console.log("check1");
 				}
+				//console.log(source_army);
 				
 				var target_army = window.gameui.GetArmyById(notif.args.target_army_id);
+				//console.log(target_army);
 				
 				//do we need to create this army?
 				if(target_army == undefined)
 				{
 					//console.log("check2");
-					var spawn_province = source_army.province_id;
+					var spawn_province = source_army.prov_name;
 					if(notif.args.target_province_override != null)
 					{
 						spawn_province = notif.args.target_province_override;
 						//console.log("check3");
 					}
-					var target_army_info = {army_id: notif.args.target_army_id, player_id: source_army.player_id, province_id: spawn_province, tiles: []};
+					var target_army_info = {army_id: notif.args.target_army_id, player_id: source_army.player_id, prov_name: spawn_province, tiles: []};
 					target_army = window.gameui.CreateArmy(target_army_info, null);
 				}
 				
@@ -446,16 +465,16 @@ define(
 				this.DestroyBattleWindow();
 				
 				//self::notifyAllPlayers("tileSacrifice", "", array('sacrifice_tile_id' => $sacrifice_tile_id, 'army_id' => $tile_info['location_arg']));
-				var army = this.GetArmyById(notif.args.army_id);
+				var sacrifice_army = this.GetArmyById(notif.args.sacrifice_army_id);
 				//RemoveTileFromStack : function(tile_info_id, target_div_id = undefined)
 				//todo: some kind of ui feedback
-				army.RemoveTileFromStack(notif.args.sacrifice_tile_id);
+				sacrifice_army.RemoveTileFromStack(notif.args.sacrifice_tile_id);
 				
 				//hack alert: there is a few ms delay in RemoveTileFromStack() due to the animation, so in order to lazily check if there is no tiles left then we just queue it for being safely destroyed
-				if(army.tiles.length == 1)
+				if(sacrifice_army.tiles.length == 1)
 				{
 					//destroy the army because it has no tiles left
-					this.DestroyArmy(army.id_num);
+					this.DestroyArmy(sacrifice_army.id_num);
 				}
 			},
 			
@@ -610,18 +629,6 @@ define(
 				this.BeginVillageState();
 			},
 			
-			notif_newCitadel : function(notif)
-			{
-				//console.log("page::notif_newCitadel()");
-				//console.log(notif);
-				
-				//var player_id = this.getFactionPlayerId(notif.args.faction_id);
-				this.CreateCitadel(notif.args.province_name, notif.args.player_id);
-				
-				//for replay mode
-				this.UIFinishPlaceCitadel();
-			},
-			
 			notif_desert_tiles : function(notif)
 			{
 				//console.log("page::notif_desert_tiles()");
@@ -645,22 +652,38 @@ define(
 				}
 			},
 			
-			notif_battleResolveCitadel : function(notif)
+			notif_citadelCapture : function(notif)
 			{
-				//a player's citadel has been captured by another
-				this.DestroyPlayerCitadel(notif.args.losing_player);
+				//console.log("page::notif_citadelCapture()");
+				//console.log(notif);
 				
-				//the winner gets a ui symbol to show many they have captured
-				//todo
+				//update the ui for everyone
+				var attacking_player_id = notif.args.attacking_player_id;
+				var player = this.gamedatas.players[attacking_player_id];
+				player.captured_citadels = Number(player.captured_citadels);	//the server passes this int to us as a string for some reason
+				player.captured_citadels += 1;
+				let captured_citadels_text_id = this.GetCitadelsCapturedTextNodeId(attacking_player_id);
+				let captured_citadels_text = dojo.byId(captured_citadels_text_id);
+				captured_citadels_text.innerHTML = player.captured_citadels;
 				
-				//pass on the notification as normal
-				this.notif_battleResolve(notif);
+				//remove the citadel unit
+				//note: the citadel unit is actually removed elsewhere now
+				//cases: 1) citadel is sacrificed by player after losing battle 2) player tries to retreat without sacrificing citadel so it dies anyway
+				//todo: case 2 this seems unnecessarily punishing
+				//self::notifyAllPlayers("tileSacrifice", "", array('sacrifice_tile_id' => $sacrifice_tile_id, 'army_id' => $tile_info['location_arg']));
+				/*var army_stack = this.GetArmyById(notif.args.citadel_army_id);
+				army_stack.RemoveTileFromStack(notif.args.citadel_tile_id);
+				this.army_display_defender.RemoveTileFromStack(notif.args.citadel_tile_id);*/
+				
 			},
 			
 			notif_battleResolve : function(notif)
 			{
 				//console.log("page::notif_battleResolve()");
-				console.log(notif);
+				//notif.args.loser_army_id
+				
+				//all the loser armies are merged into one
+				//console.log(notif);
 			},
 			
 			notif_battleResolve_dragons : function(notif)

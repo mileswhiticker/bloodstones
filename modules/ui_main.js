@@ -70,7 +70,7 @@ define(
 				this.SetupProvinceUI(canvas);
 				this.SetupArmies(gamedatas);
 				this.SetupVillages(gamedatas);
-				this.SetupCitadels(gamedatas);
+				//this.SetupCitadels(gamedatas);
 				this.SetupLeftUI(gamedatas);
 			},
 			

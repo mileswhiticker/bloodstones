@@ -24,16 +24,31 @@ trait tiles
 	public function getTilePipsFromType($tile_type)
 	{
 		$tile_pips = [
-			"0","5","0","4","3","2","3","4","4","3","5","0","0",
-			"0","5","2","4","3","2","3","4","4","3","5","5","0",
-			"0","5","2","4","3","2","3","4","4","3","5","5","0",
-			"0","5","0","4","3","2","0","4","4","3","5","0","0",
-			"0","5","3","4","3","2","3","4","4","3","5","5","0",
-			"0","5","3","0","0","0","4","0","4","0","5","0","0",
-			"0","1","2","3","4","5","0","0","0","0","0","0","0",
-			"0","1","2","3","4","5","0","0","0","0","0","0","0",
+			"0","5","0","4","3","2","3","4","4","3","5","0","0","0",
+			"0","5","2","4","3","2","3","4","4","3","5","5","0","0",
+			"0","5","2","4","3","2","3","4","4","3","5","5","0","0",
+			"0","5","0","4","3","2","0","4","4","3","5","0","0","0",
+			"0","5","3","4","3","2","3","4","4","3","5","5","0","0",
+			"0","5","3","0","0","0","4","0","4","0","5","0","0","0",
+			"0","1","2","3","4","5","0","0","0","0","0","0","0","0",
+			"0","1","2","3","4","5","0","0","0","0","0","0","0","0"
 		];
 		return $tile_pips[(int)$tile_type];
+	}
+	
+	public function getTileCostFromType($tile_type)
+	{
+		$tile_cost = [
+			"0","0","0","1","1","0","2","2","1","1","2","0","0","0",
+			"0","0","0","1","1","0","2","1","1","1","2","2","0","0",
+			"0","0","0","1","1","0","2","2","1","1","2","2","0","0",
+			"0","0","0","1","1","0","2","2","1","1","2","0","0","0",
+			"0","0","0","1","1","0","2","2","1","1","2","2","0","0",
+			"0","0","0","0","1","0","1","2","1","1","2","0","0","0",
+			"0","0","0","0","0","0","0","0","0","0","0","0","0","0",
+			"0","0","0","0","0","0","0","0","0","0","0","0","0","0"
+		];
+		return $tile_cost[(int)$tile_type];
 	}
 	
 	public function getTileNameFromType($tile_type)
@@ -68,7 +83,7 @@ trait tiles
 		}
 		
 		//standard type handling
-		if($tile_type <= 77)
+		if($tile_type <= self::TILE_UNIT_MAX)
 		{
 			$base_type = $this->getBaseTileType($tile_type);
 			$base_names = [
@@ -83,15 +98,14 @@ trait tiles
 				"Ship",
 				"Siege engine",
 				"Leader",
+				"Special1",
+				"Special2",
+				"Citadel"
 			];
 			return $base_names[$base_type];
 		}
 		
-		//citadels
-		if(84 <= $tile_type && 90 >= $tile_type)
-		{
-			return "Citadel";
-		}
+		return "Unknown_unit_NA";
 	}
 	
 	public function getBaseTileType($tile_type)
@@ -133,22 +147,25 @@ trait tiles
 	
 	public function isTileTypeDice($tile_type)
 	{
-		return ($tile_type >= 78 && $tile_type <= 83) || ($tile_type >= 91 && $tile_type <= 96);
+		return ($tile_type >= self::TILE_DICE_MIN && $tile_type <= self::TILE_DICE_MAX);
 	}
 	
 	public function isTileTypeCitadel($tile_type)
 	{
-		return ($tile_type >= 84 && $tile_type <= 88);
+		$base_type = $this->getBaseTileType($tile_type);
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::isTileTypeCitadel($tile_type) base_type:$base_type"));
+		return ($base_type == self::UNIT_CITADEL);
 	}
 	
-	public function isTileTypeStandard($tile_type)
+	public function isTileTypeUnit($tile_type)
 	{
-		return ($tile_type <= 77) && ($this->getBaseTileType($tile_type) != 0);
+		$base_type = $this->getBaseTileType($tile_type);
+		return ($tile_type >= self::TILE_UNIT_MIN) && ($tile_type <= self::TILE_UNIT_MAX) && ($base_type != self::UNIT_BLANK) && ($base_type != self::UNIT_RESOURCES);
 	}
 	
 	public function isTileTypeCastle($tile_type)
 	{
-		return ($this->getBaseTileType($tile_type) == self::TILE_BASE_CASTLE);
+		return ($this->getBaseTileType($tile_type) == self::UNIT_CASTLE);
 	}
 	
 	public function isTileTypeKobold($tile_type)
@@ -183,7 +200,7 @@ trait tiles
 	
 	public function isTileTypeCavalry($tile_type)
 	{
-		return ($this->getBaseTileType($tile_type) == self::TILE_BASE_CAVALRY);
+		return ($this->getBaseTileType($tile_type) == self::UNIT_CAVALRY);
 	}
 	
 	public function DoesTileTypeDieInDesert($tile_type)
@@ -263,40 +280,36 @@ trait tiles
 	{
 		$tile_type = intval($tile_type);
 		$numtypes = self::SPRITESHEET_ROW_TILES;
-		
-		//citadels give +5
-		if($this->isTileTypeCitadel($tile_type))
-		{
-			//will only ever be defending so we dont need to check
-			return 5;
-		}
-		
-		//dice tiles just use their face value
 		$base_type = $this->getBaseTileType($tile_type);
+		
+		//dice tiles give their face value as a combat bonus
 		if($this->isTileTypeDice($tile_type))
 		{
+			//different 
 			return $base_type;
 		}
 		
+		//some units only give a bonus in certain conditions
+		//work out what unit this is and what combat bonus applies
 		$cur_province = $this->getProvinceInfo($this->getGameStateValue("battling_province_id"));
-		if($this->isTileTypeStandard($tile_type))
+		if($this->isTileTypeUnit($tile_type))
 		{
 			//standard combat units
 			switch($base_type)
 			{
-				case 0:
+				case self::UNIT_BLANK:
 				{
 					//blank tile, shouldnt be buildable
 					self::notifyAllPlayers("debug", "", array('debugmessage' => "ERROR: server::getTileCombatBonus($tile_type, $player_id, $is_attacking) blank tile"));
 					break;
 				}
-				case 1:
+				case self::UNIT_RESOURCES:
 				{
 					//resources tile, shouldnt be buildable
 					self::notifyAllPlayers("debug", "", array('debugmessage' => "ERROR: server::getTileCombatBonus($tile_type, $player_id, $is_attacking) resources tile"));
 					break;
 				}
-				case 2:
+				case self::UNIT_ATTACKER:
 				{
 					//attacking infantry
 					if($is_attacking)
@@ -305,13 +318,13 @@ trait tiles
 					}
 					return 0;
 				}
-				case 3:
+				case self::UNIT_SWORD:
 				{
 					//sword infantry
 					//always get +1
 					return 1;
 				}
-				case 4:
+				case self::UNIT_SHIELD:
 				{
 					//defending infantry
 					if(!$is_attacking)
@@ -320,7 +333,7 @@ trait tiles
 					}
 					return 0;
 				}
-				case 5:
+				case self::UNIT_ARCHER:
 				{
 					//skirmisher infantry
 					//+1 in forests
@@ -330,7 +343,7 @@ trait tiles
 					}
 					return 0;
 				}
-				case 6:
+				case self::UNIT_CAVALRY:
 				{
 					//cavalry
 					//+1 in plains
@@ -340,7 +353,7 @@ trait tiles
 					}
 					return 0;
 				}
-				case 7:
+				case self::UNIT_CASTLE:
 				{
 					//castle
 					//+3 when defending
@@ -350,13 +363,13 @@ trait tiles
 					}
 					return 0;
 				}
-				case 8:
+				case self::UNIT_SHIP:
 				{
 					//ship
 					//always get +1... battles should only ever be at sea
 					return 1;
 				}
-				case 9:
+				case self::UNIT_SIEGE:
 				{
 					//siege engine
 					//+2 in combat against castle or citadel
@@ -390,13 +403,13 @@ trait tiles
 					//no castle present, this siege engine is useless
 					return 0;
 				}
-				case 10:
+				case self::UNIT_LEADER:
 				{
 					//leader
 					//always get +1
 					return 1;
 				}
-				case 11:
+				case self::UNIT_SPECIALONE:
 				{
 					//special1
 					//faction unique unit
@@ -426,7 +439,7 @@ trait tiles
 					}
 					return 0;
 				}
-				case 12:
+				case self::UNIT_SPECIALTWO:
 				{
 					//special2
 					//faction unique unit
@@ -443,6 +456,16 @@ trait tiles
 							self::notifyAllPlayers("debug", "", array('debugmessage' => "ERROR: server::getTileCombatBonus($tile_type, $player_id, $is_attacking) unknown special2 tile_type for faction $faction_id"));
 							break;
 						}
+					}
+					return 0;
+				}
+				case self::UNIT_CITADEL:
+				{
+					//citadel
+					//+5 when defending
+					if(!$is_attacking)
+					{
+						return 5;
 					}
 					return 0;
 				}

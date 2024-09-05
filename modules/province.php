@@ -76,25 +76,33 @@ trait province
 		$merging_armies = self::getCollectionFromDb("SELECT * FROM armies WHERE province_id='$province_name' AND player_id=$player_id");
 		
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($merging_armies,true)));
+		$merged_army_ids = [];
 		
 		$main_army = null;
-		$main_army_id = 0;
+		$main_army_id = -1;
 		foreach($merging_armies as $army_id => $army)
 		{
 			if(is_null($main_army))
 			{
-				//self::notifyAllPlayers("debug", "", array('debugmessage' => "main retreating army: army$main_army_id"));
 				$main_army = $army;
 				$main_army_id = $army["army_id"];
+				//self::notifyAllPlayers("debug", "", array('debugmessage' => "main retreating army: army $main_army_id"));
 			}
 			else
 			{
-				//merge it in
+				//merge it in... tryArmyStackTransfer() will automatically notify the players
 				//function tryArmyStackTransfer($source_army_id, $target_army_id, $tile_ids, $selection_flag, $target_province_override = null, $temp_army_id_num = null)
+				//self::notifyAllPlayers("debug", "", array('debugmessage' => "merging army $army_id into army $main_army_id"));
 				$this->tryArmyStackTransfer($army_id, $main_army_id);
-				//self::notifyAllPlayers("debug", "", array('debugmessage' => "merging army$army_id into army$main_army_id"));
+				$merged_army_ids[] = $army_id;
 			}
 		}
+		
+		//tell the players
+		/*self::notifyAllPlayers("combineProvinceArmies", "", array(
+			'merged_army_ids' => $merged_army_ids,
+			'main_army_id' => $main_army_id
+			));*/
 		
 		return $main_army;
 	}
@@ -346,7 +354,7 @@ trait province
 	function getProvinceVillagesBuilt($faction_id, $province_id)
 	{
 		//$faction_id = $this->GetPlayerFaction($player_id);
-		//return $this->getVillagesBuiltFaction($faction_id);
+		//return $this->getVillagesBuiltFactionInfos($faction_id);
 		$village_infos = $this->villages_deck->getCardsOfTypeInLocation("village", $faction_id, "province", $province_id);
 		return $village_infos;
 	}

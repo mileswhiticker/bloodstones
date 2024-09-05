@@ -71,6 +71,8 @@ define(
 					//dont worry about this for now, it should only be for spectators etc who have no tiles revealed
 					//todo
 					//console.log("No tile info recieved, player assumed to be spectating");
+					this.UpdateHiddenAttackerTiles(this.num_attacker_tiles, this.num_attacker_tiles_swapped, this.num_attacker_tiles_rejected);
+					this.UpdateHiddenDefenderTiles(this.num_defender_tiles, this.num_defender_tiles_swapped, this.num_defender_tiles_rejected);
 				}
 			},
 			
@@ -147,6 +149,7 @@ define(
 					{
 						//console.log("adding \"dice\" tile " + tile_id + " to battle stack");
 						var cur_tile_info = tileinfos[tile_id];
+						//console.log(cur_tile_info);
 						tilestack.SpawnTileInStack(cur_tile_info);
 						
 						var tile_pips = this.GetTilePips(cur_tile_info.type_arg);
@@ -172,7 +175,7 @@ define(
 				}
 				if(num_swapped >= 0)
 				{
-					var player_dice_type = this.getPlayerFactionId(this.attacking_player_id) * 13;
+					var player_dice_type = this.UNIT_BLANK + this.getPlayerFactionId(this.attacking_player_id) * this.SPRITESHEET_ROW_TILES;
 					this.UpdateBattleTilesHidden2(this.battle_tilestack_attacker, num_swapped, player_dice_type);
 				}
 				if(num_rejected >= 0)
@@ -192,7 +195,7 @@ define(
 				}
 				if(num_swapped >= 0)
 				{
-					var player_dice_type = this.getPlayerFactionId(this.defending_player_id) * 13;
+					var player_dice_type = this.getPlayerFactionId(this.defending_player_id) * this.SPRITESHEET_ROW_TILES;
 					this.UpdateBattleTilesHidden2(this.battle_tilestack_defender, num_swapped, player_dice_type);
 				}
 				if(num_rejected >= 0)

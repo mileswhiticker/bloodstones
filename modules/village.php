@@ -286,7 +286,7 @@ trait village
 		}
 		
 		//can build in provinces with or adjacent to existing villages
-		$village_infos = $this->getPlayerVillagesBuilt($player_id);
+		$village_infos = $this->getPlayerVillagesBuiltInfos($player_id);
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "checking villages..."));
 		foreach($village_infos as $village_info)
 		{

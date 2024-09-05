@@ -9,33 +9,19 @@ trait army
 		{
 			$units_string = implode(",",$starting_unit_ids);
 		}
-		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::createArmy(starting_province_name:$starting_province_name,player_id:$player_id,starting_unit_ids:[$units_string])"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::createArmy($starting_province_name,$player_id,$units_string)"));
 		$new_army_id = self::getGameStateValue("next_army_id");
+		$new_army_id_type = gettype($new_army_id);
+		self::notifyAllPlayers("debug", "", array('debugmessage' => "new_army_id type: $new_army_id_type"));
+		$new_army_id = (int)$new_army_id;
 		
 		//todo: is this php army module needed?
 		//bga just uses associative arrays in js style which is simpler and easier
 		//$newarmy = new Army($new_army_id, $starting_province_name, $player_id);
 		
 		//create it as an associative array
-		$newarmy = array("id_num"=>"$new_army_id","province_id"=>"$starting_province_name","player_id"=>"$player_id","tiles"=>array());
-		
-		if($spawn_test_units == true)
-		{
-			//todo: grab some random tiles from this player's deck bag
-			$army_size = 3;
-			
-			//grab the appropriate tile deck
-			//$player_deck = $this->faction_decks[$factionid];
-			$player_deck = $this->player_decks[$player_id];
-			
-			//for now just take random tiles from the bag
-			//todo: callback handling for the auto reshuffle
-			$army_tiles = $player_deck->pickCardsForLocation($army_size, 'bag', 'army', $new_army_id);
-			$newarmy["tiles"] = array_merge($newarmy["tiles"],$army_tiles);
-			
-			//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($player_deck,true)));
-			//self::notifyAllPlayers("debug", "", array('debugmessage' => $player_deck->table));
-		}
+		//$newarmy = array("id_num"=>"$new_army_id","province_id"=>"$starting_province_name","player_id"=>"$player_id","tiles"=>array());
+		$newarmy = array("army_id"=>$new_army_id,"prov_name"=>"$starting_province_name","player_id"=>$player_id,"tiles"=>array());
 		
 		//does this new army start with some pre-existing tiles?
 		if(is_array($starting_unit_ids) && count($starting_unit_ids) > 0)
@@ -49,7 +35,7 @@ trait army
 			try
 			{
 				$starting_tiles = $player_deck->getCards($starting_unit_ids);
-				$newarmy["tiles"] = array_merge($newarmy["tiles"], $starting_tiles);
+				$newarmy["tiles"] = $starting_tiles;
 			}
 			catch(Exception $e)
 			{
@@ -58,6 +44,24 @@ trait army
 				self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($starting_unit_ids, true)));
 			}
 		}
+		else if($spawn_test_units == true)
+		{
+			//todo: grab some random tiles from this player's deck bag
+			$army_size = 3;
+			
+			//grab the appropriate tile deck
+			//$player_deck = $this->faction_decks[$factionid];
+			$player_deck = $this->player_decks[$player_id];
+			
+			//for now just take random tiles from the bag
+			//todo: callback handling for the auto reshuffle
+			$army_tiles = $player_deck->pickCardsForLocation($army_size, 'bag', 'army', $new_army_id);
+			$newarmy["tiles"] = $army_tiles;
+			
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($player_deck,true)));
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => $player_deck->table));
+		}
+		
 		
 		//insert the newly created army into the database
 		$sql = "INSERT INTO armies (army_id, province_id, player_id) VALUES ";

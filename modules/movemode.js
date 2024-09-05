@@ -35,7 +35,7 @@ define(
 				const target_province_info = this.provinces_by_name[target_province_name];
 				
 				//did we click on the current province?
-				if(target_province_info.name == moving_army.province_id)
+				if(target_province_info.name == moving_army.prov_name)
 				{
 					//console.log("SANITY CHECK: QueueArmyMove() being called for the same province the army is in");
 					return;
@@ -50,7 +50,7 @@ define(
 					return;
 				}
 				
-				const start_province_info = this.provinces_by_name[moving_army.province_id];
+				const start_province_info = this.provinces_by_name[moving_army.prov_name];
 				var can_move = false;
 				if(this.AreProvincesLinked(start_province_info, target_province_info))
 				{
@@ -72,7 +72,7 @@ define(
 						//console.log(check_prov.name);
 					}
 					
-					if(check_prov.name == moving_army.province_id)
+					if(check_prov.name == moving_army.prov_name)
 					{
 						can_move = true;
 						
@@ -172,6 +172,10 @@ define(
 			QueueArmySplit : function(source_army, splitting_tile_ids, temp_army)
 			{
 				//console.log("page::QueueArmySplit(" + source_army.id_num + "," + splitting_tile_ids[0] + "," + temp_army.id_num + ")");
+				//console.log("page::QueueArmySplit()");
+				//console.log(source_army);
+				//console.log(splitting_tile_ids);
+				//console.log(temp_army);
 				//regular expression to extract the army id number from the node id string
 				//var army_id_num = source_army.id_string.replace(/[^0-9]/g,"");
 				
@@ -181,8 +185,8 @@ define(
 				for(var i in splitting_tile_ids)
 				{
 					var cur_tile_id = splitting_tile_ids[i];
-					var split_prov_id = this.GetProvinceIdFromName(source_army.province_id);
-					var split_step = {step_type: this.ACTION_SPLIT, prov_name: source_army.province_id, prov_id: split_prov_id, tile_id: cur_tile_id, temp_army_id_num: temp_army.id_num};
+					var split_prov_id = this.GetProvinceIdFromName(source_army.prov_name);
+					var split_step = {step_type: this.ACTION_SPLIT, prov_name: source_army.prov_name, prov_id: split_prov_id, tile_id: cur_tile_id, temp_army_id_num: temp_army.id_num};
 					
 					//this is what gets sent to the server for processing
 					var army_action_steps = this.queued_action_steps[source_army.id_string];

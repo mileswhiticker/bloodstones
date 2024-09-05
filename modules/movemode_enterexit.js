@@ -87,6 +87,15 @@ define(
 					
 					for(var army_id_string in this.queued_action_steps)
 					{
+						var army_id_num = this.GetArmyIdNumFromString(army_id_string);
+						
+						//temp armies will be nulled as they are merged back into the parent
+						//we will have to skip this one here
+						if(this.isTempArmyId(army_id_num))
+						{
+							continue;
+						}
+						
 						//console.log("cancelling action steps for: " + army_id_string);
 						var army_action_steps = this.queued_action_steps[army_id_string];
 						//console.log(army_action_steps);

@@ -72,9 +72,9 @@ define(
 						this.SelectedArmySplitAnimation(cur_tile_id, window.gameui.selected_army.id_num);
 						
 						//we have already started moving, so record this split as a new action
-						var temp_army_info = {army_id: this.getTempArmyId(), player_id: window.gameui.selected_army.player_id, province_id: window.gameui.selected_army.province_id, tiles: []};
+						var temp_army_info = {army_id: this.getTempArmyId(), player_id: window.gameui.selected_army.player_id, prov_name: window.gameui.selected_army.prov_name, tiles: []};
 						var temp_army = this.CreateArmy(temp_army_info, null);
-						this.TransferArmyTiles(window.gameui.selected_army.id_num, temp_army.id_num, [cur_tile_id], SELECT_ARMY_SOURCE);
+						this.TransferArmyTiles(window.gameui.selected_army.id_num, temp_army.id_num, [cur_tile_id], this.SELECT_ARMY_SOURCE);
 						this.QueueArmySplit(window.gameui.selected_army, [cur_tile_id], temp_army);
 					}
 					else

@@ -217,7 +217,7 @@ define(
 						this.UnselectArmyStack();
 						this.RefreshMoveModeUI();
 					}
-					else if(this.selected_army.province_id == clicked_army.province_id)
+					else if(this.selected_army.prov_name == clicked_army.prov_name)
 					{
 						//does the other army have queued moves?
 						if(!clicked_army.IsMoving())

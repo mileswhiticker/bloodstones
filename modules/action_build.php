@@ -33,7 +33,6 @@ trait action_build
 			$built_tile_names = [];
 			foreach($action_info as $prov_name => $build_action_prov)
 			{
-				//function createArmy($starting_province_id, $player_id, $starting_unit_ids, $spawn_test_units)
 				//note: new_tile_infos here needs to actually be new tile infos and not an array of tile ids
 				//note: ajax only passes in an array of tile ids
 				//for some reason $player_deck->getCards([]); doesnt work for the arrays that i pass in
@@ -44,15 +43,16 @@ trait action_build
 				$built_tile_infos = [];
 				$built_tile_ids = [];
 				
-				$new_army = self::createArmy($prov_name, $current_player_id, $tile_ids, false);
-				$built_tile_infos = $player_deck->getCardsInLocation('army', $new_army["id_num"]);
+				$army_info = self::createArmy($prov_name, $current_player_id, $tile_ids, false);
+				$built_tile_infos = $army_info["tiles"];
+				/*$built_tile_infos = $player_deck->getCardsInLocation('army', $new_army["id_num"]);
 				
 				$army_info = [
 					"army_id" => $new_army["id_num"],
 					"province_id" => $prov_name,
 					"player_id" => $current_player_id,
 					"tiles" => $built_tile_infos,
-				];
+				];*/
 				
 				$built_armies[$army_info["army_id"]] = $army_info;
 				

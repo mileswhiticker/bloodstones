@@ -76,10 +76,6 @@ define(
 					
 					this.RegenerateProvinceUI(province, context);
 				}
-				
-				this.GenerateProvinceLinks();
-				
-				//this.PHPProvinceExport();
 			},
 			
 			RegenerateProvinceUI : function(province, context)
@@ -100,7 +96,7 @@ define(
 					"left:" + province_centre_canvas.x + "px;top:" + province_centre_canvas.y + "px;");
 				
 				let zone_div = dojo.byId(province.name + "_zone");
-				var adjusted_zone_radius = province.collision_radius * this.map_view_scale;
+				var adjusted_zone_radius = this.map_province_radius * this.map_view_scale;
 				zone_div.setAttribute("style","width:" + (2 * adjusted_zone_radius) + "px;height:" + (2 * adjusted_zone_radius) + "px;" + 
 					"left:" + (-adjusted_zone_radius) + "px;top:" + (-adjusted_zone_radius) + "px;position:absolute;");
 				/*zone_div.setAttribute("style","width:" + 0 + "px;height:" + 0 + "px;" + 
@@ -257,336 +253,31 @@ define(
 				//console.log("province.drag_area_poly: " + province.drag_area_poly);
 			},
 			
-			GenerateProvinceLinks : function()
+			GetSVGPathCommandPointsMax : function(command)
 			{
-				//console.log("page::GenerateProvinceLinks()");
-				//loop over move links and try to link them to a province
-				//use a simple distance check
-				var debug_move_link = false;
-				
-				for(var prov_id in this.provinces)
+				if(command.search(/[lL]/) != -1)
 				{
-					var cur_prov = this.provinces[prov_id];
-					cur_prov.movement_link_paths = [];
-					if(debug_move_link)	console.log("checking province " + prov_id);
-					if(debug_move_link)	console.log("cur_prov:");
-					if(debug_move_link)	console.log(cur_prov);
-					var server_prov_info = this.gamedatas.all_provinces[prov_id];
-					if(debug_move_link)	console.log("server_prov_info:");
-					if(debug_move_link)	console.log(server_prov_info);
-					for(var linked_prov_index in server_prov_info.movement_links)
-					{
-						//i was getting really frustrated at this point, the debug logging was unreadably dense
-						
-						var linked_prov_id = server_prov_info.movement_links[linked_prov_index];
-						var linked_prov = this.provinces[linked_prov_id];
-						if(!linked_prov.movement_link_paths)
-						{
-							linked_prov.movement_link_paths = [];
-						}
-						
-						if(debug_move_link)	console.log("linked_prov_index:" + linked_prov_index);
-						if(debug_move_link)	console.log("linked_prov_id:" + linked_prov_id);
-						if(debug_move_link)	console.log("linked_prov:");
-						if(debug_move_link)	console.log(linked_prov);
-						
-						
-						
-						//var new_move_link = {linked_provinces: [linked_prov, cur_prov], path_segments: []};
-						
-						
-						
-						//does it already contain this link?
-						var this_move_link = {target_prov: linked_prov, path_segments: []};
-						//cur_prov.movement_link_paths.push(this_move_link);
-						if(!cur_prov.movement_link_paths.includes(linked_prov.name))
-						{
-							cur_prov.movement_link_paths[linked_prov.name] = this_move_link;
-						}
-						
-						//does it already contain this link?
-						var other_move_link = {target_prov: cur_prov, path_segments: []};
-						//linked_prov.movement_link_paths.push(other_move_link);
-						if(!linked_prov.movement_link_paths.includes(cur_prov.name))
-						{
-							linked_prov.movement_link_paths[cur_prov.name] = other_move_link;
-						}
-						
-						//if(debug_move_link)	console.log("new_move_link:");
-						//if(debug_move_link)	console.log(new_move_link);
-						
-						//find if this one has a SVG defined move path
-						
-					}
-					debug_move_link = false;
+					return 2;
+				}
+				if(command.search(/[mM]/) != -1)
+				{
+					return 1;
+				}
+				if(command.search(/[zZ]/) != -1)
+				{
+					return 1;
+				}
+				if(command.search(/[cC]/) != -1)
+				{
+					return 3;
+				}
+				if(command.search(/[sS]/) != -1)
+				{
+					return 2;
 				}
 				
-				//rather than recalculate the move link here based on distance, we will simply copy them from the php to reduce redundancy 
-				//however we still need to find the svg paths
-				//this.move_links is a mega array saved in javascript with a bunch of points
-				debug_move_link = false;
-				var links_success = 0;
-				var links_partial = 0;
-				var links_fail = 0;
-				var links_manual = 0;
-				for(var i in this.move_links)
-				{
-					var move_link = this.move_links[i];
-					if(debug_move_link)	console.log("checking link " + i);
-					
-					//loop over all provinces to find the closest one
-					var working_vertex = {x: 0, y: 0};
-					for(var k in move_link.path_segments)
-					{
-						//var current_vertex = {x: 0, y: 0};
-						var pathseg = move_link.path_segments[k];
-						switch(pathseg.type)
-						{
-							case 'm':
-							{
-								//relative moveto
-								working_vertex.x += pathseg.points[0].x;
-								working_vertex.y += pathseg.points[0].y;
-								break;
-							}
-							case 'M':
-							{
-								//absolute moveto
-								working_vertex.x = pathseg.points[0].x;
-								working_vertex.y = pathseg.points[0].y;
-								break;
-							}
-							case 'c':
-							{
-								//relative curveto (bezier cubic)
-								working_vertex.x += pathseg.points[2].x;
-								working_vertex.y += pathseg.points[2].y;
-								break;
-							}
-							case 'C':
-							{
-								//absolute curveto (bezier cubic)
-								working_vertex.x = pathseg.points[2].x;
-								working_vertex.y = pathseg.points[2].y;
-								break;
-							}
-							default:
-							{
-								console.log("WARNING page::GenerateProvinceLinks() unknown pathseg.type (" + pathseg.type + ")");
-								break;
-							}
-						}
-						
-						//if this is the first or last vertex, we want to try and link to a province
-						var found_province = null;
-						var found_dist_sqrd = 99999999999999;
-						if(k == 0 || k == (move_link.path_segments.length - 1))
-						{
-							if(debug_move_link)	console.log("checking k:" + k);
-							for(var j in this.provinces)
-							{
-								var check_prov = this.provinces[j];
-								var check_dist_sqrd = (working_vertex.x - check_prov.centre.x)**2 + (working_vertex.y - check_prov.centre.y)**2;
-								if(!found_province || check_dist_sqrd < found_dist_sqrd)
-								{
-									found_province = check_prov;
-									found_dist_sqrd = check_dist_sqrd;
-								}
-							}
-							move_link.linked_provinces.push(found_province);
-							if(found_province.name == "prov8")
-							{
-								//debug_move_link = true;
-							}
-							if(debug_move_link)	console.log("linked to province:");
-							if(debug_move_link)	console.log(found_province);
-						}
-					}
-					if(debug_move_link)	console.log("move_link:");
-					if(debug_move_link)	console.log(move_link);
-					
-					//finally, check the province links sent by the server and try to connect to this movement path
-					
-					if(debug_move_link)	console.log("now connecting path to move links");
-					
-					var provs_successfully_linked = 0;
-					
-					var cur_prov = move_link.linked_provinces[0];
-					var other_prov = move_link.linked_provinces[1];
-					
-					var success = false;
-					for(var check_prov_name in cur_prov.movement_link_paths)
-					{
-						if(check_prov_name == other_prov.name)
-						{
-							success = true;
-							break;
-						}
-					}
-					//if(cur_prov.movement_link_paths.includes(other_prov.name))
-					if(success)
-					{
-						provs_successfully_linked++;
-					}
-					else
-					{
-						if(debug_move_link)	console.log("manually linking " + cur_prov.name + " and " + other_prov.name + "(1st)");
-						var cur_move_link = {target_prov: other_prov, path_segments: []};
-						cur_prov.movement_link_paths[other_prov.name] = cur_move_link;
-						links_manual++;
-					}
-					cur_prov.movement_link_paths[other_prov.name].path_segments = move_link.path_segments;
-					//if(other_prov.movement_link_paths.includes(cur_prov.name))
-					success = false;
-					for(var check_prov_name in other_prov.movement_link_paths)
-					{
-						if(check_prov_name == cur_prov.name)
-						{
-							success = true;
-							break;
-						}
-					}
-					if(success)
-					{
-						provs_successfully_linked++;
-					}
-					else
-					{
-						if(debug_move_link)	console.log("manually linking " + other_prov.name + " and " + cur_prov.name + " (2nd)");
-						var other_move_link = {target_prov: cur_prov, path_segments: []};
-						other_prov.movement_link_paths[cur_prov.name] = other_move_link;
-						links_manual++;
-					}
-					other_prov.movement_link_paths[cur_prov.name].path_segments = move_link.path_segments;
-					
-					if(debug_move_link)	console.log(cur_prov);
-					if(debug_move_link)	console.log(other_prov);
-					
-					/*
-					for(j in move_link.linked_provinces)
-					{
-						var cur_prov = move_link.linked_provinces[j];
-						if(debug_move_link)	console.log("j:");
-						if(debug_move_link)	console.log(j);
-						if(debug_move_link)	console.log("cur_prov:");
-						if(debug_move_link)	console.log(cur_prov);
-						var success = false;
-						for(var movement_link_start_prov_name in cur_prov.movement_link_paths)
-						{
-							var movement_link_path = cur_prov.movement_link_paths[movement_link_start_prov_name];
-							if(debug_move_link)	console.log("movement_link_start_prov_name:");
-							if(debug_move_link)	console.log(movement_link_start_prov_name);
-							//if(debug_move_link)	console.log("movement_link_path:");
-							//if(debug_move_link)	console.log(movement_link_path);
-							if(move_link.linked_provinces.includes(movement_link_start_prov_name))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-							{
-								movement_link_path.path_segments = move_link.path_segments;
-								success = true;
-								provs_successfully_linked++;
-								break;
-							}
-						}
-						if(!success)
-						{
-							if(debug_move_link)	console.log("WARNING: we calculated " + check_prov.name + " was connected to move_link" + i + " at position " + j + " but it's not in their list of move links from the server");
-						}
-					}
-					*/
-					if(provs_successfully_linked == 2)
-					{
-						links_success++;
-					}
-					/*else if(provs_successfully_linked == 1)
-					{
-						links_partial++;
-					}
-					else
-					{
-						links_fail++;
-					}*/
-					
-					debug_move_link = false;
-				}
-				//console.log("FINISHED. links_success: " + links_success + ", links_partial:" + links_partial + ", links_fail: " + links_fail + ", links_manual: " + links_manual);
-			},
-			
-			PHPProvinceExport : function()
-			{
-				//this function will export the needed province and movelink info in php format as a string
-				//that way i can manually copy it over to the php
-				console.log("page::PHPProvinceExport()");
-				console.log(this.provinces);
-				console.log(this.move_links_filtered);
-				
-				var php_provinces_export = "$all_provinces = [";
-				var first_element = true;
-				var do_debug = false;
-				for(var prov_id in this.provinces)
-				{
-					/*if(prov_id == 0 || prov_id == 7)
-					{
-						do_debug = true;
-					}
-					else
-					{
-						do_debug = false;
-					}*/
-					
-					//special handling to properly add , after each element except the last
-					if(first_element)
-					{
-						first_element = false;
-					}
-					else
-					{
-						php_provinces_export += ",";
-					}
-					
-					//grab the first province
-					var cur_province = this.provinces[prov_id];
-					if(do_debug) console.log("entering new province...");
-					if(do_debug) console.log(cur_province);
-					
-					//first part of the province info
-					php_provinces_export += "[\"id\"=>" + prov_id + "," + "\"type\" => \"" + cur_province.type + "\",\"movement_links\" => [";
-					
-					//find the movement links
-					var first_linked_element = true;
-
-					for(var i in cur_province.movement_link_paths)
-					{
-						var move_link = cur_province.movement_link_paths[i];
-						for(var k in move_link.linked_provinces)
-						{
-							var check_prov = move_link.linked_provinces[k];
-							if(check_prov.name != cur_province.name)
-							{
-								if(do_debug) console.log("linking...");
-								if(do_debug) console.log(check_prov);
-								//once again add a , after each element except the last
-								if(first_linked_element)
-								{
-									first_linked_element = false;
-								}
-								else
-								{
-									php_provinces_export += ",";
-								}
-								
-								//get the id of this province and add it to the php list
-								var linked_prov_id = this.GetProvinceIdFromName(check_prov.name);
-								if(do_debug) console.log("linked_prov_id: " + linked_prov_id);
-								php_provinces_export += linked_prov_id;
-							}
-						}
-					}
-					php_provinces_export += "]]";
-				}
-				php_provinces_export += "];";
-				
-				//copy the inner text of this node from the page
-				//it's slightly easier this way for a massive block of text than copying from the debug console
-				dojo.place("<div id=\"provinces_php_export\" style=\"display:hidden\">" + php_provinces_export + "</div>", "gamewindow");
+				console.log("ERROR: page::GetSVGPathCommandPointsMax() unknown command: " + command);
+				return -1;
 			},
 		});
 		

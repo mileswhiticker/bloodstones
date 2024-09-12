@@ -508,6 +508,83 @@ define(
 			{
 				return area_element_name.substring(5);
 			},
+			
+			DebugDrawValidMoveLinks : function()
+			{
+				console.log("page::DebugDrawValidMoveLinks()");
+				console.log(this.provinces);
+				this.ClearCanvas();
+				
+				//loop over all provinces
+				for(var cur_prov_id = 0; cur_prov_id < this.provinces.length; cur_prov_id++)
+				{
+					//loop over all connected provinces
+					var cur_prov_info = this.provinces[cur_prov_id];
+					
+					//note: this will do a lot of redundant render calls but it's ok because this is a debug function
+					for(var move_link_index = 0; move_link_index < cur_prov_info.movelinks.length; move_link_index++)
+					{
+						var move_link = cur_prov_info.movelinks[move_link_index];
+						this.AddProvinceMoveLinkPath(move_link.path_segments, PROV_MOVE1);
+					}
+				}
+			},
+			
+			DebugDrawProvinceConnections : function()
+			{
+				console.log("page::DebugDrawAllMovelinks()");
+				console.log(this.provinces);
+				this.ClearCanvas();
+				
+				const canvas = document.getElementById("province_overlay_canvas");
+				const context = canvas.getContext("2d");
+
+				//draw the movelinks that are sent to us from the server
+				for(var prov_id in this.provinces)
+				{
+					var cur_prov_info = this.provinces[prov_id];
+					for(var linked_prov_index in cur_prov_info.linked_prov_ids)
+					{
+						var linked_prov_id = cur_prov_info.linked_prov_ids[linked_prov_index];
+						var other_prov_info = this.provinces[linked_prov_id];
+						
+						//draw a debug line between these two provinces
+						context.beginPath();
+						context.lineWidth = 2;
+						context.strokeStyle = "red";
+						
+						var scale_factor = this.svg_scale_factor;
+						var cur_centre = this.WorldToCanvasCoords(cur_prov_info.centre.x * scale_factor, cur_prov_info.centre.y * scale_factor);
+						var other_centre = this.WorldToCanvasCoords(other_prov_info.centre.x * scale_factor, other_prov_info.centre.y * scale_factor);
+						
+						context.moveTo(cur_centre.x, cur_centre.y);
+						context.lineTo(other_centre.x, other_centre.y);
+						context.stroke();
+						
+						//console.log("drawing line " + cur_prov_info.name + " -> " + other_prov_info.name + " : " + cur_prov_info.centre.ToString() + " to " + other_prov_info.centre.ToString());
+					}
+				}
+			},
+			
+			DebugDrawAllProvinceOutlines : function()
+			{
+				console.log("page::DebugDrawAllProvinceOutlines()");
+				console.log(this.provinces);
+				this.ClearCanvas();
+				
+				const canvas = document.getElementById("province_overlay_canvas");
+				const context = canvas.getContext("2d");
+				
+				//draw the province outlines we loaded from svg
+				for(var prov_id in this.provinces)
+				{
+					var cur_prov_info = this.provinces[prov_id];
+					
+					var overlayColour = this.GetProvinceOverlayColour(PROV_MOVE1);
+					var fillColour = this.GetProvinceOverlayColour(PROV_MOVE1 + 1);
+					this.SetProvinceOverlayColour(cur_prov_info, overlayColour, fillColour);
+				}
+			},
 		});
 			
 		return instance;

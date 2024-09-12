@@ -59,18 +59,15 @@ define(
 					//start with all provinces adjacent to the starting province
 					const unchecked_provs = [];
 					const checked_provs = [start_province_info];
-					for(var i in start_province_info.movement_link_paths)
+					for(var i=0;i<start_province_info.linked_prov_ids; i++)
 					{
-						var move_link = start_province_info.movement_link_paths[i];
-						//console.log("move_link:");
-						//console.log(move_link);
-						adj_province_info = move_link.target_prov;
+						var linked_prov_id = start_province_info.linked_prov_ids[i];
+						var adj_province_info = this.provinces[linked_prov_id];
 						if(adj_province_info != start_province_info)
 						{
 							unchecked_provs.push(adj_province_info);
 							adj_province_info.move_prov_previous = start_province_info;
 							adj_province_info.movemode_iteration = this_movemode_iteration;
-							//adj_province_info.move_link_previous = move_link;
 							checked_provs.push(adj_province_info);
 						}
 					}
@@ -104,10 +101,11 @@ define(
 							//check adjacent provinces
 							//console.log("check_prov:");
 							//console.log(check_prov);
-							for(var link_prov_name in check_prov.movement_link_paths)
+							for(var i=0;i<start_province_info.linked_prov_ids; i++)
 							{
-								var move_link = check_prov.movement_link_paths[link_prov_name];
-								var adj_province_info = move_link.target_prov;
+								var linked_prov_id = start_province_info.linked_prov_ids[i];
+								var adj_province_info = this.provinces[linked_prov_id];
+								
 								if(!checked_provs.includes(adj_province_info))
 								{
 									//console.log("adding adjacent province: " + adj_province_info.name);

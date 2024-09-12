@@ -24,64 +24,20 @@ define(
 			AddProvinceMoveLink : function(start_province_info, dest_province_info, overlay_type)
 			{
 				//console.log("page::AddProvinceMoveLink(" + start_province_info.name + ", " + dest_province_info.name + ", " + overlay_type + ")");
-				for(var i in start_province_info.movement_link_paths)
+				for(var move_link_index = 0; move_link_index < start_province_info.linked_prov_ids; move_link_index++)
 				{
-					var move_link = start_province_info.movement_link_paths[i];
-					if(move_link.target_prov.name == dest_province_info.name)
+					//which province is this?
+					var check_prov_id = start_province_info.linked_prov_ids[move_link_index];
+					
+					//is this the province we are drawing a link to?
+					if(check_prov_id == dest_province_info.id)
 					{
+						//found it
+						var move_link = start_province_info.movelinks[move_link_index];
 						this.AddProvinceMoveLinkPath(move_link.path_segments, overlay_type, false);
-						return;
+						break;
 					}
 				}
-				
-				
-				/* OLD CODE */
-				console.log("WARNING: page::AddProvinceMoveLink(" + start_province_info.name + "," + dest_province_info.name + "," + overlay_type + ") reverting to old movement link rendering");
-				
-				//draw a movement link between the provinces
-				//link colour is  string that can be hex, rbg or colour name 
-				
-				const canvas = dojo.byId("province_overlay_canvas");
-				const context = canvas.getContext("2d");
-				var scale_factor = this.svg_scale_factor;
-				
-				context.beginPath();
-				var start_coords_canvas = this.WorldToCanvasCoords(start_province_info.centre.x * scale_factor, start_province_info.centre.y * scale_factor);
-				context.moveTo(start_coords_canvas.x, start_coords_canvas.y);
-				var dest_coords_canvas = this.WorldToCanvasCoords(dest_province_info.centre.x * scale_factor, dest_province_info.centre.y * scale_factor);
-				context.lineTo(dest_coords_canvas.x, dest_coords_canvas.y);
-
-				if(overlay_type != PROV_QUEUED)
-				{
-					//just make it grey for now, this is easier to see
-					//var start_link_colour = "RGBA(128, 128, 128, 0.7)";
-					//var dest_link_colour = "RGBA(128, 128, 128, 0.7)";
-					var transparent_colour = "RGBA(256, 256, 256, 0)";
-					
-					//nice gradual colour fade
-					//note: turns out this is actually hard to see
-					var start_link_colour = this.GetProvinceOverlayColour(overlay_type);
-					var dest_link_colour = start_link_colour;//transparent_colour;//this.GetProvinceOverlayColour(overlay_type);
-					
-					// Create gradient
-					const gradient = context.createLinearGradient(start_coords_canvas.x, start_coords_canvas.y, dest_coords_canvas.x, dest_coords_canvas.y);
-					gradient.addColorStop(0, start_link_colour.rgba());
-					gradient.addColorStop(0.7, start_link_colour.rgba());
-					gradient.addColorStop(0.8, dest_link_colour.rgba());
-					gradient.addColorStop(1, dest_link_colour.rgba());
-					
-					// Fill with gradient
-					context.strokeStyle = gradient;
-				}
-				else
-				{
-					//solid colour
-					context.strokeStyle = this.GetProvinceOverlayColour(overlay_type);
-				}
-
-				// Draw the Path
-				context.lineWidth = this.province_link_width * this.map_view_scale;
-				context.stroke();
 			},
 			
 			GetNextColourCycle : function()
@@ -89,28 +45,6 @@ define(
 				var retval = Colour(this.colour_cycle.r, this.colour_cycle.g, this.colour_cycle.b, 255);
 				this.colour_cycle.addRGB(this.colour_progression);
 				return retval;
-			},
-			
-			DrawNewTestMoveLinks : function()
-			{
-				console.log("page::DrawNewTestMoveLinks()");
-				
-				console.log("this.move_links_filtered:");
-				console.log(this.move_links_filtered);
-				console.log("this.provinces:");
-				console.log(this.provinces);
-				
-				//for testing: render all movement links
-				var max = 9999;
-				for(var i in this.move_links_filtered)
-				{
-					if(i >= max)
-					{
-						break;
-					}
-					var move_link = this.move_links_filtered[i];
-					this.AddProvinceMoveLinkPath(move_link.path_segments, PROV_MOVE1);
-				}
 			},
 			
 			AddProvinceMoveLinkPath : function(path_segments, overlay_type, do_debug = false)

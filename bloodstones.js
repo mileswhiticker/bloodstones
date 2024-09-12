@@ -158,7 +158,6 @@ define([
 	g_gamethemeurl + '/modules/province_ui.js',
 	g_gamethemeurl + '/modules/province_ui_setup.js',
 	g_gamethemeurl + '/modules/province_ui_events.js',
-	g_gamethemeurl + '/modules/province_ui_svg.js',
 	
 	g_gamethemeurl + '/modules/village.js',
 	g_gamethemeurl + '/modules/village_ui.js',
@@ -233,7 +232,6 @@ function (dojo, declare, lang, fx, on, domAttr) {
 		_province_ui,
 		_province_ui_setup,
 		_province_ui_events,
-		_province_ui_svg,
 		
 		_village,
 		_village_ui,
@@ -393,6 +391,7 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			
 			/* Camera, World and View */
 			
+			this.map_province_radius = 200;
 			this.svg_scale_factor = 0.415;
 			this.display_as_buildable = 3;
 			

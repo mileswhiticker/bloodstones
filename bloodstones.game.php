@@ -1961,7 +1961,7 @@ class bloodstones extends Table
 			$this->resetAfterTie();
 			
 			//tell the players what is happening
-			self::notifyAllPlayers("showMessage", $message, array('message' => clienttranslate("This round of battle was a draw. Starting the next round..."), 'type' => "info"));
+			self::notifyAllPlayers("showMessage", clienttranslate("This round of battle was a draw. Starting the next round..."), []);
 			
 			//go back to the dice draw step, but after withdrawals
 			$this->gamestate->nextState('setupBattle');

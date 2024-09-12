@@ -487,52 +487,42 @@ define(
 			
 			GameLayerDialog : function()
 			{
-				return this.GameLayerUIOver() + 1;
+				return this.GameLayerDialogBase() + 1;
 			},
 			
-			GameLayerUIOver : function()
-			{
-				return this.GameLayerUIMiddle() + 1;
-			},
-			
-			GameLayerUIMiddle : function()
-			{
-				return this.GameLayerUIUnder() + 1;
-			},
-			
-			GameLayerArmy : function()
-			{
-				return this.GameLayerUIUnder();
-			},
-			
-			GameLayerUIUnder : function()
-			{
-				return 1;
-			},
-			
-			GameLayerMovementRouteRender : function()
+			GameLayerDialogBase : function()
 			{
 				return this.GameLayerProvinceInteract() + 1;
 			},
 			
 			GameLayerProvinceInteract : function()
 			{
-				return this.GameLayerProvinceOverlayRender() + 1;
+				return this.GameLayerArmy() + 1;
 			},
 			
-			GameLayerProvinceOverlayRender : function()
+			GameLayerArmy : function()
 			{
-				return this.GameLayerBackgroundRender() + 1;
+				return this.GameLayerArmyZone() + 1;
 			},
 			
-			GameLayerBackgroundRender : function()
+			GameLayerArmyZone : function()
+			{
+				return this.GameLayerCanvas() + 1;
+			},
+			
+			GameLayerCanvas : function()
+			{
+				return this.GameLayerMap() + 1;
+			},
+			
+			GameLayerMap : function()
 			{
 				return this.GameLayerDefault() + 1;
 			},
 			
 			GameLayerDefault : function()
 			{
-				return -20;
+				return 0;
 			},
 			
 			EnableButton : function(button_id)

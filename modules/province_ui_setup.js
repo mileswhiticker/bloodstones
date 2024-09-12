@@ -23,6 +23,7 @@ define(
 				//console.log("page::SetupProvinceUI(" + canvas + ", [" + this.provinces.length + "])");
 				var context = canvas.getContext("2d");
 				var provinceclickareas = dojo.byId("provinceclickareas");
+				var do_debug = false;
 				for (let i in this.provinces)
 				{
 					//grab the next province object
@@ -33,25 +34,18 @@ define(
 					province_div.id = province.name;
 					gamemap.appendChild(province_div);
 					
-					//now create the droppable area element
+					//now create the mouse interaction area of this province
 					let area_element = document.createElement("area");
 					area_element.id = this.GetAreaElementNameFromProv(province);
-					//console.log("area_element.id: " + area_element.id);
 					area_element.shape = "poly";
 					area_element.style.position = "absolute";
 					area_element.dataset.province_id = province_div.id;
+					//dojo.style(area_element, 'z-index', this.GameLayerProvinceInteract());
+					
 					provinceclickareas.appendChild(area_element,true);
-					dojo.style(area_element, 'zIndex', this.GameLayerProvinceInteract());
 					
-					//add event listeners so the drop area can be dropped onto
-					/*
-					area_element.addEventListener("dragenter", dragenter_handler);
-					area_element.addEventListener("dragover", dragover_handler);
-					area_element.addEventListener("dragleave", dragleave_handler);
-					area_element.addEventListener("drop", onNodeDrop);
-					*/
+					//mouse interaction callback
 					dojo.connect(area_element, "click", dojo.hitch(this, this.onClickProvince));
-					
 					area_element.ondragenter = window.gameui.onDragEnterProvince;
 					area_element.ondragleave = window.gameui.onDragLeaveProvince;
 					area_element.ondragover = window.gameui.onDragOverProvince;
@@ -61,33 +55,48 @@ define(
 					
 					//create a div to hold the zone which will hold all the armies in this province
 					let zone_div = document.createElement("div");
-					zone_div.id = province.name + '_zone';
+					zone_div.id = this.GetProvZoneName(province);
+					//dojo.style(zone_div, 'position', "absolute");
+					//console.log("setting " + zone_div.id + " z index to -20");
+					//dojo.style(zone_div, 'z-index', this.GameLayerDefault());
+					//zone_div.style.zIndex = this.GameLayerDefault();
 					province_div.appendChild(zone_div);
 					
 					//create an ebg/zone to hold all the armies
 					var newZone = new modules.ArmyZone();
-					newZone.create(this, zone_div, 50, 50);
+					newZone.create(this, zone_div, this.map_province_radius, this.map_province_radius);
 					newZone.setPattern("ellipticalfit");
 					province.zone = newZone;
+					
+					//this function will create the outline and make sure it's properly scaled for the current user zoom level
+					this.RegenerateProvinceUI(province, context, area_element, do_debug);
 					
 					//to add or remove an element from this zone, use:
 					//zone.placeInZone( <object_id>, <weight> );
 					//zone.removeFromZone( <object_id>, <destroy?>, <to> );
 					
-					this.RegenerateProvinceUI(province, context);
+					do_debug = false;
 				}
 			},
 			
-			RegenerateProvinceUI : function(province, context)
+			RegenerateProvinceUI : function(province, context, area_element, do_debug = false)
 			{
-				//console.log("page::RegenerateProvinceUI()");
-				//console.log(province);
+				if(do_debug)
+				{
+					console.log("page::RegenerateProvinceUI()");
+					console.log(province);
+				}
 				var scale_factor = this.svg_scale_factor;
 				
 				this.RegenerateProvincePolygon(province, context);
 				var area_element_name = this.GetAreaElementNameFromProv(province);
-				//console.log("area_element_name: " + area_element_name);
-				let area_element = dojo.byId(area_element_name);
+				//let area_element = dojo.byId(area_element_name);
+				if(do_debug)
+				{
+					console.log(area_element_name);
+					console.log(area_element);
+					console.log(province);
+				}
 				area_element.coords = province.drag_area_poly;
 				
 				let province_div = dojo.byId(province.name);
@@ -95,7 +104,7 @@ define(
 				province_div.setAttribute("style","width:1px;height:1px;position:absolute;" + 
 					"left:" + province_centre_canvas.x + "px;top:" + province_centre_canvas.y + "px;");
 				
-				let zone_div = dojo.byId(province.name + "_zone");
+				let zone_div = dojo.byId(this.GetProvZoneName(province));
 				var adjusted_zone_radius = this.map_province_radius * this.map_view_scale;
 				zone_div.setAttribute("style","width:" + (2 * adjusted_zone_radius) + "px;height:" + (2 * adjusted_zone_radius) + "px;" + 
 					"left:" + (-adjusted_zone_radius) + "px;top:" + (-adjusted_zone_radius) + "px;position:absolute;");
@@ -105,11 +114,6 @@ define(
 			
 			RegenerateProvincePolygon : function(province, context, debug_draw = false)
 			{
-				//broken provinces: 17, 55, 74
-				if(province.name != "prov55")
-				{
-					//debug_draw = false;
-				}
 				if(debug_draw)
 				{
 					//console.log("page::RegenerateProvincePolygon(" + debug_draw + ")");

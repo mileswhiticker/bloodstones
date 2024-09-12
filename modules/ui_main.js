@@ -27,15 +27,32 @@ define(
 				}
 				
 				//create the basic framework of the window
+				const gamewindow = dojo.byId("gamewindow");
+				
+				//gamewindow children
 				const centrepanel = dojo.place("<div id=\"centrepanel\"></div>","gamewindow");
-				const toppanel = dojo.place("<div id=\"toppanel\"></div>","centrepanel");
-				const gamemap = dojo.place("<div id=\"gamemap\"></div>","centrepanel");
-				const canvas = dojo.place("<canvas id=\"province_overlay_canvas\" width=\"1039px\" height=\"1185px\"></canvas>","gamemap");
-				const provinceclickareas = dojo.place("<map id=\"provinceclickareas\" name=\"provinceclickareas\"></map>","gamemap");
 				const leftpanel = dojo.place("<div id=\"leftpanel\"></div>","gamewindow");
+				
+				//centrepanel children
+				const gamemap = dojo.place("<div id=\"gamemap\"></div>","centrepanel");
+				const toppanel = dojo.place("<div id=\"toppanel\"></div>","centrepanel");
+				const provinceclickareas = dojo.place("<map id=\"provinceclickareas\" name=\"provinceclickareas\"></map>","centrepanel");
+				var droppable_img = dojo.place("<img id=\"droppable_map\" class=\"droppable_map\" src=\"/img/blank.png\" usemap=\"#provinceclickareas\"></img>","centrepanel");
+				
+				//leftpanel children
 				dojo.place("<div id=\"playercards\"></div>","leftpanel");
 				dojo.place("<div id=\"selected_army\"></div>","leftpanel");
 				dojo.place("<div id=\"bag\"></div>","leftpanel");	//this is probably unneeded but i'll leave it for now
+				
+				//gamemap children
+				const canvas = dojo.place("<canvas id=\"province_overlay_canvas\" width=\"1039px\" height=\"1185px\"></canvas>","gamemap");
+				
+				//no longer using zindex here, i think it was over complicating this
+				//dojo.style(gamewindow, 'zIndex', this.GameLayerDefault());
+				//dojo.style(centrepanel, 'zIndex', this.GameLayerDefault());
+				//dojo.style(gamemap, 'zIndex', this.GameLayerMap());
+				//dojo.style(canvas, 'zIndex', this.GameLayerDefault());
+				//dojo.style(provinceclickareas, 'zIndex', this.GameLayerProvinceInteract());
 				
 				//Setup the zindex layering so that click detection works properly
 				//todo: where am i doing this now? does it need a refactoring pass?
@@ -58,7 +75,7 @@ define(
 				dojo.connect(gamemap, "click", dojo.hitch(this, this.onClickGamemap));
 				dojo.connect(canvas, "click", dojo.hitch(this, this.onClickCanvas));
 				dojo.connect(centrepanel, "click", dojo.hitch(this, this.onClickCentrepanel));
-				dojo.connect(provinceclickareas, "click", dojo.hitch(this, this.onClickProvinceAreas));
+				//dojo.connect(provinceclickareas, "click", dojo.hitch(this, this.onClickProvinceAreas));
 				
 				//these are created programmatically because it's a little easier than having them as a block of strings
 				this.CreateFactionTileStrings();

@@ -29,6 +29,7 @@ define(
 					console.log("page::CreatePendingBattleCircles() ERROR: this.pending_battle_circles.length == " + this.pending_battle_circles.length);
 					return;
 				}
+				var container_node_id = "centrepanel";
 				for(var cur_province_id in this.gamedatas.pending_battles)
 				{
 					//console.log("cur_province_id: " + cur_province_id);
@@ -39,7 +40,7 @@ define(
 					//check if a circle already exists
 					if(dojo.byId(new_node_id) == null)
 					{
-						var battle_circle = dojo.place("<div class=\"battle_circle\" id=\"" + new_node_id + "\"></div>","gamemap");
+						var battle_circle = dojo.place("<div class=\"battle_circle\" id=\"" + new_node_id + "\"></div>",container_node_id);
 						//the magnifying glass image is set to 200*200px in css, so offset the image position by half that
 						var world_x = battle_province_info.centre.x * this.svg_scale_factor - 100;
 						var world_y = battle_province_info.centre.y * this.svg_scale_factor - 100;
@@ -76,7 +77,7 @@ define(
 							//create an outer div for the button
 							var outer_classes = "button_preview_battle_outer blanktile" + enemy_faction_id;
 							var outer_button_id = "button_preview_battle_" + cur_province_id;
-							var preview_battle_button = dojo.place("<div class=\"" + outer_classes + "\" id=\"" + outer_button_id + "\"></div>","gamemap");
+							var preview_battle_button = dojo.place("<div class=\"" + outer_classes + "\" id=\"" + outer_button_id + "\"></div>",container_node_id);
 							this.pending_battle_buttons.push(preview_battle_button);
 							
 							//calculate the position we will put this button

@@ -499,14 +499,19 @@ define(
 				return reflected;
 			},
 			
-			GetAreaElementNameFromProv(province_info)
+			GetAreaElementNameFromProv : function(province_info)
 			{
 				return "area_" + province_info.name;
 			},
 			
-			GetProvNameFromAreaElement(area_element_name)
+			GetProvNameFromAreaElement : function(area_element_name)
 			{
 				return area_element_name.substring(5);
+			},
+			
+			GetProvZoneName : function(province_info)
+			{
+				return province_info.name + "_zone";
 			},
 			
 			DebugDrawValidMoveLinks : function()

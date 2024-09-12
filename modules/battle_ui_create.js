@@ -123,7 +123,7 @@ define(
 				
 				//create the container node
 				var battlewindow = dojo.place("<div id=\"battlewindow\"></div>", "centrepanel", "after");
-				dojo.style(battlewindow, 'zIndex', this.GameLayerUIOver());
+				//dojo.style(battlewindow, 'zIndex', this.GameLayerDialogBase());
 				
 				//it's possible that this.gamedatas.attacking_player_id and defending_player_id will be undefined if there is no ongoing battle
 				

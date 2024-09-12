@@ -26,14 +26,7 @@ define(
 				//this.SetMapViewScale(1);
 				//this.MoveCameraWorld(0,0);
 				
-				//<img id="droppable_map" class="droppable_map" usemap="#provinceclickareas"></img>
-				var path_string = g_gamethemeurl + '/img/blank.png';
-				//console.log("img src: " + path_string);
-				var droppable_img = dojo.place("<img id=\"droppable_map\" class=\"droppable_map\" src=\"" + path_string + "\" usemap=\"#provinceclickareas\"></img>",
-					"province_overlay_canvas","after");
-				
-				dojo.connect(droppable_map, "click", dojo.hitch(this, this.onClickDroppable_map));
-				
+				//dojo.connect(droppable_map, "click", dojo.hitch(this, this.onClickDroppable_map));
 				//setup the map click and drag
 				gamemap.draggable = true;
 				gamemap.ondragstart = window.gameui.MapDragStart;

@@ -391,7 +391,7 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			
 			/* Camera, World and View */
 			
-			this.map_province_radius = 200;
+			this.map_province_radius = 50;
 			this.svg_scale_factor = 0.415;
 			this.display_as_buildable = 3;
 			

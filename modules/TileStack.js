@@ -286,7 +286,7 @@ define(
 				this.item_width = 115;
 				this.item_height = 57;
 				this.selectable = 0;
-				dojo.style(this.container_div, 'zIndex', window.gameui.GameLayerUIOver());
+				dojo.style(this.container_div, 'zIndex', window.gameui.GameLayerDialog());
 				//dojo.style(this.container_div, 'width', "115px");
 			},
 			

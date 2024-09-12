@@ -59,7 +59,7 @@ define(
 					//start with all provinces adjacent to the starting province
 					const unchecked_provs = [];
 					const checked_provs = [start_province_info];
-					for(var i=0;i<start_province_info.linked_prov_ids; i++)
+					for(var i=0;i<start_province_info.linked_prov_ids.length; i++)
 					{
 						var linked_prov_id = start_province_info.linked_prov_ids[i];
 						var adj_province_info = this.provinces[linked_prov_id];
@@ -101,7 +101,7 @@ define(
 							//check adjacent provinces
 							//console.log("check_prov:");
 							//console.log(check_prov);
-							for(var i=0;i<start_province_info.linked_prov_ids; i++)
+							for(var i=0;i<start_province_info.linked_prov_ids.length; i++)
 							{
 								var linked_prov_id = start_province_info.linked_prov_ids[i];
 								var adj_province_info = this.provinces[linked_prov_id];

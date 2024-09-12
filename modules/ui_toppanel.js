@@ -23,7 +23,7 @@ define(
 				//console.log("page::SetupTopUI()");
 				//const toppanel = dojo.place("<div id=\"toppanel\"></div>","centrepanel");
 				const toppanel = dojo.byId("toppanel");
-				dojo.style(toppanel, 'zIndex', this.GameLayerUIOver());
+				dojo.style(toppanel, 'zIndex', this.GameLayerDialog());
 				
 				const button_zoomin = dojo.place("<div id=\"button_zoomin\"></div>","toppanel");
 				dojo.addClass(button_zoomin, "blst_button topbutton");

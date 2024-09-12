@@ -1,0 +1,787 @@
+<html>
+
+<p id="province_outline_svg_title">Load province outlines SVG file here:</p>
+<input type="file" id="province_outline_svg">
+
+<p id="province_movelinks_svg_title">Load province movelinks SVG file here:</p>
+<input type="file" id="province_movelinks_svg">
+
+<p id="title">Enter map name for custom corrections to province outline, movelinks and centre point (eg Tyrant's Lament):</p>
+<input id="map_name" type="text" value="Tyrant's Lament"></input>
+
+<p id="title">Enter number of provinces:</p>
+<input id="num_provinces" type="text" value="74"></input>
+<input type="button" id="generate_province_types_template" value="Generate province types template"><br>
+<br>
+<input id="province_type_defs" type="text" style="width:400px;" size="500"></input>
+<p>^ manually edit this generated text to set the correct province types, then copy it back in</p><br>
+<input type="button" id="generate_php" value="Generate PHP map definitions array">
+<input type="button" id="generate_javascript" value="Generate Javascript map definitions array">
+<input type="button" id="copy_to_clipboard" value="Copy generated text to clipboard">
+<p id="output_text"></p>
+
+<script type="text/javascript">
+
+var mapname;
+var exported_province_movelinks;
+var exported_province_outlines;
+var exported_province_types;
+var connected_movelinks;
+var applied_custom_name_overrides = false;
+var final_provinces_combined;
+
+document.getElementById('copy_to_clipboard').addEventListener('click', function (evt) {
+	
+	//copy the generated text string to clkipboard for ease of use
+	//document.getElementById('output_text').innerText
+	var output_node = document.getElementById('output_text');
+	navigator.clipboard.writeText(output_node.innerText);
+});
+	
+document.getElementById('province_outline_svg').addEventListener('change', function (evt) {
+    if (!evt.target.files){
+        return;
+    }
+
+    var file = evt.target.files ? evt.target.files[0] : null;
+    var reader = new FileReader();
+	
+    reader.onload = function (evt) {
+		//xml parser
+		const parser = new DOMParser();
+		const svg_fragment = parser.parseFromString(evt.target.result, "image/svg+xml");
+		let parent_node = svg_fragment.documentElement;
+		
+		var mapname_node = document.getElementById('map_name');
+		mapname = mapname_node.value;
+		LoadProvinceOutlines(parent_node);
+		
+		var outcome_message = "SUCCESS! Province outlines SVG file has been loaded";
+		if(applied_custom_name_overrides)
+		{
+			outcome_message += " with custom overrides for map \"" + mapname + "\""
+		}
+		else
+		{
+			outcome_message += " with no custom map overrides (did you spell the map name correctly?)"
+		}
+		document.getElementById('province_outline_svg_title').innerText = outcome_message;
+		document.getElementById("province_outline_svg").style.display = "none";
+		console.log(outcome_message);
+    };
+	
+    reader.readAsText(file);
+});
+
+document.getElementById('province_movelinks_svg').addEventListener('change', function (evt) {
+    if (!evt.target.files){
+        return;
+    }
+
+    var file = evt.target.files ? evt.target.files[0] : null;
+    var reader = new FileReader();
+
+    reader.onload = function (evt) {
+		//xml parser
+		const parser = new DOMParser();
+		const svg_fragment = parser.parseFromString(evt.target.result, "image/svg+xml");
+		let parent_node = svg_fragment.documentElement;
+		
+		LoadProvinceMovelinks(parent_node);
+		
+		document.getElementById('province_movelinks_svg_title').innerText = "SUCCESS! Province movelinks SVG file has been loaded";
+		document.getElementById("province_movelinks_svg").style.display = "none";
+		console.log("SUCCESS! Province movelinks SVG file has been loaded");
+    };
+
+    reader.readAsText(file);
+});
+
+document.getElementById('generate_province_types_template').addEventListener('click', function (evt) {
+	//console.log("generate_province_types_template");
+	var num_provinces_node = document.getElementById('num_provinces');
+	if(!num_provinces_node.value)
+	{
+		return;
+	}
+	const num_provinces = Number(num_provinces_node.value);
+	
+	var provinces_template = [];
+	for(var i=0; i<num_provinces; i++)
+	{
+		var new_province = {};
+		new_province.id = i;
+		new_province.type = "Plains";
+		provinces_template.push(new_province);
+	}
+	//console.log("success");
+	//console.log(provinces_template);
+	document.getElementById('province_type_defs').value = JSON.stringify(provinces_template);
+	console.log("SUCCESS! Province types template has been generated");
+});
+
+function LoadProvinceOutlines(parent_node)
+{
+	//remove the defs node
+	//console.log(parent_node.children[0]);
+	parent_node.removeChild(parent_node.children[0]);
+	
+	//loop over each separate province outline, stored as a <g> node
+	var max_provinces = 9999;
+	var all_provinces = [];
+	var test_provinces = [];
+	while (parent_node.children.length > 0 && max_provinces > 0)
+	{
+		//for testing it's easier if we only do a couple
+		max_provinces--;
+		
+		//contruct our JSON object
+		var new_prov = {};
+		new_prov.centre = {x:0,y:0}
+		
+		//setup some movement links for testing
+		/*
+		if(all_provinces.length > 0)
+		{
+			new_prov.movement_links.push("prov" + (all_provinces.length - 1));
+		}
+		new_prov.movement_links.push("prov" + (all_provinces.length + 1));
+		*/
+		
+		new_prov.id = all_provinces.length;
+		new_prov.name = GetProvinceNameFromId(all_provinces.length);
+		
+		var do_debug = false;
+		var do_debug2 = false;
+		if(new_prov.name == "prov0")
+		{
+			//do_debug = true;
+			//do_debug2 = true;
+		}
+		else
+		{
+			//continue;
+		}
+		
+		//convert the svg path data into our usable format
+		var graphics_node = parent_node.children[0];
+		if(do_debug)	console.log(graphics_node);
+		let path_node = graphics_node.children[0];
+		let d_value = path_node.getAttribute("d");
+		if(do_debug)	console.log(path_node);
+		new_prov.prov_path_segments = ParseSVGPath(d_value, do_debug2);
+		if(do_debug)	console.log(new_prov.prov_path_segments);
+		
+		if(graphics_node.children.length > 1)
+		{
+			let type_node = graphics_node.children[1];
+			//console.log(type_node);
+
+			new_prov.type = type_node.childNodes[0].nodeValue;
+			//console.log("new_prov.type: " + new_prov.type);
+		}
+		
+		//calculate the centre of the province using a basic arithmetic mean
+		//if the province is weirdly shaped this may place the "centre" at an unintuitive point
+		var minX = 9999999;
+		var maxX = -9999999;
+		var minY = 9999999;
+		var maxY = -9999999;
+		var cursor = {x:0,y:0};
+		for (var i in new_prov.prov_path_segments)
+		{
+			var seg = new_prov.prov_path_segments[i];
+			
+			//first, figure out the type of point and thus which set of coords to use
+			switch(seg.type)
+			{
+				case "m":
+				{
+					cursor.x += seg.points[0].x;
+					cursor.y += seg.points[0].y;
+					break;
+				}
+				case "M":
+				{
+					cursor.x = seg.points[0].x;
+					cursor.y = seg.points[0].y;
+					break;
+				}
+				case "c":
+				{
+					cursor.x += seg.points[2].x;
+					cursor.y += seg.points[2].y;
+					break;
+				}
+				case "C":
+				{
+					cursor.x = seg.points[2].x;
+					cursor.y = seg.points[2].y;
+					break;
+				}
+			}
+			
+			//if(do_debug)	console.log("(" + cursor.x + "," + cursor.y + ")");
+			
+			if(cursor.x < minX)
+			{
+				minX = cursor.x;
+				//if(do_debug)	console.log("new minX " + minX);
+			}
+			else if(cursor.x > maxX)
+			{
+				maxX = cursor.x;
+				//if(do_debug)	console.log("new maxX " + maxX);
+			}
+			if(cursor.y < minY)
+			{
+				minY = cursor.y;
+				//if(do_debug)	console.log("new minY " + minY);
+			}
+			else if(cursor.y > maxY)
+			{
+				maxY = cursor.y;
+				//if(do_debug)	console.log("new maxY " + maxY);
+			}
+		}
+		new_prov.centre.x = minX + (maxX - minX) / 2;
+		new_prov.centre.y = minY + (maxY - minY) / 2;
+		
+		//some manual corrections for weirdly shaped provinces
+		switch(mapname)
+		{
+			case ("Tyrant's Lament"):
+			{
+				applied_custom_name_overrides = true;
+				//all_provinces.length is a shortcut for the prov id here
+				switch(all_provinces.length)
+				{
+					case (8):
+					{
+						new_prov.centre.x = 219.85;
+						break;
+					}
+					case (33):
+					{
+						new_prov.centre.x = 2229.17;
+						break;
+					}
+					case (33):
+					{
+						new_prov.centre.x = 1714.03;
+						break;
+					}
+					case (42):
+					{
+						new_prov.centre.x = 2188.585;
+						break;
+					}
+				}
+				break;
+			}
+		}
+		
+		
+		if(do_debug)	console.log("centre: " + new_prov.centre.x + "," +  new_prov.centre.y);
+		
+		//save the new province
+		//console.log(new_prov.name);
+		all_provinces.push(new_prov);
+		if(new_prov.name == "prov2")
+		{
+			test_provinces.push(new_prov);
+		}
+		
+		//remove this g node now that we are done with it
+		parent_node.removeChild(graphics_node);
+	}
+	
+	//save it in a global variable
+	exported_province_outlines = all_provinces;
+};
+
+function ParseSVGPath (svg_path_string, do_debug)
+{
+	if(do_debug)	console.log("page::ParseSVGPath()");
+	if(do_debug)	console.log(svg_path_string);
+	//for a good reference see https://css-tricks.com/svg-path-syntax-illustrated-guide/
+	//for a good visualiser see https://svg-path-visualizer.netlify.app/
+	//applet to test and experiment with regex https://regexr.com/
+	
+	//in this function, I reinvent the wheel because apparently the svg object handling in js has been deprecated for about 8 years and not replaced yet
+	//this is a script parser of the minified svg path d attribute
+	//it should be safe because each svg used for province layout is static and will go through a lot of QA testing to identify any issues
+	
+	//svg_path_string should contain the d (data) attribute for a g (graphics) node inside a svg file
+	
+	//console.log("page::DrawSVGPath() svg_path_string: " + svg_path_string);
+	//console.log("page::DrawSVGPath()");
+	
+	//cant use string split() because of the different rules for splitting
+	//test_element_array = svg_path_string.split(/[a-z]/);
+	
+	//loop over the string and extract all the elements of the svg path
+	path_terms = [];
+	
+	//loop over each char individually
+	var currentPathSeg = {points: [], type: "", absolute: false};
+	var allPathSegs = [];
+	
+	var current_type = "M";
+	
+	//var working_string = "";
+	var current_coord = "";
+	for(var c in svg_path_string)
+	{
+		var current_char = svg_path_string[c];
+		//if(do_debug)	console.log("current_char: " + current_char);
+		
+		//first, check if we need to export the current command
+		var export_coord = false;
+		var export_pathSeg = false;
+		var cp_max = this.GetSVGPathCommandPointsMax(current_type)
+		//if(do_debug)	console.log("cp_max: " + cp_max);
+		if(current_char.search(/[a-zA-Z]/) != -1)
+		{
+			current_type = current_char;
+			if(do_debug)	console.log("setting next current_type: " + current_type);
+			current_char = "";
+			
+			if(currentPathSeg.type != "")
+			{
+				if(current_coord !== "")
+				{
+					if(do_debug)	console.log("exporting 1 (full)");
+					export_pathSeg = true;
+					export_coord = true;
+				}
+				else
+				{
+				if(do_debug)	console.log("check2");
+				}
+			}
+			else
+			{
+				currentPathSeg.type = current_type;
+				if(do_debug)	console.log("new type");
+			}
+		}
+		else if(currentPathSeg.points.length >= cp_max && currentPathSeg.points[currentPathSeg.points.length - 1].y !== "")
+		{
+			export_pathSeg = true;
+		}
+		else if(current_char.search(/[,]/) != -1)
+		{
+			export_coord = true;
+			current_char = "";
+		}
+		else if(current_char.search(/[-]/) != -1)
+		{
+			if(current_coord !== "")
+			{
+				export_coord = true;
+			}
+		}
+		else if(c == svg_path_string.length - 1)
+		{
+			export_coord = true;
+			export_pathSeg = true;
+		}
+		else if(current_char == "." && current_coord.search(/[.]/) != -1)
+		{
+			export_coord = true;
+		}
+		
+		if(export_coord)
+		{
+			//console.log("attempting coord export: " + current_coord);
+			if(current_coord[0] === ".")
+			{
+				current_coord = "0" + current_coord
+			}
+			else if(current_coord.substring(0,2) === "-.")
+			{
+				current_coord = current_coord.slice(1);
+				current_coord = "-0" + current_coord;
+			}
+			
+			//is this the first point in the segment?
+			if(currentPathSeg.points.length === 0)
+			{
+				//insert a new point in the segment
+				currentPathSeg.points.push({x:"",y:""});
+			}
+			
+			//grab the latest point in the segment
+			lastPoint = currentPathSeg.points[currentPathSeg.points.length - 1];
+			
+			//check if the point is finished
+			if(lastPoint.y !== "")
+			{
+				//insert a new point in the segment
+				currentPathSeg.points.push({x:"",y:""});
+				
+				//grab the latest point in the segment
+				lastPoint = currentPathSeg.points[currentPathSeg.points.length - 1];
+			}
+			
+			if(lastPoint.x === "")
+			{
+				var val = Number(current_coord);
+				if(do_debug){console.log("exporting " + val + "x but was previously " + current_coord)};
+				lastPoint.x = val;
+			}
+			else if(lastPoint.y === "")
+			{
+				var val = Number(current_coord);
+				if(do_debug){console.log("exporting " + val + "y")};
+				lastPoint.y = val;
+			}
+			else
+			{
+				console.log("ERROR: ParseSVGPath() expected an unfinished point but found a finished one");
+			}
+			current_coord = "";
+		}
+		if(export_pathSeg)
+		{
+			//does this segment use absolute or relative coordinates?
+			//this is currently unused 19/10/23, and i'm trying to avoid using it as much as possible
+			if(currentPathSeg.type.search(/[a-z]/) != -1)
+			{
+				currentPathSeg.absolute = false;
+			}
+			else if(currentPathSeg.type.search(/[A-Z]/) != -1)
+			{
+				currentPathSeg.absolute = true;
+			}
+			else
+			{
+				//sanity check
+				console.log("WARNING: page::DrawSVGPath() unable to determine relative or absolute coords for pathseg with current_type: " + current_type);
+			}
+			
+			if(do_debug){console.log("exported seg: " + JSON.stringify(currentPathSeg))};
+			allPathSegs.push(currentPathSeg);
+			if(current_type == 'Z')
+			{
+				//premature finish here
+				break;
+			}
+			currentPathSeg = {points: [], type: current_type, absolute: false};
+		}
+		
+		current_coord += current_char;
+	}
+	
+	//console.log(allPathSegs);
+	return allPathSegs;
+};
+
+function GetSVGPathCommandPointsMax(command)
+{
+	if(command.search(/[lL]/) != -1)
+	{
+		return 2;
+	}
+	if(command.search(/[mM]/) != -1)
+	{
+		return 2;
+	}
+	if(command.search(/[sS]/) != -1)
+	{
+		return 2;
+	}
+	if(command.search(/[zZ]/) != -1)
+	{
+		return 0;
+	}
+	if(command.search(/[cC]/) != -1)
+	{
+		return 3;
+	}
+	
+	console.log("ERROR: page::GetSVGPathCommandPointsMax() unknown command: " + command);
+	return 99;
+};
+
+function LoadProvinceMovelinks(parent_node)
+{
+		//remove the defs node
+		//console.log(parent_node.children[0]);
+		parent_node.removeChild(parent_node.children[0]);
+		
+		//loop over each separate province movement link, stored as a path node
+		var max_iterations = 999999;
+		var all_links = [];
+		while (parent_node.children.length > 0 && max_iterations > 0)
+		{
+			//for testing it's easier if we only do a couple
+			max_iterations--;
+			
+			//contruct our JSON object
+			var new_move_link = {};
+			//new_move_link.linked_provinces = [];
+			
+			//convert the svg path data into our usable format
+			let path_node = parent_node.children[0];
+			let d_value = path_node.getAttribute("d");
+			new_move_link.path_segments = ParseSVGPath(d_value, false);
+			//console.log(new_move_link.path_segments);
+			
+			//save the new province
+			//console.log(new_prov.name);
+			all_links.push(new_move_link);
+			
+			//remove this g node now that we are done with it
+			parent_node.removeChild(path_node);
+		}
+		
+		
+	//save it in a global variable
+	exported_province_movelinks = all_links;		
+	//content.innerText = JSON.stringify(all_links);// + ";";
+};
+
+document.getElementById('generate_php').addEventListener('click', function (evt)
+{
+	generate_php();
+});
+
+function generate_php()
+{
+	console.log("generate_php()");
+	if(!merge_province_outlines_types())
+	{
+		//if this failed we cant go any further
+		return;
+	}
+	
+	connect_movelinks_provinces_all();
+	
+	var output_php_array = "[";
+	var first_element = true;
+	for(var prov_id in final_provinces_combined)
+	{
+		if(first_element)
+		{
+			first_element = false;
+		}
+		else
+		{
+			output_php_array += ",";
+		}
+		
+		var cur_province = final_provinces_combined[prov_id];
+		
+		//copy across only the properties that we want
+		//todo: movement links
+		output_php_array += "[\"id\"=>" + prov_id + "," + "\"type\" => \"" + cur_province.type + "\",\"movement_links\" => " + JSON.stringify(cur_province.linked_prov_ids) + "]";
+	}
+	output_php_array += "]";
+	document.getElementById('output_text').innerText = output_php_array;
+	console.log("finished generate_php()");
+}
+
+document.getElementById('generate_javascript').addEventListener('click', function (evt)
+{
+	generate_javascript();
+});
+
+function generate_javascript()
+{
+	console.log("generate_javascript()");
+	if(!merge_province_outlines_types())
+	{
+		//if this failed we cant go any further
+		return;
+	}
+	
+	connect_movelinks_provinces_all();
+	
+	//output it as a json string so we can copy paste it into the .js files
+	document.getElementById('output_text').innerText = JSON.stringify(final_provinces_combined);
+	
+	console.log("finished generate_javascript()");
+}
+
+function merge_province_outlines_types()
+{
+	//first load the province types string
+	var province_types_string = document.getElementById('province_type_defs').value;
+	if(!province_types_string)
+	{
+		document.getElementById('output_text').innerText = "WARNING: you must enter a province types JSON";
+		return false;
+	}
+	exported_province_types = JSON.parse(province_types_string);
+	
+	//shallow copy the outlines
+	final_provinces_combined = exported_province_outlines.slice();
+	
+	//manually copy across the type string
+	for(var i in exported_province_types)
+	{
+		var cur_province_info_final = final_provinces_combined[i];
+		var cur_province_info_types = exported_province_types[i];
+		
+		//copy this across
+		cur_province_info_final.type = cur_province_info_types.type;
+		
+		//reset this in case we are running the script multiple times in a row
+		cur_province_info_final.movelinks = [];
+		cur_province_info_final.linked_prov_ids = [];
+	}
+	
+	return true;
+}
+
+function connect_movelinks_provinces_all(province_types)
+{
+	console.log("connect_movelinks_provinces()");
+	
+	if(!exported_province_movelinks)
+	{
+		document.getElementById('output_text').innerText = "WARNING: you must load the province movelinks SVG file";
+		return;
+	}
+	if(!exported_province_outlines)
+	{
+		document.getElementById('output_text').innerText = "WARNING: you must load the province outlines SVG file";
+		return;
+	}
+	
+	//grab a shallow copy of this
+	var unconnected_movelinks = exported_province_movelinks.slice();
+	connected_movelinks = [];
+	sum_dist = 0;
+	all_dists = [];
+	
+	//assume that every movelink is valid and each end is connected to a province
+	//therefore, find the closest province centre to each end of the movelink and connect it
+	while(unconnected_movelinks.length > 0)
+	{
+		//grab the topmost element of the array that we havent checked yet
+		var cur_movelink = unconnected_movelinks.shift();
+		//console.log(cur_movelink);
+		var start_point;
+		for(var j in cur_movelink.path_segments)
+		{
+			var cur_segment = cur_movelink.path_segments[j];
+			
+			if(j == 0 || j == cur_movelink.path_segments.length - 1)
+			{
+				var chosen_point;
+				if(cur_segment.type == "M")
+				{
+					start_point = {x: cur_segment.points[0].x, y: cur_segment.points[0].y};
+					chosen_point = start_point;
+				}
+				else if(cur_segment.type == "c")
+				{
+					chosen_point = {x: cur_segment.points[2].x, y: cur_segment.points[2].y};
+					chosen_point.x += start_point.x;
+					chosen_point.y += start_point.y;
+				}
+				else
+				{
+					//this shouldnt happen so long as the movelinks svg is in the right format
+					console.log("ERROR: unhandled point type \'" + cur_segment.type | "\'");
+					console.log("cur_movelink:");
+					console.log(cur_movelink);
+					console.log("cur_segment:");
+					console.log(cur_segment);
+					continue;
+				}
+				
+				//find the connected provinces andlink them
+				connect_movelink_province(cur_movelink, chosen_point);
+			}
+		}
+		connected_movelinks.push(cur_movelink);
+	}
+	
+	//merge across the province types
+	/*final_provinces_combined = province_types.slice();
+	for(var i in final_provinces_combined)
+	{
+		var cur_prov_info = final_provinces_combined[i];
+		var cur_provtype_info = final_provinces_combined[i];
+		
+		cur_prov_info.type = cur_provtype_info.type;
+	}*/
+	
+	var avg_dist_sqrd = (sum_dist / all_dists.length);
+	var avg_dist = Math.sqrt(avg_dist_sqrd);
+	console.log("FINISHED connecting movelinks. avg_dist: " + avg_dist + " | avg_dist_sqrd: " + avg_dist_sqrd);
+	console.log(final_provinces_combined);
+	console.log(connected_movelinks);
+};
+
+//for debugging the province connections
+var all_dists = [];
+var sum_dist = 0;
+
+function connect_movelink_province(movelink_info, movelink_point)
+{
+	//console.log("connect_movelink_province");
+	//loop over all provinces to find the closest province to this point
+	var closest_prov_info;
+	var closest_prov_centre;
+	var closest_dist = -1;
+	for(var i in final_provinces_combined)
+	{
+		var cur_prov_info = final_provinces_combined[i];
+		var dist_sqrd = Math.pow(movelink_point.x - cur_prov_info.centre.x, 2) + Math.pow(movelink_point.y - cur_prov_info.centre.y, 2);
+		if(!closest_prov_info || dist_sqrd < closest_dist)
+		{
+			closest_prov_info = cur_prov_info
+			closest_prov_centre = cur_prov_info.centre;
+			closest_dist = dist_sqrd;
+			//console.log(closest_prov_info.name + " | " + closest_dist);
+		}
+	}
+	
+	//save the prov id in the movelink
+	if(movelink_info.movelink_prov_ids == undefined || movelink_info.movelink_prov_ids.length == 2)
+	{
+		movelink_info.movelink_prov_ids = [];
+	}
+	var closest_prov_id = GetProvinceIdFromName(closest_prov_info.name);
+	movelink_info.movelink_prov_ids.push(closest_prov_id);
+	
+	//have we found a province for each end of this move link?
+	if(movelink_info.movelink_prov_ids.length == 2)
+	{
+		//now we will tell the two provinces about this move link and each other
+		var first_prov_id = movelink_info.movelink_prov_ids[0];
+		var first_prov_info = final_provinces_combined[first_prov_id];
+		
+		var second_prov_id = movelink_info.movelink_prov_ids[1];
+		var second_prov_info = final_provinces_combined[second_prov_id];
+		
+		first_prov_info.movelinks.push(movelink_info);
+		first_prov_info.linked_prov_ids.push(second_prov_id);
+		second_prov_info.movelinks.push(movelink_info);
+		second_prov_info.linked_prov_ids.push(first_prov_id);
+	}
+	
+	//console.log(closest_prov_info.name + " is closest, distance is: " + closest_dist);
+	all_dists.push(closest_dist);
+	//console.log(sum_dist);
+	sum_dist += closest_dist;
+}
+
+function GetProvinceIdFromName(province_name)
+{
+	return Number(province_name.substring(4));
+}
+
+function GetProvinceNameFromId(province_id)
+{
+	return "prov" + province_id;
+}
+
+</script>
+
+</html>

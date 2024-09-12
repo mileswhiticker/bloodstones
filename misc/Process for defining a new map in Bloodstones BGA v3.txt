@@ -1,0 +1,27 @@
+*Process for defining a new map in Bloodstones BGA*
+REVIEW DRAFT 12/09/24
+v3
+
+Before you start you will need two .svg files containing the drawn province outlines and move links. Most of the work is done in "generate_map_definitions.html" so have it open first. 
+
+1) Province types
+- Enter the number of provinces in "generate_map_definitions.html" and click "Generate province types template"
+- Manually update the correct province types. Valid province types are "Hills", "Plains", "Forest", "Mountains", "Sea", "Desert". Make sure the plurals and capitalisation match exactly
+- NOTE 1: The province id is determined by their order in the svg files... it will typically go in rows left to right across the map but not exactly. Cross reference the relevant files as needed
+- NOTE 2: you may find it easier to copy the text into a separate text file and work there. Make sure to copy it back into "generate_map_definitions.html" when you are done
+
+2) Province outlines
+- Load the map province outlines .svg file in "generate_map_definitions.html" 
+
+3) Province movelinks
+- Load the map province movelinks .svg file in "generate_map_definitions.html" 
+
+4) PHP province definitions
+- Click the "Generate PHP" button in "generate_map_definitions.html" 
+- Save the generated PHP array into province.php as the return value of the function "getAllProvinces()" on line 21, remember to add a ; at the end of the line if necessary
+- NOTE: you can use the "Copy to clipboard" button as a shortcut
+
+5) Javascript province definitions
+- Click the "Generate Javascript" button in "generate_map_definitions.html" 
+- Save the generated JSON array into province_defs.js as the variable "this.provinces" on line 24, remember to add a ; at the end of the line if necessary
+- NOTE: it will be long so it's better to use the "Copy to clipboard" button if it works in your web browser

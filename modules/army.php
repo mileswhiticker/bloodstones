@@ -12,7 +12,7 @@ trait army
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::createArmy($starting_province_name,$player_id,$units_string)"));
 		$new_army_id = self::getGameStateValue("next_army_id");
 		$new_army_id_type = gettype($new_army_id);
-		self::notifyAllPlayers("debug", "", array('debugmessage' => "new_army_id type: $new_army_id_type"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "new_army_id type: $new_army_id_type"));
 		$new_army_id = (int)$new_army_id;
 		
 		//todo: is this php army module needed?

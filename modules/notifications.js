@@ -471,7 +471,7 @@ define(
 				sacrifice_army.RemoveTileFromStack(notif.args.sacrifice_tile_id);
 				
 				//hack alert: there is a few ms delay in RemoveTileFromStack() due to the animation, so in order to lazily check if there is no tiles left then we just queue it for being safely destroyed
-				if(sacrifice_army.tiles.length == 1)
+				if(sacrifice_army.IsStackEmpty())
 				{
 					//destroy the army because it has no tiles left
 					this.DestroyArmy(sacrifice_army.id_num);
@@ -506,14 +506,14 @@ define(
 				retreating_army.RemoveTilesFromStack(notif.args.killed_tiles);
 				
 				//if there are no tiles remaining, kill the army
-				if(retreating_army.items.length == 0)
+				if(retreating_army.items.IsEmpty())
 				{
-					console.log("no tiles left, destroying army");
+					//console.log("no tiles left, destroying army");
 					this.DestroyArmy(notif.args.retreating_army_id);
 				}
 				else
 				{
-					console.log("army has " + retreating_army.items.length + " tiles left");
+					//console.log("army has " + retreating_army.items.length + " tiles left");
 					this.RefreshSelectArmyStack(retreating_army);
 				}
 				

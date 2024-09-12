@@ -693,6 +693,19 @@ define(
 				return this.tiles[tile_info_id.toString()];
 			},
 			
+			IsStackEmpty : function()
+			{
+				//tiles is an object so we can do for..in loop as an easy way to check if it has any contents
+				for(var i in this.tiles)
+				{
+					//literally any contents means it is not empty
+					return false;
+				}
+				
+				//we didnt find any tile_infos so we must be empty
+				return true;
+			},
+			
 			//no longer used, left in for debugging etc
 			SpawnTestUnitsInStack : function(faction_id)
 			{

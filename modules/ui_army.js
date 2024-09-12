@@ -479,7 +479,7 @@ define(
 				//var old_selected_army = this.UnselectArmyStack();
 				
 				//if the old army is completely empty?
-				if(source_army.items.length == 0)
+				if(source_army.IsEmpty())
 				{
 					//console.log("destroying source army");
 					this.DestroyArmy(source_army_id);

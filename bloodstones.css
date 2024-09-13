@@ -523,14 +523,14 @@
 
 .player_villages_text
 {
-	width: 30px;
-	right: 43px;
+	width: 90px;
+	right: 5px;
 }
 
 .player_villages_icon
 {
 	width: 30px;
-	right: 27px;
+	right: 50px;
 }
 
 .player_captured_village
@@ -551,7 +551,7 @@
 .captured_villages_container
 {
 	position: absolute;
-	left: 20px;
+	left: 25px;
 	top: 0px;
 	width: 100%;
 	height: 100%;
@@ -563,7 +563,7 @@
 	right: 5px;
 	bottom: 35px;
 	display: flex;
-	justify-content: space-between;
+	justify-content: flex-start;
 	align-items: center;
 }
 
@@ -576,7 +576,7 @@
 
 .blst_captured_citadels_text
 {
-	width: 30px;
+	width: 20px;
 }
 
 /*.blst_captured_citadels_container

@@ -37,7 +37,8 @@ define(
 				const gamemap = dojo.place("<div id=\"gamemap\"></div>","centrepanel");
 				const toppanel = dojo.place("<div id=\"toppanel\"></div>","centrepanel");
 				const provinceclickareas = dojo.place("<map id=\"provinceclickareas\" name=\"provinceclickareas\"></map>","centrepanel");
-				var droppable_img = dojo.place("<img id=\"droppable_map\" class=\"droppable_map\" src=\"/img/blank.png\" usemap=\"#provinceclickareas\"></img>","centrepanel");
+				blank_img_url = g_gamethemeurl + "/img/blank.png";
+				var droppable_img = dojo.place("<img id=\"droppable_map\" class=\"droppable_map\" src=\"" + blank_img_url + "\" usemap=\"#provinceclickareas\"></img>","centrepanel");
 				
 				//leftpanel children
 				dojo.place("<div id=\"playercards\"></div>","leftpanel");

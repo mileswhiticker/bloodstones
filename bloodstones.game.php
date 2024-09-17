@@ -1586,6 +1586,7 @@ class bloodstones extends Table
 			//for debugging we need this because we will be skipping a few other steps
 			$this->AssignRandomPlayerFactions();
 			$this->InitNewGame();
+			$this->AssignRandomPlayerCitadels();
 			//$this->gamestate->nextState('freeBuild');
 			$this->gamestate->nextState('freeBuild_finish');
 		}

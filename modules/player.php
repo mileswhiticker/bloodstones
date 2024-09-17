@@ -302,18 +302,6 @@ trait player_utils
 			//assign faction
 			self::DbQuery("UPDATE player SET player_factionid='$cur_faction_id' WHERE player_id='$player_id';");
 			
-			//create citadel
-			//skip chaos horde because they dont have a citadel
-			if($cur_faction_id != self::FACTION_CHAOSHORDE)
-			{
-				$citadel_prov_id = 10 * ($cur_faction_id + 1);
-				if($citadel_prov_id > 74)
-				{
-					$citadel_prov_id -= 74;
-				}
-				$this->DbQuery("UPDATE player SET player_citadel_prov='$citadel_prov_id' WHERE player_id='$player_id'");
-			}
-			
 			//next faction
 			$cur_faction_id++;
 			if($cur_faction_id > 5)

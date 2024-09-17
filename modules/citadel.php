@@ -2,6 +2,33 @@
 
 trait citadel
 {
+	public function AssignRandomPlayerCitadels()
+	{
+		//for debugging: assign random player factions, create their citadels, then start the game
+		self::notifyAllPlayers("debug", "", array('debugmessage' => "server::AssignRandomPlayerCitadels()"));
+		$players = self::getCollectionFromDb("SELECT player_id FROM player ");
+		$cur_faction_id = 1;//rand(0,5);
+		foreach($players as $player_id => $player)
+		{
+			//create citadel
+			//skip chaos horde because they dont have a citadel
+			if($cur_faction_id != self::FACTION_CHAOSHORDE)
+			{
+				$citadel_prov_id = 10 * ($cur_faction_id);
+				if($citadel_prov_id > 74)
+				{
+					$citadel_prov_id -= 74;
+				}
+				$prov_name = $this->getProvinceName($citadel_prov_id);
+				$this->PlaceCitadel($player_id, $prov_name);
+			}
+			
+			$cur_faction_id++;
+		}
+		
+		self::notifyAllPlayers("debug", "", array('debugmessage' => "AssignRandomPlayerCitadels() completed successfully"));
+	}
+	
 	public function tryPlaceCitadel($prov_name)
 	{
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::tryPlaceCitadel($prov_name)"));
@@ -16,24 +43,30 @@ trait citadel
 			return;
 		}
 		
-		//update the database
-		$prov_id = $this->getProvinceIdFromName($prov_name);
-		$this->DbQuery("UPDATE player SET player_citadel_prov='$prov_id' WHERE player_id='$active_player_id'");
-		
-		$citadel_tile_info = $this->GetPlayerCitadelTile($active_player_id);
-		$citadel_tile_id = $citadel_tile_info["id"];
-		$citadel_army_info = $this->createArmy($prov_name, $active_player_id, [$citadel_tile_id]);
-		
-		//notify all the players
-		//$player_name = $this->getActivePlayerName();
-		self::notifyAllPlayers('newCitadel', clienttranslate('${player_name} has placed their citadel.'), 
-			array(
-				'player_name' => $this->getActivePlayerName(),
-				'player_id' => $active_player_id,
-				'built_citadel_army' => $citadel_army_info
-			));
+		$this->PlaceCitadel($active_player_id, $prov_name);
 		
 		$this->gamestate->nextState('nextCitadel');
+	}
+	
+	public function PlaceCitadel($player_id, $prov_name)
+	{
+		self::notifyAllPlayers("debug", "", array('debugmessage' => "server::PlaceCitadel($player_id, $prov_name)"));
+		
+		//update the database
+		$prov_id = $this->getProvinceIdFromName($prov_name);
+		$this->DbQuery("UPDATE player SET player_citadel_prov='$prov_id' WHERE player_id='$player_id'");
+		
+		$citadel_tile_info = $this->GetPlayerCitadelTile($player_id);
+		$citadel_tile_id = $citadel_tile_info["id"];
+		$citadel_army_info = $this->createArmy($prov_name, $player_id, [$citadel_tile_id]);
+		
+		//notify all the players
+		self::notifyAllPlayers('newCitadel', clienttranslate('${player_name} has placed their citadel.'), 
+			array(
+				'player_name' => $this->getPlayerNameById($player_id),
+				'player_id' => $player_id,
+				'built_citadel_army' => $citadel_army_info
+			));
 	}
 	
 	public function GetCapturedCitadels($player_id)

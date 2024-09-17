@@ -36,9 +36,11 @@ define(
 				return this.current_player_hand;
 			},
 			
-			onClickStackTileUI : function(event)
+			//onClickStackTileUI : function(event)
+			onClickArmySelectedTile : function(event)
 			{
-				//console.log("page::onClickStackTileUI()");
+				//this is untested with the new system but might not work
+				//console.log("page::onClickArmySelectedTile()");
 				//console.log(event);
 				
 				if(window.gameui.selected_army == null)
@@ -48,12 +50,14 @@ define(
 				}
 				
 				var selected_div = $(event.target.id);
-				var cur_tile_id = this.GetTileIdFromImage(event.target.id);
+				//var cur_tile_id = this.GetTileIdFromImage(event.target.id);
+				var cur_tile_id = this.GetArmySelectedTileId(event.target.id);
 				//console.log(event.target.id);
 				//console.log(cur_tile_id);
 				//console.log(window.gameui.selected_army.tiles);
 				
 				//only active players in move mode can split off tiles
+				//todo: better merge move mode and undead mode functionality here
 				if(this.isCurrentPlayerMoveMode())
 				{
 					//we can't split off a tile if this is the last one

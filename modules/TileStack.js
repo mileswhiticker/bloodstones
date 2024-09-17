@@ -11,6 +11,7 @@
 const STACK_UNDEFINED = 0;
 const STACK_ARMY = 1;
 const STACK_PLAYERHAND = 2;
+const STACK_ARMY_SELECTED = 11;
 const STACK_CITADEL = 3;
 const STACK_VILLAGE = 4;
 const STACK_PAYMENT = 5;
@@ -37,6 +38,9 @@ define(
 		var static_item_type = {};
 		var initialised_statics = false;
 		//console.log(singleton);
+		
+		//i have heavily overriden stock here but there is still some of the basic functionality
+		//for full source see: https://x.boardgamearena.net/data/themereleases/220811-1000/js/modules/stock.js
 		
 		var singleton = declare("modules.TileStack", ebg.stock, {
 			constructor: function(){
@@ -65,6 +69,7 @@ define(
 				this.selected_opacity = 0.6;
 				this.tiles = {};
 				this.tiles_array = [];
+				this.tiles_selected = {};
 				this.spawn_fadein = true;
 				this.spawn_fadeout = true;
 				
@@ -403,6 +408,11 @@ define(
 						container_div_id = "paystack";
 						break;
 					}
+					case STACK_ARMY_SELECTED:
+					{
+						container_div_id = page.GetArmySelectionStackId();
+						break;
+					}
 				}
 				this.id_string = container_div_id;
 				
@@ -415,6 +425,16 @@ define(
 					case STACK_PLAYERHAND:
 					{
 						this.items_per_line = 2;
+						this.selectable = 2;
+						this.selectionApparance = 'striped';
+						break;
+					}
+					case STACK_ARMY_SELECTED:
+					{
+						this.items_per_line = 1;
+						this.selectable = 2;
+						this.selectionApparance = 'striped';
+						this.custom_item_render_callback = this.renderTileSelectedArmy;
 						break;
 					}
 					case STACK_PAYMENT:
@@ -433,6 +453,22 @@ define(
 			createAsPlayerHand: function(page, host_div_id, player_id)
 			{
 				this.createAsUITilestack(page, host_div_id, player_id, STACK_PLAYERHAND);
+			},
+			
+			createAsArmySelection: function(page, host_div_id, parent_army)
+			{
+				//console.log("Tilestack::createAsArmySelection({page}, " + host_div_id + "," + " {parent_army})");
+				//console.log(parent_army);
+				//create the basic structure
+				this.createAsUITilestack(page, host_div_id, parent_army.player_id, STACK_ARMY_SELECTED);
+				
+				//shuffle down slightly so we dont overlap the army title text
+				//this is a hack but oh well
+				//console.log(this.container_div);
+				this.container_div.top = "75px";
+				
+				//copy tiles from army stack
+				this.copyAcrossParentTiles(parent_army);
 			},
 			
 			createAsPaystack: function(page, host_div_id, player_id)
@@ -522,7 +558,7 @@ define(
 				return "battle_display_tilebonus_" + this.player_id + "_" + item.id;
 			},
 			
-			destroy: function()
+			destroy_self: function()
 			{
 				//todo: this is untested and could lead to memory leaks
 				//console.log("TileStack::Destroy()");
@@ -1175,7 +1211,7 @@ define(
 						if( this.onItemCreate )
 						{   this.onItemCreate( item_div, item.type, item_id );  }
 						
-						if(typeof from != 'undefined')
+						if(typeof from != 'undefined' && from != null)
 						{
 							this.page.placeOnObject( item_div, from );
 
@@ -1287,9 +1323,29 @@ define(
 						this.page.onClickArmyStack(event, this);
 						break;
 					}
+					case STACK_ARMY_SELECTED:
+					{
+						this.page.onClickArmySelectedTile(event);
+						break;
+					}
 					case STACK_PLAYERHAND:
 					{
-						console.log("Warning: onClickOnItem() STACK_PLAYERHAND should be unreachable");
+						//console.log("Warning: onClickOnItem() STACK_PLAYERHAND should be unreachable");
+						var prefix_length = ( this.control_name+'_item_' ).length;
+						var item_id = event.currentTarget.id.substr( prefix_length );
+
+						if(this.isSelected(item_id))
+						{
+							this.unselectItem(item_id);
+						}
+						else
+						{
+							if(this.selectable === 1)
+							{
+								this.unselectAll(); 
+							}
+							this.selectItem(item_id);
+						}
 						break;
 					}
 					case STACK_PAYMENT:
@@ -1425,6 +1481,114 @@ define(
 				else
 				{
 					this.inherited(arguments);
+				}
+			},
+			
+			renderTileSelectedArmy : function(render_item_info)
+			{
+				//console.log("Tilestack::renderTileSelectedArmy(render_item_info)");
+				var item_id = this.getItemDivId( render_item_info.id );
+				var item_div = dojo.byId(item_id);
+				
+				item_div.style.position = "static";
+				
+				//some useful strings
+				var tile_strings = this.page.all_tile_strings[render_item_info.type];
+				
+				//check if it exists first
+				var title_div_id = this.getItemTitleId(render_item_info);
+				if(!dojo.byId(title_div_id))
+				{
+					//name of this tile
+					dojo.place("<div id=\"" + title_div_id + "\" class=\"army_selection_element army_item_title\">" + tile_strings.name + "</div>",item_div,"before");
+				}
+				
+				//check if it exists first
+				var desc_div_id = this.getItemDescId(render_item_info);
+				if(!dojo.byId(desc_div_id))
+				{
+					//text description of this tile 
+					dojo.place("<div id=\"" + desc_div_id + "\" class=\"army_selection_element army_item_desc\">" + tile_strings.desc + "</div>",item_div,"after");
+				}
+			},
+			
+			copyAcrossParentTiles : function(parent_army)
+			{
+				this.SpawnTilesInStack(parent_army.tiles, null, false);
+			},
+			
+			getItemTitleId : function(item)
+			{
+				var item_id = this.getItemDivId( item.id );
+				var title_div_id = item_id + "_title";
+				return title_div_id;
+			},
+			
+			getItemDescId : function(item)
+			{
+				var item_id = this.getItemDivId( item.id );
+				var desc_div_id = item_id + "_desc";
+				return desc_div_id;
+			},
+			
+			// Select item with specified id (raw method)
+			selectItem: function( id )
+			{
+				//console.log( "Selected item "+id );
+				var item_div = $( this.getItemDivId( id ) );
+				
+				if( this.selectionApparance == 'border' )
+				{
+					dojo.style( item_div, 'borderWidth', this.apparenceBorderWidth );
+				}
+				else if( this.selectionApparance == 'disappear' )
+				{
+					dojo.fadeOut( { node: item_div } ).play();
+				}
+				else if( this.selectionApparance == 'class' )
+				{
+					dojo.addClass( item_div, this.selectionClass );
+				}
+				else if( this.selectionApparance == 'striped' )
+				{
+					var selection_div_id = item_div.id + "_selected";
+					dojo.place("<div id=" + selection_div_id + " class='blst_tile_striped slide_left_animated'></div>", item_div);
+				}
+				
+				this.item_selected[ id ] = 1;
+			},
+			
+			// Unselect item with specified id (raw method)
+			unselectItem: function( id )
+			{
+				//console.log( "Unselect item "+id );
+				var item_div = $( this.getItemDivId( id ) );
+				
+				if( this.selectionApparance == 'border' )
+				{    dojo.style( item_div, 'borderWidth', '0px' );  }
+				else if( this.selectionApparance == 'disappear' )
+				{    dojo.fadeIn( { node: item_div } ).play();      }
+				else if( this.selectionApparance == 'class' )
+				{    dojo.removeClass( item_div, this.selectionClass );     }
+				else if( this.selectionApparance == 'striped' )
+				{
+					var selection_div_id = item_div.id + "_selected";
+					var selection_div = dojo.byId(selection_div_id);
+					dojo.destroy(selection_div);
+				}
+				
+				this.item_selected[ id ] = 0;            
+			},
+			
+			IsAnyItemSelected : function()
+			{
+				for (var i in this.item_selected)
+				{
+					if(this.item_selected[i])
+					{
+						return true;
+					}
+					return false;
 				}
 			},
 			

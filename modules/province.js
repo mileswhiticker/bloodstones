@@ -101,11 +101,14 @@ define(
 				//calculate how many tiles can get a free leader move
 				var leader_bonus_left = moving_army.GetNumLeaders();
 				
+				var subset_selected = moving_army.IsAnyItemSelected();
 				for(var k in moving_army.tiles)
 				{
 					var tile_info = moving_army.tiles[k];
 					//console.log(tile_info);
-					if(!tile_info.selected)
+					
+					//are we calculating moves for all items or just some of them?
+					if(subset_selected && !tile_info.selected)
 					{
 						//console.log("not selected!");
 						continue;

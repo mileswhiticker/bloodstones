@@ -34,8 +34,40 @@ define(
 					window.gameui.selected_army = new_selected_army;
 					window.gameui.selected_army.selectStack();
 					
+					//is there already a selected army?
+					var selected_army_display_stack = window.gameui.selected_army_display_stack
+					if(selected_army_display_stack)
+					{
+						//sanity check
+						console.log("ERROR: window.gameui.selected_army_display_stack already exists");
+						console.log(selected_army_display_stack);
+						return;
+					}
+					
+					//setup the title text, replacing the old one if it exists
+					dojo.query(".ui_stack_title").forEach(dojo.destroy);
+					var title_div;
+					var selected_army_div = dojo.byId("selected_army");
+					if(new_selected_army.player_id == gameui.getCurrentPlayer())
+					{
+						title_div = dojo.place("<h1>" + _("Your Army") + "</h1>", selected_army_div);
+					}
+					else
+					{
+						title_div = dojo.place("<h1>" + _("Enemy Army") + "</h1>", selected_army_div);
+					}
+					dojo.addClass(title_div, "ui_stack_title");
+					//dojo.addClass(title_div, "selected_stack_element");
+					
+					//createAsArmySelection: function(page, host_div_id, parent_army)
+					selected_army_display_stack = new modules.TileStack();
+					selected_army_display_stack.createAsArmySelection(this, "selected_army", new_selected_army);
+					window.gameui.selected_army_display_stack = selected_army_display_stack;
+					
 					//console.log(window.gameui.selected_army);
 					
+					//old army selection display
+					/*
 					//update the ui to show more info about this selected army stack
 					var selected_army_div = dojo.byId("selected_army");
 					
@@ -115,12 +147,10 @@ define(
 						//dojo.style(image_div, 'padding', '10px');
 						
 						//create a selection overlay div
-						/*
-						var selected_div = dojo.place("<div class=\"ui_stack_tile_selected\"></div>", image_div);
-						selected_div.id = "selected_tile_" + tile_id;
-						tile.selected = 1;	//automatically reselect all tiles in the stack
-						dojo.style(selected_div, 'opacity', tile.selected);
-						*/
+						//var selected_div = dojo.place("<div class=\"ui_stack_tile_selected\"></div>", image_div);
+						//selected_div.id = "selected_tile_" + tile_id;
+						//tile.selected = 1;	//automatically reselect all tiles in the stack
+						//dojo.style(selected_div, 'opacity', tile.selected);
 						
 						//tile desc
 						var tile_desc = dojo.place("<div>" + tile_strings.desc + "</div>", tile_div);
@@ -132,6 +162,7 @@ define(
 						current_height_offset += new_offset + 10;	//10px bottom margin
 						//console.log("success");
 					}
+					*/
 				}
 				else
 				{
@@ -139,19 +170,31 @@ define(
 				}
 			},
 			
-			GetSelectedTileIdString : function(tile_id)
+			GetArmySelectionStackId : function()
 			{
-				return "selected_army_uitile_" + tile_id;
+				return "army_selection_stack";
 			},
+			
+			/*GetSelectedTileIdString : function(tile_id)
+			{
+				//this is unused but im leaving it here just in case
+				return this.GetArmySelectionStackId() + "_item_" + tile_id;
+			},*/
 			
 			GetSelectedTileImageIdString : function(tile_id)
 			{
-				return "selected_tile_image_" + tile_id;
+				return this.GetArmySelectionStackId() + "_item_" + tile_id;
 			},
 			
-			GetTileIdFromImage : function(tile_image_id)
+			/*GetTileIdFromImage : function(tile_image_id)
 			{
 				return tile_image_id.slice(20);
+			},*/
+			
+			GetArmySelectedTileId : function(tile_image_id)
+			{
+				//format: "army_selection_stack_item_XX" where XX is the tile id set by the Deck in php
+				return tile_image_id.slice(26);
 			},
 			
 			RefreshSelectArmyStack : function(target_army)
@@ -168,11 +211,19 @@ define(
 				}
 			},
 			
+			ForceRefreshSelectArmyStack : function(target_army)
+			{
+				if(this.selected_army != null)
+				{
+					this.UnselectArmyStack();
+				}
+				this.SelectArmyStack(target_army);
+			},
+			
 			UnselectArmyStack : function()
 			{
 				//console.log("page::UnselectArmyStack()");
-				/*var test_obj;
-				test_obj.forceerror();*/
+				
 				var old_selected_army = window.gameui.selected_army;
 				if(old_selected_army != null)
 				{
@@ -181,7 +232,11 @@ define(
 					window.gameui.selected_army = null;
 					
 					//clean up the ui
-					dojo.query(".selected_stack_element").forEach(dojo.destroy);
+					//dojo.query(".selected_stack_element").forEach(dojo.destroy);
+					
+					dojo.destroy("army_selection_stack");
+					//this.DestroyArmyByStack(window.gameui.selected_army_display_stack);
+					window.gameui.selected_army_display_stack = null;
 					
 					//add a hint telling the player they can select an army there
 					this.CreateArmySelectPanelTitle();
@@ -196,6 +251,7 @@ define(
 			
 			CreateArmySelectPanelTitle : function()
 			{
+				dojo.query(".ui_stack_title").forEach(dojo.destroy);
 				dojo.place("<h1 class=\"ui_stack_title selected_stack_element\">" + this.GetUnselectedArmyHintString() + "</h1>", "selected_army");
 			},
 			
@@ -298,9 +354,8 @@ define(
 					
 					dojo.destroy(source_army.container_div);
 					
-					//todo: i dont think this does anything? also unnecessary due to javascript GC
-					//delete source_army;
-					source_army.destroy();
+					//let the army handle any other custom cleanup it needs to do
+					source_army.destroy_self();
 			},
 			
 			MoveArmy : function(army_obj, dest_province_name, do_jump = false, ghost_move = false)
@@ -479,13 +534,24 @@ define(
 				//var old_selected_army = this.UnselectArmyStack();
 				
 				//if the old army is completely empty?
-				if(source_army.IsEmpty())
+				if(source_army.IsStackEmpty())
 				{
+					//console.log("army is empty... selecting new army");
+					//select the new army we are merging into
+					this.ForceRefreshSelectArmyStack(target_army);
+					
 					//console.log("destroying source army");
 					this.DestroyArmy(source_army_id);
 				}
+				else if(source_army == window.gameui.selected_army)
+				{
+					//console.log("army is not empty... refreshing previously selected army");
+					//was this army selected? special extra handling
+					this.ForceRefreshSelectArmyStack(source_army);
+				}
 				
 				//toggle stack selection to refresh the ui
+				//this is a bit unweildy the way i was doing it... i'll do this a bit more cleanly above but i'll leave this here for now
 				switch(selection_flag)
 				{
 					case this.SELECT_ARMY_NONE:

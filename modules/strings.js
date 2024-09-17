@@ -124,7 +124,7 @@ define(
 			
 			GetUnselectedArmyHintString : function()
 			{
-				return _("Select an army to show its units here");
+				return _("For more details, select one or more tiles in your hand, or any army on the board.");
 			},
 			
 			GetTileDropPayString : function(action_mode)

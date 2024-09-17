@@ -252,7 +252,7 @@ define(
 			CreateArmySelectPanelTitle : function()
 			{
 				dojo.query(".ui_stack_title").forEach(dojo.destroy);
-				dojo.place("<h1 class=\"ui_stack_title selected_stack_element\">" + this.GetUnselectedArmyHintString() + "</h1>", "selected_army");
+				dojo.place("<p class=\"ui_stack_title selected_stack_element\">" + this.GetUnselectedArmyHintString() + "</p>", "selected_army");
 			},
 			
 			TileSelectionUpdated : function()

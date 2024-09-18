@@ -131,6 +131,10 @@ define(
 			{
 				switch(action_mode)
 				{
+					case gameui.STATE_FREEBUILD:
+					{
+						return _("You cannot pay extra tiles to increase the size of your starting army.");
+					}
 					case gameui.STATE_CAPTURE:
 					{
 						return _("Drag tiles here from your hand to pay for village capturing (maximum of one tile)");
@@ -170,6 +174,10 @@ define(
 			{
 				switch(action_mode)
 				{
+					case gameui.STATE_FREEBUILD:
+					{
+						return _("Build cost");
+					}
 					case gameui.STATE_CAPTURE:
 					{
 						return _("Capture cost");
@@ -205,6 +213,10 @@ define(
 			{
 				switch(action_mode)
 				{
+					case gameui.STATE_FREEBUILD:
+					{
+						return _("Free build points");
+					}
 					case gameui.STATE_UNDEAD:
 					{
 						return "";
@@ -221,6 +233,10 @@ define(
 			{
 				switch(action_mode)
 				{
+					case gameui.STATE_FREEBUILD:
+					{
+						return _("Start with no army");
+					}
 					case gameui.STATE_CAPTURE:
 					{
 						return _("Skip capturing and end turn");
@@ -260,6 +276,10 @@ define(
 			{
 				switch(action_mode)
 				{
+					case gameui.STATE_FREEBUILD:
+					{
+						return _("Finalise starting army");
+					}
 					case gameui.STATE_CAPTURE:
 					{
 						return _("Approve Capturing");
@@ -299,6 +319,10 @@ define(
 			{
 				switch(fail_reason)
 				{
+					case gameui.STATE_FREEBUILD:
+					{
+						return _("You cannot have more than 5 starting free build points");
+					}
 					case gameui.STATE_CAPTURE:
 					{
 						return _("You must pay more pips to capture those villages");
@@ -365,6 +389,10 @@ define(
 			{
 				switch(action_mode)
 				{
+					case gameui.STATE_FREEBUILD:
+					{
+						return "action_currency_icon_pip";
+					}
 					case gameui.STATE_CAPTURE:
 					{
 						return "action_currency_icon_pip";

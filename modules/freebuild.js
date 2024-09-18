@@ -32,7 +32,7 @@ define(
 				//this.prev_frame_timestamp = this.date.getTime();
 				this.build_mode_cancel_anim = window.requestAnimationFrame(this.buildmodeAnimFrame);
 				this.AddBuildModeUI();
-				this.EnablePaymentBucket(gameui.STATE_MAIN_BUILD);
+				this.EnablePaymentBucket(gameui.STATE_FREEBUILD);
 			},
 			
 			UnlimitChaosHordeBuildableProvinces : function()

@@ -307,6 +307,7 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			this.STATE_MAIN_MAX = 7;
 
 			this.STATE_BUILDVILLAGE = 8;
+			this.STATE_FREEBUILD = 9;
 			this.STATE_MAX = 8;
 			
 			//length of a row on the sprite sheet as measured in number of tiles

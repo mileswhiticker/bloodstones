@@ -117,9 +117,16 @@ define(
 				var action_payment_bucket = dojo.place("<div id=\"action_payment_bucket\">" + payment_string + "</div>", container_id);
 				switch(this.payment_mode)
 				{
+					case gameui.STATE_FREEBUILD:
+					{
+						//cant pay for extra undead movement
+						dojo.addClass("action_payment_bucket","action_payment_bucket_striped");
+						break;
+					}
 					case gameui.STATE_UNDEAD:
 					{
 						//cant pay for extra undead movement
+						dojo.addClass("action_payment_bucket","action_payment_bucket_striped");
 						break;
 					}
 					default:
@@ -296,6 +303,12 @@ define(
 				//console.log("page::CancelAction() this.payment_mode:" + this.payment_mode);
 				switch(this.payment_mode)
 				{
+					case gameui.STATE_FREEBUILD:
+					{
+						this.ExitBuildMode(false);
+						this.ServerSkipAction();
+						break;
+					}
 					case gameui.STATE_CAPTURE:
 					{
 						//all factions except chaos horde capturing villages
@@ -316,11 +329,6 @@ define(
 					case gameui.STATE_MAIN_BUILD:
 					{
 						this.ExitBuildMode(false);
-						if(this.isCurrentPlayerFreeBuildMode())
-						{
-							this.ServerSkipAction();
-							return;
-						}
 						break;
 					}
 					case gameui.STATE_BUILDVILLAGE:
@@ -400,6 +408,15 @@ define(
 				{
 					switch(this.payment_mode)
 					{
+						case gameui.STATE_FREEBUILD:
+						{
+							//todo: send request to server for tile payment
+							//for now, just refreshing the page will "refund" these tiles anyway
+							//this.RefundPaystackTiles();
+
+							this.ExitBuildMode(true);
+							break;
+						}
 						case gameui.STATE_CAPTURE:
 						{
 							this.EndCaptureState(true);

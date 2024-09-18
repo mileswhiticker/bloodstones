@@ -1435,6 +1435,7 @@
 	border-width: 5px;
 	cursor: pointer;
 	background-position: center;
+	background-size: cover;
 }
 
 .factionlogo:hover

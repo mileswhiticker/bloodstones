@@ -500,7 +500,8 @@
 .playercard_title
 {
 	height: 30px;
-	margin-bottom: 5px;
+	grid-row-start: 1;
+	grid-column-start: 1;
 }
 
 .playercard_faction_name
@@ -509,39 +510,68 @@
 	font-size: 23px;
 }
 
-.playercard_element
+.playercard_text
 {
-	height: 22px;
 	padding: 5px;
 	font-size: 16px;
+}
+
+.playercard_icon
+{
 	position: absolute;
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: right;
+	width: 30px;
+	height: 30px;
 }
 
-.regroups_left
+.playercard_elements_grid
 {
-	width: 44px;
-	right: 75px;
+	position: relative;
+	display: grid;
+	grid-template-columns: 4fr 1fr 1fr 1fr 1fr;
+	grid-template-rows: 30px 30px auto 30px 30px;
+	width: 100%;
+	height: 100%;
+	left: 0px;
+	top: 0px;
 }
 
-.player_score
+.player_regroups_text
 {
-	width: 60px;
-	right: 5px;
+	grid-row-start: 1;
+	grid-column-start: 2;
+}
+
+.player_regroups_icon
+{
+	grid-row-start: 1;
+	grid-column-start: 3;
+}
+
+.player_score_text
+{
+	grid-row-start: 1;
+	grid-column-start: 4;
+}
+
+.player_score_icon
+{
+	grid-row-start: 1;
+	grid-column-start: 5;
 }
 
 .player_villages_text
 {
-	width: 90px;
-	right: 5px;
+	grid-row-start: 2;
+	grid-column-start: 4;
 }
 
 .player_villages_icon
 {
-	width: 30px;
-	right: 50px;
+	grid-row-start: 2;
+	grid-column-start: 5;
 }
 
 .player_captured_village
@@ -559,6 +589,30 @@
 	bottom: 5px;
 }
 
+.player_capcit_text
+{
+	grid-row-start: 4;
+	grid-column-start: 4;
+}
+
+.player_capcit_icon
+{
+	grid-row-start: 4;
+	grid-column-start: 5;
+}
+
+.player_capvil_text
+{
+	grid-row-start: 5;
+	grid-column-start: 4;
+}
+
+.player_capvil_icon
+{
+	grid-row-start: 5;
+	grid-column-start: 5;
+}
+
 .captured_villages_container
 {
 	position: absolute;
@@ -566,28 +620,6 @@
 	top: 0px;
 	width: 100%;
 	height: 100%;
-}
-
-.blst_captured_citadels_container
-{
-	width: 90px;
-	right: 5px;
-	bottom: 35px;
-	display: flex;
-	justify-content: flex-start;
-	align-items: center;
-}
-
-.blst_captured_citadels_icon
-{
-	height: 30px;
-	width: 30px;
-	background-size: contain;
-}
-
-.blst_captured_citadels_text
-{
-	width: 20px;
 }
 
 .blst_tile_striped
@@ -641,9 +673,10 @@
 	width: 150px;
 	height: 100px;
 	position: absolute;
-	margin-left: 10px;
 	align-content: flex-start;
 	gap: 10px;
+	grid-row-start: 2;
+	grid-column-start: 1;
 }
 
 #selected_army {
@@ -975,6 +1008,12 @@
 
 .action_payment_bucket_dragover {
 	background-color: rgba(0, 0, 0, 0.3);
+}
+
+.action_payment_bucket_striped
+{
+	background-image: linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+	background-size: 1rem 1rem;
 }
 
 .tile_dragging {

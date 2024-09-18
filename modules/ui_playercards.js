@@ -46,10 +46,14 @@ define(
 					dojo.addClass(playercard,'playercard');
 					playercards.appendChild(playercard,true);
 					
+					//grid to hold all the display elements except for the player hand tiles
+					let playercard_elements_grid = dojo.place("<div></div>", playercard.id);
+					dojo.addClass(playercard_elements_grid,'playercard_elements_grid');
+					
 					//div to hold the top row of content for each player's info card
 					let playercard_title = document.createElement("div");
 					dojo.addClass(playercard_title,'playercard_title');
-					playercard.appendChild(playercard_title,true);
+					playercard_elements_grid.appendChild(playercard_title,true);
 					
 					//faction name
 					var faction_color_css = "faction" + factionid + "_color";
@@ -60,34 +64,44 @@ define(
 					dojo.addClass(faction_name,'playercard_faction_name');
 					playercard_title.appendChild(faction_name,true);
 					
-					//faction regroup counter
-					let regroups_left = document.createElement("div");
-					regroups_left.id = "regroups_" + player_id;
-					regroups_left.innerHTML = player.regroups;
-					//regroups_left.style.color = this.faction_strings[factionid].fontColour;
-					dojo.addClass(regroups_left,faction_color_css);
-					dojo.addClass(regroups_left,'regroups_left');
-					dojo.addClass(regroups_left,'playercard_element');
-					dojo.addClass(regroups_left,'regroup' + factionid);
-					playercard_title.appendChild(regroups_left,true);
+					//player regroup counter
+					let player_regroups_text = dojo.place("<div></div>", playercard_elements_grid);
+					player_regroups_text.id = "regroups_" + player_id;
+					player_regroups_text.innerHTML = player.regroups;
+					dojo.addClass(player_regroups_text,faction_color_css);
+					dojo.addClass(player_regroups_text,'player_regroups_text');
+					dojo.addClass(player_regroups_text,'playercard_text');
 					
-					//faction VP
-					let player_score = document.createElement("div");
-					player_score.id = this.GetPlayerScoreDivId(player_id);
-					player_score.innerHTML = player.score;
-					//player_score.style.color = this.faction_strings[factionid].fontColour;
-					dojo.addClass(player_score,faction_color_css);
-					dojo.addClass(player_score,'player_score');
-					dojo.addClass(player_score,'playercard_element');
-					dojo.addClass(player_score,'score' + factionid);
-					playercard_title.appendChild(player_score,true);
+					let player_regroups_icon = dojo.place("<div></div>", playercard_elements_grid);
+					dojo.addClass(player_regroups_icon,'regroup' + factionid);
+					dojo.addClass(player_regroups_icon,'player_regroups_icon');
+					dojo.addClass(player_regroups_icon,'playercard_icon');
+					
+					//player score counter (victory poinst)
+					let player_score_text = dojo.place("<div></div>", playercard_elements_grid);
+					dojo.addClass(player_score_text,player_score_text);
+					player_score_text.id = this.GetPlayerScoreDivId(player_id);
+					player_score_text.innerHTML = player.score;
+					dojo.addClass(player_score_text,faction_color_css);
+					dojo.addClass(player_score_text,'player_score_text');
+					dojo.addClass(player_score_text,'playercard_text');
+					
+					let player_score_icon = dojo.place("<div></div>", playercard_elements_grid);
+					dojo.addClass(player_score_icon,'score' + factionid);
+					dojo.addClass(player_score_icon,'player_score_icon');
+					dojo.addClass(player_score_icon,'playercard_icon');
 					
 					//villages not yet built from this player
-					let player_villages_text = dojo.place("<div class=\"player_villages_text playercard_element\">" + player.villages_available + "</div>", playercard.id);
-					//player_villages_text.style.color = this.faction_strings[factionid].fontColour;
+					let player_villages_text = dojo.place("<div></div>", playercard_elements_grid);
+					player_villages_text.innerHTML = player.villages_available;
+					dojo.addClass(player_villages_text,"player_villages_text");
 					dojo.addClass(player_villages_text,faction_color_css);
-					let player_villages_icon = dojo.place("<div class=\"player_villages_icon playercard_element\"></div>", playercard.id);
+					dojo.addClass(player_villages_text,"playercard_text");
+					
+					let player_villages_icon = dojo.place("<div></div>", playercard_elements_grid);
+					dojo.addClass(player_villages_icon,"player_villages_icon");
 					dojo.addClass(player_villages_icon,'village' + factionid);
+					dojo.addClass(player_villages_icon,"playercard_icon");
 					
 					//chaos horde cannot build villages
 					if(factionid == this.FACTION_CHAOSHORDE)
@@ -97,18 +111,20 @@ define(
 					}
 					
 					//captured citadels container
-					let captured_citadels_container_id = this.GetCitadelsCapturedContainerId(player_id);
-					let captured_citadels_container = dojo.place("<div id=\"" + captured_citadels_container_id + "\" class=\"blst_captured_citadels_container playercard_element\"></div>", playercard.id);
+					let player_capcit_text = dojo.place("<div></div>", playercard_elements_grid);
+					player_capcit_text.id = this.GetCitadelsCapturedTextNodeId(player_id);
+					player_capcit_text.innerHTML = player.captured_citadels;
+					dojo.addClass(player_capcit_text,"player_capcit_text");
+					dojo.addClass(player_capcit_text,faction_color_css);
+					dojo.addClass(player_capcit_text,"playercard_text");
 					
-					//captured citadels text
-					//console.log("creating playercard for:");
-					//console.log(player);
-					let captured_citadels_text_id = this.GetCitadelsCapturedTextNodeId(player_id);
-					let captured_citadels_text = dojo.place("<div id=\"" + captured_citadels_text_id + "\" class=\"blst_captured_citadels_text\">" + player.captured_citadels + "</div>", captured_citadels_container_id);
-					dojo.addClass(captured_citadels_text,faction_color_css);
+					let player_capcit_icon = dojo.place("<div></div>", playercard_elements_grid);
+					dojo.addClass(player_capcit_icon,"player_capcit_icon");
+					dojo.addClass(player_capcit_icon,"playercard_icon");
 					
-					//create a custom image showing citadels from all the other players
+					//dynamically generate an icon for the captured citadels
 					var current_left_offset = 0;
+					var num_enemy_citadels = 0;
 					for(var captured_player_id in gamedatas.players)
 					{
 						//skip ourselves, we can't capture our own citadels!
@@ -127,36 +143,43 @@ define(
 							continue;
 						}
 						
-						//create the div element to show a town for this player
-						let player_captured = document.createElement("div");
-						captured_citadels_container.appendChild(player_captured,true);
+						num_enemy_citadels++;
 						
-						dojo.addClass(player_captured, 'blst_captured_citadels_icon');
-						dojo.addClass(player_captured, 'citadel' + captured_factionid);
-						dojo.style(player_captured, "left", current_left_offset + "px");
+						//create the div element to show a town for this player
+						let player_captured_cit = dojo.place("<div></div>", player_capcit_icon);
+						dojo.addClass(player_captured_cit, 'playercard_icon');
+						dojo.addClass(player_captured_cit, 'citadel' + captured_factionid);
+						dojo.style(player_captured_cit, "left", current_left_offset + "px");
 						current_left_offset += 10;
+					}
+					
+					//this should only occur if there are 2 players, and one is chaos horde (normally wont happen)
+					if(num_enemy_citadels == 0)
+					{
+						dojo.addClass(player_capcit_text, 'display_none');
+						dojo.addClass(player_capcit_icon, 'display_none');
 					}
 					
 					
 					
+					//captured villages container
+					let player_capvil_text = dojo.place("<div></div>", playercard_elements_grid);
+					player_capvil_text.id = this.GetVillagesCapturedTextNodeId(player_id);
+					player_capvil_text.innerHTML = player.villages_captured;
+					dojo.addClass(player_capvil_text,"player_capvil_text");
+					dojo.addClass(player_capvil_text,faction_color_css);
+					dojo.addClass(player_capvil_text,"playercard_text");
 					
-					//villages captured by this player from enemy players
-					let player_villages_container_id = this.GetVillagesCapturedContainerId(player_id);
-					let player_captured_villages = dojo.place("<div id=\"" + player_villages_container_id + "\"class=\"player_captured_villages playercard_element\"></div>", playercard.id);
+					let player_capvil_icon = dojo.place("<div></div>", playercard_elements_grid);
+					dojo.addClass(player_capvil_icon,"player_capvil_icon");
+					dojo.addClass(player_capvil_icon,"playercard_icon");
 					
-					//text for the number of villages captured
-					let player_captured_villages_text = dojo.place("<div id=\"" + this.GetVillagesCapturedTextId(player_id) + "\">" + player.villages_captured + "</div>", player_villages_container_id);
-					//player_captured_villages.style.color = this.faction_strings[factionid].fontColour;
-					dojo.addClass(player_captured_villages,faction_color_css);
-					
-					//some image icons for the captured villages
-					let captured_villages_container = dojo.place("<div class=\"captured_villages_container\"></div>", player_captured_villages);
-					
-					//create a custom image showing towns from all the other players
-					var current_left_offset = 0;
+					//dynamically generate an icon for the captured citadels
+					current_left_offset = 0;
+					var num_enemy_villages = 0;
 					for(var captured_player_id in gamedatas.players)
 					{
-						//skip ourselves, we can't capture our own towns!
+						//skip ourselves, we can't capture our own citadels!
 						if(captured_player_id == player_id)
 						{
 							continue;
@@ -166,20 +189,27 @@ define(
 						var captured_player = gamedatas.players[captured_player_id];
 						var captured_factionid = captured_player.factionid;
 						
-						//chaos horde cannot build villages
+						//chaos horde cannot build citadels
 						if(captured_factionid == this.FACTION_CHAOSHORDE)
 						{
 							continue;
 						}
 						
-						//create the div element to show a town for this player
-						let player_captured_village = document.createElement("div");
-						captured_villages_container.appendChild(player_captured_village,true);
+						num_enemy_villages++;
 						
-						dojo.addClass(player_captured_village, 'player_captured_village');
-						dojo.addClass(player_captured_village, 'village' + captured_factionid);
-						dojo.style(player_captured_village, "left", current_left_offset + "px");
+						//create the div element to show a town for this player
+						let player_captured_vil = dojo.place("<div></div>", player_capvil_icon);
+						dojo.addClass(player_captured_vil, 'playercard_icon');
+						dojo.addClass(player_captured_vil, 'village' + captured_factionid);
+						dojo.style(player_captured_vil, "left", current_left_offset + "px");
 						current_left_offset += 10;
+					}
+					
+					//this should only occur if there are 2 players, and one is chaos horde (normally wont happen)
+					if(num_enemy_villages == 0)
+					{
+						dojo.addClass(player_capvil_text, 'display_none');
+						dojo.addClass(player_capvil_icon, 'display_none');
 					}
 					
 					//player name
@@ -229,38 +259,8 @@ define(
 						playercard.style.height = "135px";
 						
 						//a container for this enemy player tiles
-						let enemy_tiles = dojo.place("<div id=\"enemy_tiles_" + player.id + "\" class=\"enemy_tiles\"></div>", playercard);
+						let enemy_tiles = dojo.place("<div id=\"enemy_tiles_" + player.id + "\" class=\"enemy_tiles\"></div>", playercard_elements_grid);
 						this.UpdateHiddenHandTiles(player.id);
-						
-						/*
-						//create a grid layout showing the number of cards
-						//todo: should this just use an instance of stock or TileStack for convenience?
-						var numLines = 1 + Math.floor(player.cards_visible / 3);
-						var tilesleft = player.cards_visible;
-						//console.log("numLines:" + numLines);
-						//console.log("player.cards_visible:" + player.cards_visible);
-						for (var curLine = 0; curLine < numLines; curLine++)
-						{
-							if(tilesleft <= 0)
-							{
-								break;
-							}
-							for (var curColumn = 0; curColumn < 3; curColumn++)
-							{
-								if(tilesleft <= 0)
-								{
-									break;
-								}
-								let blanktile = document.createElement("div");
-								blanktile.style.top = 0 + curLine * 25 + "px";
-								blanktile.style.left = 0 + curColumn * 45 + "px";
-								dojo.addClass(blanktile,'blanktile' + factionid);
-								dojo.addClass(blanktile,'blanktile');
-								enemy_tiles.appendChild(blanktile,true);
-								tilesleft--;
-							}
-						}
-						*/
 					}
 				}
 				
@@ -373,7 +373,7 @@ define(
 				return "villages_captured_" + player_id;
 			},
 			
-			GetVillagesCapturedTextId : function(player_id)
+			GetVillagesCapturedTextNodeId : function(player_id)
 			{
 				return "villages_captured_text_" + player_id;
 			},
@@ -385,7 +385,7 @@ define(
 				console.log(player);
 				player.villages_captured = Number(player.villages_captured);
 				player.villages_captured += num_new_villages;
-				var player_captured_villages = dojo.byId(this.GetVillagesCapturedTextId(player_id));
+				var player_captured_villages = dojo.byId(this.GetVillagesCapturedTextNodeId(player_id));
 				player_captured_villages.innerHTML = player.villages_captured;
 			},
 			
@@ -402,11 +402,12 @@ define(
 			AddCitadelsCaptured : function(player_id, captured_faction)
 			{
 				console.log("page::AddCitadelsCaptured(" + player_id + "," + captured_faction + ")");
+				//todo: this function
 				/*var player = this.gamedatas.players[player_id];
 				console.log(player);
 				player.villages_captured = Number(player.villages_captured);
 				player.villages_captured += num_new_villages;
-				var player_captured_villages = dojo.byId(this.GetVillagesCapturedTextId(player_id));
+				var player_captured_villages = dojo.byId(this.GetVillagesCapturedTextNodeId(player_id));
 				player_captured_villages.innerHTML = player.villages_captured;*/
 			},
 			

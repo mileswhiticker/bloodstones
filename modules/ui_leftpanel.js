@@ -33,6 +33,10 @@ define(
 				this.current_player_hand = new modules.TileStack();
 				this.current_player_hand.createAsPlayerHand(this,"gamemap", hand_player_id);
 				
+				var playercard = dojo.byId(this.GetPlayercardDivId(hand_player_id));
+				var playercard_grid = playercard.firstChild;
+				playercard_grid.appendChild(this.current_player_hand.container_div,true);
+				
 				return this.current_player_hand;
 			},
 			

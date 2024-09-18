@@ -247,7 +247,6 @@ define(
 						
 						//the current player's tiles in hand
 						let current_player_hand = this.CreatePlayerHand(player_id);
-						playercard.appendChild(current_player_hand.container_div,true);
 						//console.log(gamedatas.hand);
 						
 						//add all tiles to their hand

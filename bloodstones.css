@@ -482,9 +482,9 @@
 
 #player_hand
 {
-	margin-left: 11px;
-	top: 80px;
 	width: 240px;
+	grid-row-start: 3;
+	grid-column-start: 1;
 }
 
 .playercard {
@@ -507,7 +507,7 @@
 .playercard_faction_name
 {
 	position: absolute;
-	font-size: 23px;
+	font-size: 20px;
 }
 
 .playercard_text
@@ -541,37 +541,37 @@
 .player_regroups_text
 {
 	grid-row-start: 1;
-	grid-column-start: 2;
+	grid-column-start: 4;
 }
 
 .player_regroups_icon
 {
 	grid-row-start: 1;
-	grid-column-start: 3;
+	grid-column-start: 5;
 }
 
 .player_score_text
 {
-	grid-row-start: 1;
+	grid-row-start: 2;
 	grid-column-start: 4;
 }
 
 .player_score_icon
 {
-	grid-row-start: 1;
+	grid-row-start: 2;
 	grid-column-start: 5;
 }
 
 .player_villages_text
 {
-	grid-row-start: 2;
-	grid-column-start: 4;
+	grid-row-start: 1;
+	grid-column-start: 2;
 }
 
 .player_villages_icon
 {
-	grid-row-start: 2;
-	grid-column-start: 5;
+	grid-row-start: 1;
+	grid-column-start: 3;
 }
 
 .player_captured_village

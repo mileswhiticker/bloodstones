@@ -17,7 +17,10 @@ define(
 		
 		var instance = declare("_ui_scroll", null, {
 			//put your functions here
-
+			
+			//todo: these two functions are not correctly hooked to key inputs
+			//see onKeyDown() in ui.js line 342
+			
 			ScrollGamewindowVertical : function(direction)
 			{
 				var scroll_amount = 50 * direction;

@@ -342,6 +342,7 @@ define(
 			onKeyDown : function(event)
 			{
 				//console.log(event.key);
+				//todo: something is not correctly triggering here
 				switch(event.key)
 				{
 					case 'w':

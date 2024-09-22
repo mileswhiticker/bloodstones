@@ -52,7 +52,7 @@ define(
 			MapDrag : function(event)
 			{
 				//console.log("page::MapDrag()");
-				console.log(event);
+				//console.log(event);
 				//pageX and pageY are set to 0 under certain conditions
 				//if so, then deltaX and deltaY below will "reset" the whole drag movement
 				//this is a hacky way to prevent that, but i think it should be safe
@@ -149,16 +149,25 @@ define(
 			
 			getMapScreenWidth : function()
 			{
-				var gamemap = dojo.byId("gamemap");
-				var box = dojo.marginBox(gamemap);
+				var box = dojo.marginBox("gamemap");
 				return box.w;
 			},
 			
 			getMapScreenHeight : function()
 			{
-				var gamemap = dojo.byId("gamemap");
-				var box = dojo.marginBox(gamemap);
-				return box.h;
+				var gamemap_box = dojo.marginBox("gamemap");
+				var height = gamemap_box.h;
+				
+				//add in the bottompanel so it's not obscuring the map view
+				//todo: this isn't a permanent solution
+				var bottompanel = dojo.byId("bottompanel");
+				if(bottompanel)
+				{
+					var bottompanel_box = dojo.marginBox("bottompanel");
+					height -= bottompanel_box.h;
+				}
+				
+				return height;
 			},
 			
 			getBoundsMinX : function()

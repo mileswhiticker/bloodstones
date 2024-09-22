@@ -76,15 +76,17 @@ define(
 		var instance = declare("_ui", null, {
 			//put your functions here
 
-			RegenerateMapUI : function()
+			RegenerateMapUI : function(do_debug)
 			{
 				var canvas = this.getProvinceOverlayCanvas();
 				var context = canvas.getContext("2d");
+				this.ClearCanvas();
+				
 				for (let i in this.provinces)
 				{
 					//grab the next province object
 					let province = this.provinces[i];
-					this.RegenerateProvinceUI(province, context);
+					this.RegenerateProvinceUI(province, context, null, do_debug);
 				}
 				this.RefreshMoveModeUI();
 				this.RefreshBuildModeUI();

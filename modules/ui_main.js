@@ -20,6 +20,7 @@ define(
 			
 			AddMainWindow : function(gamedatas)
 			{
+				//console.log("page::AddMainWindow()");
 				//check if this ui has already been created
 				if(dojo.byId("centrepanel"))
 				{
@@ -46,7 +47,18 @@ define(
 				dojo.place("<div id=\"bag\"></div>","leftpanel");	//this is probably unneeded but i'll leave it for now
 				
 				//gamemap children
-				const canvas = dojo.place("<canvas id=\"province_overlay_canvas\" width=\"1039px\" height=\"1185px\"></canvas>","gamemap");
+				const canvas = dojo.place("<canvas id=\"province_overlay_canvas\"></canvas>","gamemap");
+				
+				//a canvas element expects its height and width property to be set
+				//so trying to set  height and width using CSS will mess up the scaling
+				//here we do a little hack to properly set the dimensions so it will scale nicely
+				
+				//todo: this is a nice square layout but it could be more responsive if we scale to a rectangular layout on certain resolutions
+				//this is not a small job so lets leave it at square for the moment and have empty space for those wide monitors
+				var box = dojo.marginBox(canvas);
+				//console.log(box);
+				canvas.width = box.w;
+				canvas.height = box.h;
 				
 				//no longer using zindex here, i think it was over complicating this
 				//dojo.style(gamewindow, 'zIndex', this.GameLayerDefault());
@@ -54,6 +66,7 @@ define(
 				//dojo.style(gamemap, 'zIndex', this.GameLayerMap());
 				//dojo.style(canvas, 'zIndex', this.GameLayerDefault());
 				//dojo.style(provinceclickareas, 'zIndex', this.GameLayerProvinceInteract());
+				dojo.style(leftpanel, 'zIndex', this.GameLayerProvinceInteract());
 				
 				//Setup the zindex layering so that click detection works properly
 				//todo: where am i doing this now? does it need a refactoring pass?

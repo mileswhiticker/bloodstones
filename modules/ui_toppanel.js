@@ -32,15 +32,15 @@ define(
 				const button_zoomout = dojo.place("<div id=\"button_zoomout\"></div>","toppanel");
 				dojo.addClass(button_zoomout, "blst_button topbutton");
 				dojo.connect(button_zoomout, "click", dojo.hitch(this, this.onClickZoomOut));
+				
+				const button_debug = dojo.place("<div id=\"button_debug\"></div>","toppanel");
+				dojo.addClass(button_debug, "blst_button topbutton");
+				dojo.connect(button_debug, "click", dojo.hitch(this, this.playerDebugAction));
+				
 				/*
 				const button_spawnbattle = dojo.place("<div id=\"button_spawnbattle\"></div>","toppanel");
 				dojo.addClass(button_spawnbattle, "blst_button topbutton");
 				dojo.connect(button_spawnbattle, "click", dojo.hitch(this, this.spawnBattle));
-				
-				const button_debug = dojo.place("<div id=\"button_debug\"></div>","toppanel");
-				dojo.addClass(button_debug, "blst_button topbutton");
-				//dojo.connect(button_findbattle, "click", dojo.hitch(this, this.findBattle));
-				dojo.connect(button_debug, "click", dojo.hitch(this, this.playerDebugAction));
 				
 				const button_cycle_hand = dojo.place("<div id=\"button_cycle_hand\"></div>","toppanel");
 				dojo.addClass(button_cycle_hand, "blst_button topbutton");
@@ -236,56 +236,6 @@ define(
 				}
 			},
 			
-			getBoundsRect : function()
-			{
-				return {min_x: this.getBoundsMinX(), min_y: this.getBoundsMinY(), max_x: this.getBoundsMaxX(), max_y: this.getBoundsMaxY()}
-			},
-			
-			applyBoundedCoords : function(coords)
-			{
-				var bounds_rect = this.getBoundsRect();
-				if(coords.x < bounds_rect.min_x)
-				{
-					coords.x = bounds_rect.min_x;
-				}
-				if(coords.x > bounds_rect.max_x)
-				{
-					coords.x = bounds_rect.max_x;
-				}
-				if(coords.y < bounds_rect.min_y)
-				{
-					coords.y = bounds_rect.min_y;
-				}
-				if(coords.y > bounds_rect.max_y)
-				{
-					coords.y = bounds_rect.max_y;
-				}
-				
-				return coords;
-			},
-			
-			getBoundsMaxX : function()
-			{
-				//var edgepos = this.viewmax_x;
-				var edgepos = (this.map_view_scale - 1) * (this.viewmax_x/2);
-				return edgepos;
-			},
-			getBoundsMaxY : function()
-			{
-				//return this.world_maxy;
-				//var edgepos = this.viewmax_x;
-				var edgepos = (this.map_view_scale - 1) * (this.viewmax_y/2);
-				return edgepos;
-			},
-			getBoundsMinX : function()
-			{
-				return 0;//-(this.map_view_scale - 1) * (this.viewmax_x/2);
-			},
-			getBoundsMinY : function()
-			{
-				return 0;//-(this.map_view_scale - 1) * (this.viewmax_y/2);
-			},
-			
 			playerSpawnTestArmy : function(event)
 			{
 				//console.log("page::onClickPlayerHandTile()");
@@ -317,7 +267,11 @@ define(
 			
 			playerDebugAction : function(event)
 			{
+				this.DebugDrawAllProvinceOutlines();
+				return;
+				
 				console.log("page::playerDebugAction()");
+				
 				//is this move allowed?
 				if(window.gameui.checkAction('action_playerDebug'))
 				{

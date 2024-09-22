@@ -393,7 +393,7 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			/* Camera, World and View */
 			
 			this.map_province_radius = 50;
-			this.svg_scale_factor = 0.415;
+			this.svg_scale_factor = 0.32;
 			this.display_as_buildable = 3;
 			
 			//camera coords here are in world space
@@ -408,6 +408,11 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			this.world_maxy = 2334;
 			this.viewmax_x = 2048;
 			this.viewmax_y = 2334;
+			
+			//these are currently set to the dimensions of bloodstones_test_map.jpg "tyrant's lament" 22/09/24 
+			//these are likely to change at some point, and we will need probably standardised dimensions for all map image files
+			this.map_width = 2500;
+			this.map_height = 2849;
 			
 			//this is a percent value, it can go [0,inf)
 			this.map_view_scale = 1.0;

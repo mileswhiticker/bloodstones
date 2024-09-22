@@ -51,6 +51,10 @@ define(
 					area_element.ondragover = window.gameui.onDragOverProvince;
 					area_element.ondrop = window.gameui.onDropProvince;
 					
+					area_element.draggable = true;
+					area_element.ondragstart = window.gameui.MapDragStart;
+					area_element.ondrag = window.gameui.MapDrag;
+					
 					//console.log(province.name + ": " + province_div.style.cssText);
 					
 					//create a div to hold the zone which will hold all the armies in this province
@@ -79,21 +83,25 @@ define(
 				}
 			},
 			
-			RegenerateProvinceUI : function(province, context, area_element, do_debug = false)
+			RegenerateProvinceUI : function(province, context, area_element = null, do_debug = false)
 			{
 				if(do_debug)
 				{
 					console.log("page::RegenerateProvinceUI()");
-					console.log(province);
+					//console.log(province);
+					//console.log(this.provinces);
 				}
 				var scale_factor = this.svg_scale_factor;
 				
-				this.RegenerateProvincePolygon(province, context);
+				this.RegenerateProvincePolygon(province, context, do_debug);
 				var area_element_name = this.GetAreaElementNameFromProv(province);
-				//let area_element = dojo.byId(area_element_name);
+				if(!area_element)
+				{
+					area_element = dojo.byId(area_element_name);
+				}
 				if(do_debug)
 				{
-					console.log(area_element_name);
+					//console.log(area_element_name);
 					console.log(area_element);
 					console.log(province);
 				}
@@ -116,8 +124,8 @@ define(
 			{
 				if(debug_draw)
 				{
-					//console.log("page::RegenerateProvincePolygon(" + debug_draw + ")");
-					//console.log(province);
+					console.log("page::RegenerateProvincePolygon(" + debug_draw + ")");
+					console.log(province);
 				}
 				//new way of doing province outlines using shiny svg path data
 				
@@ -128,7 +136,7 @@ define(
 				{
 					context.beginPath();
 					//context.moveTo(0,0);
-					context.lineWidth = this.province_border_width * this.map_view_scale;
+					context.lineWidth = this.GetProvinceBorderWidth();
 					//console.log(context.lineWidth);
 					var debug_colour = this.getProvinceDebugColour(province);
 					//console.log(debug_colour);

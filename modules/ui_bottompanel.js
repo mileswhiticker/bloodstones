@@ -33,6 +33,7 @@ define(
 				{
 					//if not then create it
 					bottompanel = dojo.place("<div id=\"bottompanel\"></div>","centrepanel");
+					dojo.style(bottompanel, "z-index", this.GameLayerDialogBase());
 				}
 				
 				//

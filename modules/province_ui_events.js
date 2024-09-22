@@ -143,7 +143,7 @@ define(
 					{
 						//console.log(event);
 						var prov_name = window.gameui.GetProvNameFromAreaElement(event.target.id);
-						if(prov_name == window.gameui.pulsing_province_id)
+						if(prov_name && prov_name == window.gameui.pulsing_province_id)
 						{
 							//console.log(prov_name);
 							
@@ -216,11 +216,15 @@ define(
 			
 			onDropProvince : function(event)
 			{
-				event.preventDefault();
+				//console.log("page::onDropProvince()");
+				
 				
 				var prov_name = window.gameui.GetProvNameFromAreaElement(event.target.id);
 				var target_prov_id = window.gameui.GetProvinceIdFromName(prov_name);
-				window.gameui.DisableProvinceBuildHover(prov_name);
+				if(this.pulsing_province_id != null)
+				{
+					window.gameui.DisableProvinceBuildHover(prov_name);
+				}
 				
 				//console.log("page::onDropProvince() target_prov_id:" + target_prov_id);
 				
@@ -231,6 +235,8 @@ define(
 						var check_string = window.gameui.dragging_data_id.substring(0,16);
 						if(check_string == "player_hand_item")
 						{
+							event.preventDefault();
+							
 							//check if this is a valid build province
 							//todo: should this array window.gameui.buildable_provinces be indexed? that way we dont have to loop over it
 							var found = false;
@@ -285,6 +291,8 @@ define(
 				{
 					if(window.gameui.dragging_data_id == "current_player_villages")
 					{
+						event.preventDefault();
+						
 						var province_info = window.gameui.provinces_by_name[prov_name];
 						window.gameui.TryQueueVillageBuild(province_info);
 					}

@@ -311,8 +311,14 @@ define(
 					
 					//new method of doing province outlines
 					var current_coords = {x:0,y:0};
+					
+					//calculate the scaling factor based on canvas dimensions
+					var canvas = this.getProvinceOverlayCanvas();
+					var box = dojo.marginBox(canvas);
 					var scale_factor = this.svg_scale_factor;
-					context.lineWidth = this.province_border_width * this.map_view_scale;
+					//var scale_factor = box.w / 2678;
+					
+					context.lineWidth = this.GetProvinceBorderWidth();
 					context.strokeStyle = overlayColour.rgba();
 					
 					//iterate over the loaded path segments and draw them
@@ -365,6 +371,15 @@ define(
 								var end_point_canvas = this.WorldToCanvasCoords(end_point.x,end_point.y);
 								
 								context.bezierCurveTo(control_point1_canvas.x, control_point1_canvas.y, control_point2_canvas.x, control_point2_canvas.y, end_point_canvas.x, end_point_canvas.y);
+								
+								if(this.greatest_x < end_point_canvas.x)
+								{
+									this.greatest_x = end_point_canvas.x;
+								}
+								if(this.greatest_y < end_point_canvas.y)
+								{
+									this.greatest_y = end_point_canvas.y;
+								}
 								
 								//update the current position of the draw cursor
 								current_coords = end_point;
@@ -436,6 +451,8 @@ define(
 							}
 						}
 					}
+					//this.greatest_x = 0;
+					//this.greatest_y = 0;
 					//context.closePath();
 					context.stroke();
 					
@@ -580,7 +597,12 @@ define(
 				const canvas = document.getElementById("province_overlay_canvas");
 				const context = canvas.getContext("2d");
 				
+				//var box = dojo.marginBox(canvas);
+				//console.log(box);
+				
 				//draw the province outlines we loaded from svg
+				this.greatest_x = 0;
+				this.greatest_y = 0;
 				for(var prov_id in this.provinces)
 				{
 					var cur_prov_info = this.provinces[prov_id];
@@ -589,6 +611,12 @@ define(
 					var fillColour = this.GetProvinceOverlayColour(PROV_MOVE1 + 1);
 					this.SetProvinceOverlayColour(cur_prov_info, overlayColour, fillColour);
 				}
+				//console.log("greatest_x:" + this.greatest_x + " | greatest_y:" + this.greatest_y);
+			},
+			
+			GetProvinceBorderWidth : function()
+			{
+				return (this.province_border_width * this.map_view_scale) / this.map_view_scale;
 			},
 		});
 			

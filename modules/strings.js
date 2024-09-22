@@ -457,7 +457,7 @@ define(
 			{
 				switch(fail_reason)
 				{
-					case VILLAGE_FAIL_AVAIL:
+					case this.VILLAGE_FAIL_AVAIL:
 					{
 						return _("Insufficient villages available to place one there.");
 					}

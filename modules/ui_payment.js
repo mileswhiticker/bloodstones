@@ -90,12 +90,44 @@ define(
 				var approve_button = dojo.place("<div id=\"approve_button\" class=\"action_approve blst_button\">" + this.GetActionApproveString(payment_mode) + "</div>", paywindow);
 				dojo.connect(approve_button, "click", dojo.hitch(this, this.PayAction));
 				
+				//button to minimise the paywindow to reveal more screen space over themap
+				var paywindow_drag = dojo.place("<div id=\"paywindow_drag_button\"></div>",paywindow);
+				//dojo.addClass(paywindow_drag, "blst_button");
+				
+				//button to indicate the paywindow can be dragged (note: user can click and drag from anywhere on the paywindow)
+				var paywindow_minimise_button = dojo.place("<div id=\"paywindow_minimise_button\"><</div>",paywindow);
+				dojo.addClass(paywindow_minimise_button, "blst_button");
+				dojo.connect(paywindow_minimise_button, "click", dojo.hitch(this, this.MinimisePaywindow));
+				
 				//dragging
 				paywindow.draggable = true;
 				paywindow.ondragstart = window.gameui.PaywindowDragStart;
 				paywindow.ondrag = window.gameui.PaywindowDrag;
 				paywindow.ondrop = window.gameui.PaywindowDrop;
 				this.paywindowPrevY = 0;
+			},
+			
+			MinimisePaywindow : function(event)
+			{
+				//console.log("page::MinimisePaywindow()");
+				var paywindow = dojo.byId("paywindow");
+				if(paywindow)
+				{
+					var paywindow_minimise_button = dojo.byId("paywindow_minimise_button");
+					if(dojo.hasClass(paywindow, "paywindow_minimise"))
+					{
+						dojo.removeClass(paywindow, "paywindow_minimise");
+						dojo.addClass(paywindow, "paywindow_unminimise");
+						paywindow_minimise_button.innerText = "<";
+					}
+					else
+					{
+						dojo.removeClass(paywindow, "paywindow_unminimise");
+						dojo.removeClass(paywindow, "paywindow_slidein");
+						dojo.addClass(paywindow, "paywindow_minimise");
+						paywindow_minimise_button.innerText = ">";
+					}
+				}
 			},
 			
 			CreatePaymentNode : function(parent_id, container_id, payment_string, paystack_node_id = "paystack")

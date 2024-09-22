@@ -493,6 +493,16 @@ define(
 				return this.GameLayerDialogBase() + 1;
 			},
 			
+			GameLayerLeftpanel : function()
+			{
+				return this.GameLayerPaywindow() + 1;
+			},
+			
+			GameLayerPaywindow : function()
+			{
+				return this.GameLayerProvinceInteract() + 1;
+			},
+			
 			GameLayerDialogBase : function()
 			{
 				return this.GameLayerProvinceInteract() + 1;

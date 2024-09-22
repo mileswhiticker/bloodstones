@@ -986,6 +986,7 @@
 	border-style: dashed dashed dashed none;
 	animation-duration: 1s;
 	animation-iteration-count: 1;
+	cursor: move;
 }
 
 .paywindow_slidein
@@ -1021,6 +1022,66 @@
 	to
 	{
 		left: -12px;
+	}
+}
+
+#paywindow_drag_button
+{
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	width: 30px;
+	height: 30px;
+	border: double;
+	border-radius: 5px;
+	background-image: url('img/icondrag.jpg');
+	background-size: contain;
+	background-repeat: no-repeat;
+}
+
+#paywindow_minimise_button
+{
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	width: 30px;
+	height: 30px;
+	background-image: url('img/arrow_left.jpg');
+}
+
+.paywindow_minimise
+{
+	animation-name: kf_paywindow_minimise;
+	left: 50px;
+}
+
+.paywindow_unminimise
+{
+	animation-name: kf_paywindow_unminimise;
+	left: 480px;
+}
+
+@keyframes kf_paywindow_minimise
+{
+	from
+	{
+		left: 480px;
+	}
+	to
+	{
+		left: 50px;
+	}
+}
+
+@keyframes kf_paywindow_unminimise
+{
+	from
+	{
+		left: 50px;
+	}
+	to
+	{
+		left: 480px;
 	}
 }
 

@@ -975,8 +975,7 @@
 	width: 457px;
 	height: 300px;
 	position: absolute;
-	
-	top: 500px;
+	top: 60px;
 	padding: 20px;
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);

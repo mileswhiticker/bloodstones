@@ -38,6 +38,7 @@ define(
 				}
 				paywindow = dojo.place("<div id=\"paywindow\"></div>", "centrepanel", "after");
 				dojo.addClass("paywindow","paywindow_slidein");
+				dojo.style(paywindow, 'zIndex', this.GameLayerDialogBase());
 				
 				//dojo.style(paywindow, 'zIndex', this.GameLayerUIMiddle());
 				//dojo.style(paywindow, 'left', "10px");	//move this to help with testing

@@ -29,7 +29,7 @@ define(
 			
 			UICanvasRenderBuildVillagesOverlay : function()
 			{
-				console.log("page::UICanvasRenderBuildVillagesOverlay()");
+				//console.log("page::UICanvasRenderBuildVillagesOverlay()");
 				this.StartAnimatedCanvas(this.UICanvasRenderBuildVillagesOverlay);
 				//loop over the provinces and add an overlay for all the ones that are valid for player to build in
 				//console.log(this.buildable_province_names);

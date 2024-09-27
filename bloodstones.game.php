@@ -222,7 +222,7 @@ class bloodstones extends Table
 		
         // Get public information about players
         // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
-        $sql_players = "SELECT player_id id, player_score score, player_factionid factionid, player_regroups regroups, player_citadel_prov citadel_prov, captured_citadels FROM player ";
+        $sql_players = "SELECT player_id id, player_score score, player_factionid factionid, player_regroups regroups, player_citadel_prov citadel_prov, captured_citadels, player_freebuildpoints freebuildpoints FROM player ";
         $result['players'] = self::getCollectionFromDb($sql_players);
 		
 		//calculate some useful info about the player hands here

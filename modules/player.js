@@ -93,6 +93,12 @@ define(
 				return (this.isCurrentPlayerActive() && this.current_phase_id == gameui.STATE_MAIN_BATTLE);
 			},
 			
+			getCurrentPlayerInfo()
+			{
+				var current_player_id = this.getCurrentPlayerId();
+				return this.gamedatas.players[current_player_id];
+			},
+			
 		});
 			
 		return instance;

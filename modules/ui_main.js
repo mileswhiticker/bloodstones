@@ -27,6 +27,15 @@ define(
 					return;
 				}
 				
+				//convert some string values to int 
+				for(var player_id in gamedatas.players)
+				{
+					//get the updated faction id for this player from the server
+					var player_info = gamedatas.players[player_id];
+					player_info.freebuildpoints = Number(player_info.freebuildpoints);
+					//todo: any others that need to be converted to numbers here?
+				}
+				
 				//create the basic framework of the window
 				const gamewindow = dojo.byId("gamewindow");
 				

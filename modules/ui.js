@@ -140,11 +140,15 @@ define(
 						if(this.getCurrentPlayerFactionId() != this.FACTION_CHAOSHORDE)
 						{
 							var current_player_id = this.getCurrentPlayer();
-							this.buildable_provinces = args.args.buildable_provinces[current_player_id];
-							this.AddFreeBuildUI();
-							
-							//5 free build points
-							this.AddActionPaidAmount(5);
+							var current_player_info = this.getCurrentPlayerInfo();
+							if(current_player_info.freebuildpoints > 0)
+							{
+								this.buildable_provinces = args.args.buildable_provinces[current_player_id];
+								this.AddFreeBuildUI();
+								
+								//5 free build points
+								this.AddActionPaidAmount(current_player_info.freebuildpoints);
+							}
 						}
 						break;
 					}
@@ -155,10 +159,16 @@ define(
 							var current_player_id = this.getCurrentPlayer();
 							this.buildable_provinces = args.args.buildable_provinces[current_player_id];
 							this.buildable_provinces_backup = args.args.buildable_provinces[current_player_id];
-							this.AddFreeBuildUI();
 							
-							//10 free build points
-							this.AddActionPaidAmount(5);
+							//5 free build points
+							//todo: what if the chaos horde player has none left? 
+							//mabye a sanity check because the state should have progressed...
+							var current_player_info = this.getCurrentPlayerInfo();
+							if(current_player_info.freebuildpoints > 0)
+							{
+								this.AddFreeBuildUI();
+								this.AddActionPaidAmount(current_player_info.freebuildpoints);
+							}
 						}
 						break;
 					}

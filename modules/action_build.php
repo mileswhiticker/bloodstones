@@ -23,6 +23,7 @@ trait action_build
 			return $outcome_info;
 		}
 		//todo: legality checks to prevent cheating
+		//also todo: has the player paid enough lmao
 		//for testing, assume it's legal
 		//$success = true;
 		
@@ -63,10 +64,22 @@ trait action_build
 				}
 			}
 			
-			$pips_spent = $this->DiscardTilesFromHand($paid_tile_infos, $current_player_id);
-			$this->incStat($pips_spent, "pips_move", $current_player_id);
-			
-			$this->updatePlayerHandChanged($current_player_id);
+			//eventually there should be checks here to see if the player has paid enough
+			$statename = $this->getStateName();
+			if($statename == "freeBuild" || $statename == "freeBuild_chaosHorde")
+			{
+				$freebuildpoints = self::getUniqueValueFromDB("SELECT player_freebuildpoints FROM player WHERE player_id='$current_player_id'");
+				
+				//wipe all freebuild points regardless of whether they used them or not
+				self::DbQuery("UPDATE player SET player_freebuildpoints='0' WHERE player_id='$current_player_id'");
+			}
+			else
+			{
+				$pips_spent = $this->DiscardTilesFromHand($paid_tile_infos, $current_player_id);
+				$this->incStat($pips_spent, "pips_move", $current_player_id);
+				
+				$this->updatePlayerHandChanged($current_player_id);
+			}
 			
 			$units_built_string = "nothing";
 			$tiles_built = count($built_tile_names);

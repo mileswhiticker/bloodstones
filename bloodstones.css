@@ -998,14 +998,14 @@
 .paywindow_slideout
 {
 	animation-name: paywindow_slideout;
-	left: -12px;
+	left: -20px;
 }
 
 @keyframes paywindow_slidein
 {
 	from
 	{
-		left: -12px;
+		left: -20px;
 	}
 	to
 	{
@@ -1021,7 +1021,7 @@
 	}
 	to
 	{
-		left: -12px;
+		left: -20px;
 	}
 }
 

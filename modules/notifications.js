@@ -506,7 +506,7 @@ define(
 				retreating_army.RemoveTilesFromStack(notif.args.killed_tiles);
 				
 				//if there are no tiles remaining, kill the army
-				if(retreating_army.items.IsStackEmpty())
+				if(retreating_army.IsStackEmpty())
 				{
 					//console.log("no tiles left, destroying army");
 					this.DestroyArmy(notif.args.retreating_army_id);

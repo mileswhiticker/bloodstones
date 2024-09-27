@@ -63,7 +63,7 @@ trait setup
 		$this->initStat("player", "pips_move", 0);
 		$this->initStat("player", "pips_built", 0);
 		//$this->initStat("player", "ship_crossings", 0);
-		//$this->initStat("player", "longest_move", 0);
+		$this->initStat("player", "longest_move", 0);
 		$this->initStat("player", "terrain_losses", 0);
 		//$this->initStat("player", "castle_defences", 0);
 		$this->initStat("player", "vp_villages", 0);

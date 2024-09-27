@@ -45,6 +45,7 @@ trait player_utils
 	
 	function GetPlayerCitadelTileInfo($player_id)
 	{
+		$tile_info = null;
 		try
 		{
 			//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::GetPlayerCitadelTileInfo($player_id)"));
@@ -68,12 +69,14 @@ trait player_utils
 			//self::notifyAllPlayers("debug", "", array('debugmessage' => "citadel_tile_id:$citadel_tile_id"));
 			//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($tiles, true)));
 			//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($tile_info, true)));
+			
+			return $citadel_tile_info;
 		}
 		catch (Exception $e)
 		{
 			self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($e, true)));
 		}
-		return $tile_info;
+		return null;
 	}
 	
 	function PlayerCaptureCitadel($attacking_player_id, $defending_player_id)
@@ -807,12 +810,12 @@ trait player_utils
 		$players = $this->getCollectionFromDb("SELECT player_id, player_factionid FROM player");
 		foreach($players as $player_id => $player)
 		{
+			//calculate the vp for captured villages
 			$captured_villages_score = $this->countPlayerVillagesCaptured($player_id);
-			
-			//chaos horde score double VP for captured villages
 			if($player["player_factionid"] == self::FACTION_CHAOSHORDE)
 			{
-				$captured_villages_score = $num_captured * 2;
+				//chaos horde score double VP for captured villages
+				$captured_villages_score = $captured_villages_score * 2;
 			}
 			
 			//add the VP for captured villages
@@ -827,8 +830,10 @@ trait player_utils
 			$this->incStat($captured_citadels_score, "vp_citadels", $player_id);
 			
 			//calculate the tie breaker
+			//multiplying by 100 here is a little hack to have a priority order for tie breaking, see multiple tie breaker management above
 			$num_villages_built = count($this->getPlayerVillagesBuiltInfos($player_id));
-			$aux_score = $num_villages_built * 100 + $num_captured;
+			$total_captured_score = $captured_villages_score + $captured_citadels_score;
+			$aux_score = $num_villages_built * 100 + $total_captured_score;
 			$this->dbSetAuxScore($player_id, $aux_score);
 		}
 	}

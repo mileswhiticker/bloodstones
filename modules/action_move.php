@@ -33,9 +33,12 @@ trait action_move
 		$temp_id_map = [];
 		if($success)
 		{
+			$longest_move_length = $this->getStat("longest_move", $current_player_id);
+			
 			foreach($action_info as $army_id_string => $army_action_steps)
 			{
 				$source_army_id = self::GetArmyIdNumFromString($army_id_string);
+				$cur_move_length = 0;
 				if($this->isArmyIdTemp($source_army_id))
 				{
 					$temp_id = $source_army_id;
@@ -66,6 +69,7 @@ trait action_move
 					
 					if($action_step_type == self::ACTION_MOVE)
 					{
+						$cur_move_length += 1;
 						//self::notifyAllPlayers("debug", "", array('debugmessage' => "self::ACTION_MOVE,source_army_id:$source_army_id,action_step_prov_name:$action_step_prov_name"));
 						/*
 						var action_step = {step_type: ACTION_MOVE, prov_name: target_province_info.name};
@@ -127,6 +131,13 @@ trait action_move
 					self::notifyAllPlayers("debug", "", array('debugmessage' => "WARNING: army move ended at same province it started"));
 				}
 				
+				//update the record
+				if($cur_move_length > $longest_move_length)
+				{
+					$longest_move_length = $cur_move_length;
+					$this->setStat($longest_move_length, "longest_move", $current_player_id);
+				}
+				
 				//todo: handle any army splits here using the same steps as movement
 				
 				self::notifyAllPlayers('playerArmyMove', '', array(
@@ -138,9 +149,11 @@ trait action_move
 				));
 			}
 			
+			//do we need to update this?
+			
 			// process the tile payment
 			$pips_spent = $this->DiscardTilesFromHand($paid_tile_infos, $current_player_id);
-			$this->incStat($pips_spent, "pips_built", $current_player_id);
+			$this->incStat($pips_spent, "pips_move", $current_player_id);
 			
 			//did this action trigger any new possible battles?
 			//$attacking_player_id = $this->getGameStateValue("attacking_player_id");

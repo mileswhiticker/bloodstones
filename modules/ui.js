@@ -95,6 +95,7 @@ define(
 				this.RefreshPendingBattleCircles();
 				this.RefreshRetreatOverlay();
 				this.RefreshCitadelOverlay();
+				this.UIRefreshBuildVillages();
 			},
 
 			///////////////////////////////////////////////////

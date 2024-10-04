@@ -108,8 +108,11 @@ define(
 			
 			UIRefreshBuildVillages : function()
 			{
-				this.UIClearBuildVillages();
-				this.UICanvasRenderBuildVillagesOverlay();
+				if(this.isCurrentPlayerVillagesState())
+				{
+					this.UIClearBuildVillages();
+					this.UICanvasRenderBuildVillagesOverlay();
+				}
 			},
 			
 			UIClearBuildVillages : function()

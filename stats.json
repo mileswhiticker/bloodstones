@@ -18,42 +18,42 @@
 		"battles_plains":
 		{
 			"id": 12,
-			"name": "Number of battles in Plains terrain",
+			"name": "Number of battles in Plains",
 			"type": "int"
 			},
 
 		"battles_forest":
 		{
 			"id": 13,
-			"name": "Number of battles in Forest terrain",
+			"name": "Number of battles in Forest",
 			"type": "int"
 			},
 
 		"battles_hills":
 		{
 			"id": 14,
-			"name": "Number of battles in Hills terrain",
+			"name": "Number of battles in Hills",
 			"type": "int"
 			},
 
 		"battles_mountains":
 		{
 			"id": 15,
-			"name": "Number of battles in Mountains terrain",
+			"name": "Number of battles in Mountains",
 			"type": "int"
 			},
 
 		"battles_desert":
 		{
 			"id": 16,
-			"name": "Number of battles in Desert terrain",
+			"name": "Number of battles in Desert",
 			"type": "int"
 			},
 
 		"battles_sea":
 		{
 			"id": 17,
-			"name": "Number of battles in Sea terrain",
+			"name": "Number of battles in Sea",
 			"type": "int"
 			}
 	},
@@ -64,14 +64,14 @@
 		"player_faction":
 		{
 			"id": 10,
-			"name": "Player chosen faction",
+			"name": "Chosen faction",
 			"type": "int"
 			},
 
 		"turns_number":
 		{
 			"id": 11,
-			"name": "Number of player turns turn",
+			"name": "Player turns taken",
 			"type": "int",
 			"display": "limited"
 			},
@@ -79,35 +79,35 @@
 		"battles_won":
 		{
 			"id": 12,
-			"name": "Number of battles won",
+			"name": "Battles won",
 			"type": "int"
 			},
 
 		"battles_lost":
 		{
 			"id": 13,
-			"name": "Number of battles lost",
+			"name": "Battles lost",
 			"type": "int"
 			},
 
 		"battles_withdraw":
 		{
 			"id": 14,
-			"name": "Number of battles withdrawn from",
+			"name": "Battles withdrawn",
 			"type": "int"
 			},
 
 		"battles_attack":
 		{
 			"id": 15,
-			"name": "Number of battles attacked",
+			"name": "Battles attacked",
 			"type": "int"
 			},
 
 		"battles_defend":
 		{
 			"id": 16,
-			"name": "Number of battles defended",
+			"name": "Battles defended",
 			"type": "int"
 			},
 
@@ -119,35 +119,35 @@
 		"villages_built":
 		{
 			"id": 18,
-			"name": "Number of villages built",
+			"name": "Villages built",
 			"type": "int"
 			},
 
 		"villages_captured":
 		{
 			"id": 19,
-			"name": "Number of villages captured",
+			"name": "Villages captured",
 			"type": "int"
 			},
 
 		"tiles_built":
 		{
 			"id": 20,
-			"name": "Number of army tiles built",
+			"name": "Army tiles built",
 			"type": "int"
 			},
 
 		"pips_move":
 		{
 			"id": 21,
-			"name": "Number of pips spent moving",
+			"name": "Pips spent moving",
 			"type": "int"
 			},
 
 		"pips_built":
 		{
 			"id": 22,
-			"name": "Number of pips spent building",
+			"name": "Pips spent building",
 			"type": "int"
 			},
 
@@ -161,49 +161,49 @@
 		"terrain_losses":
 		{
 			"id": 24,
-			"name": "Number of tiles lost to dangerous terrain, including during retreats",
+			"name": "Tiles lost to dangerous terrain, including during retreats",
 			"type": "int"
 			},
 
 		"castle_defences":
 		{
 			"id": 25,
-			"name": "Number of defending battles with a castle or citadel",
+			"name": "Defending battles with a castle or citadel",
 			"type": "int"
 			},
 
 		"ship_crossings":
 		{
 			"id": 26,
-			"name": "Number of times an army travels across the sea",
+			"name": "Times an army travelled across the sea",
 			"type": "int"
 			},
 
 		"vp_villages":
 		{
 			"id": 27,
-			"name": "Number of victory points scored from built villages",
+			"name": "Victory points scored from built villages",
 			"type": "int"
 			},
 
 		"vp_captures":
 		{
 			"id": 28,
-			"name": "Number of victory points scored from capturing villages",
+			"name": "Victory points scored from capturing villages",
 			"type": "int"
 			},
 
 		"vp_battles":
 		{
 			"id": 29,
-			"name": "Number of victory points scored from winning battles",
+			"name": "Victory points scored from winning battles",
 			"type": "int"
 			},
 
 		"vp_citadels":
 		{
 			"id": 30,
-			"name": "Number of victory points scored from capturing citadels",
+			"name": "Victory points scored from capturing citadels",
 			"type": "int"
 			}
 

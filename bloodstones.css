@@ -1418,9 +1418,9 @@
 	background-size: cover;
 	display: grid;
 	grid-template-rows: 0.2fr 0.8fr 1fr;
-	height: 760px;
 	justify-items: center;
 	align-items: center;
+	height: 100%
 }
 
 #bigtitle
@@ -1433,6 +1433,7 @@
 	/*width: 754px;
 	height: 130px;*/
 	grid-row-start: 1;
+	margin-top: 20px;
 }
 
 #factions

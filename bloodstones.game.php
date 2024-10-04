@@ -1869,7 +1869,7 @@ class bloodstones extends Table
 			self::notifyAllPlayers("showMessage", clienttranslate('Corsairs have spied on ${other_faction_name} battle tiles.'), array('type' => "info", 'other_faction_name' => $other_faction_name));
 		}
 		
-		$this->incStat(1, "battles_defend", $attacking_player_id);
+		$this->incStat(1, "battles_defend", $defending_player_id);
 		
 		//decide who will go first
 		$this->gamestate->nextState("nextBattleTile");
@@ -2003,7 +2003,7 @@ class bloodstones extends Table
 	
 	function st_gameOver()
 	{
-		self::notifyAllPlayers("debug", "", array('debugmessage' => "server::st_gameOver()"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::st_gameOver()"));
 		
 		//most of this function is to calculate the winner for game stats purposes
 		//the BGA framework does a separate calculation of the winner which makes this code possibly redundant
@@ -2026,7 +2026,7 @@ class bloodstones extends Table
 			}
 		}
 		
-		self::notifyAllPlayers("debug", "", array('debugmessage' => "winning player id after first pass is $winning_player_id"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "winning player id after first pass is $winning_player_id"));
 		
 		//check for ties
 		$tied_players = [];
@@ -2043,14 +2043,14 @@ class bloodstones extends Table
 		$num_ties = count($tied_players);
 		if($num_ties > 1)
 		{
-			self::notifyAllPlayers("debug", "", array('debugmessage' => "tied players detected: $num_ties"));
-			self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($tied_players,true)));
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => "tied players detected: $num_ties"));
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($tied_players,true)));
 			
 			//resolve the tie
 			foreach($tied_players as $player_id)
 			{
 				$tie_player_score = $player["player_score"] + $player["player_score_aux"];
-				self::notifyAllPlayers("debug", "", array('debugmessage' => "player_id:$player_id tie_player_score:$tie_player_score"));
+				//self::notifyAllPlayers("debug", "", array('debugmessage' => "player_id:$player_id tie_player_score:$tie_player_score"));
 				if($tie_player_score > $winning_player_score)
 				{
 					$winning_player_id = $player_id;
@@ -2066,21 +2066,53 @@ class bloodstones extends Table
 			$tie_player_score = $player["player_score"] + $player["player_score_aux"];
 			if($tie_player_score == $winning_player_score)
 			{
-				$tied_players[] = $winning_player_id;
+				$tied_players[] = $player_id;
 			}
 		}
 		
 		$num_ties = count($tied_players);
 		if($num_ties == 1)
 		{
-			self::notifyAllPlayers("debug", "", array('debugmessage' => "final winning player:$winning_player_id"));
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => "final winning player:$winning_player_id"));
+			self::notifyAllPlayers("showMessage", clienttranslate('Game over. ${player_name} has won.'), array(
+				'type' => "info",
+				'player_id' => $winning_player_id,
+				'player_name' => $this->getPlayerNameById($winning_player_id),
+				));
 			
 			$winning_faction = $this->GetPlayerFaction($winning_player_id);
 			$this->setStat($winning_faction, "winning_faction");
 		}
+		else if($num_ties == 2)
+		{
+			$args = ['type' => 'info'];
+			$args['player_id1'] = $tied_players[0];
+			$args['player_name1'] = $this->getPlayerNameById($tied_players[0]);
+			$args['player_id2'] = $tied_players[1];
+			$args['player_name2'] = $this->getPlayerNameById($tied_players[1]);
+			self::notifyAllPlayers("showMessage", clienttranslate('The following players have tied for first place: ${player_name1}, ${player_name2}'), $args);
+		}
 		else
 		{
-			self::notifyAllPlayers("debug", "", array('debugmessage' => "tie remains after tiebreaker!"));
+			//showing a nice custom string with all the tied player names is tricky to do programmatically, so i will take a shortcut here
+			$args = ['type' => 'info'];
+			self::notifyAllPlayers("showMessage", clienttranslate('Multiple players have tied for first place!'), $args);
+			/*
+			$args = ['type' => 'info'];
+			$player_index = 0;
+			foreach($tied_players as $player_id)
+			{
+				$player_name = $this->getPlayerNameById($player_id);
+				
+				$player_name_var = "player_name$player_index";
+				$player_id_var = "player_id$player_index";
+				$args[$player_name_var] = $player_name;
+				$args[$player_id_var] = $player_id;
+				
+				$player_index = $player_index + 1;
+			}
+			self::notifyAllPlayers("showMessage", clienttranslate('The following players have tied for first place: ${tied_player_names}'), $args);
+			*/
 		}
 		
 		//end the game

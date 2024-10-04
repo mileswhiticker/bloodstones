@@ -88,9 +88,13 @@ define(
 					let province = this.provinces[i];
 					this.RegenerateProvinceUI(province, context, null, do_debug);
 				}
+				
+				//only one of these will actually trigger, because they check the current state or mode
 				this.RefreshMoveModeUI();
 				this.RefreshBuildModeUI();
 				this.RefreshPendingBattleCircles();
+				this.RefreshRetreatOverlay();
+				this.RefreshCitadelOverlay();
 			},
 
 			///////////////////////////////////////////////////

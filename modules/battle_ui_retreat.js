@@ -18,15 +18,14 @@ define(
 		var instance = declare("_battle_ui_retreat", null, {
 			//put your functions here
 			
-			CreateRetreatOverlayIfNotExists : function(args)
+			CreateRetreatOverlayIfNotExists : function()
 			{
 				this.DestroyRetreatOverlay();
-				this.CreateRetreatOverlay(args.args.retreat_prov_options);
+				this.CreateRetreatOverlay();
 			},
 			
-			CreateRetreatOverlay : function(retreat_prov_options)
+			CreateRetreatOverlay : function()
 			{
-				this.retreat_prov_options = retreat_prov_options;
 				//console.log("page::CreateRetreatOverlay()");
 				//console.log(retreat_prov_options);
 				//console.log(this.battling_province_name);
@@ -52,9 +51,9 @@ define(
 					}
 				}
 				
-				for(var i in retreat_prov_options)
+				for(var i in this.retreat_prov_options)
 				{
-					var retreat_option = retreat_prov_options[i]
+					var retreat_option = this.retreat_prov_options[i]
 					var adj_province_name = retreat_option.name;
 					
 					//grab some starting info
@@ -81,6 +80,15 @@ define(
 			{
 				//see movemode_ui_addremove.js
 				this.ClearCanvas();
+			},
+			
+			RefreshRetreatOverlay : function()
+			{
+				if(this.isCurrentPlayerRetreatState())
+				{
+					this.DestroyRetreatOverlay();
+					this.CreateRetreatOverlay();
+				}
 			},
 		});
 		

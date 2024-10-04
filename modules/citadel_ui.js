@@ -46,6 +46,15 @@ define(
 			{
 				this.ClearCanvas();
 			},
+			
+			RefreshCitadelOverlay : function()
+			{
+				if(this.isCurrentPlayerCitadelState())
+				{
+					this.UIFinishPlaceCitadel();
+					this.UICanvasRenderPlaceCitadelOverlay();
+				}
+			},
 		});
 		
 		return instance;

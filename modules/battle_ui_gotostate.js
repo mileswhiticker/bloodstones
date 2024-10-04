@@ -236,6 +236,7 @@ define(
 				this.battling_province_name = args.args.battling_province_name;
 				this.attacking_player_id = args.args.attacking_player_id;
 				this.defending_player_id = args.args.defending_player_id;
+				this.retreat_prov_options = args.args.retreat_prov_options;
 				
 				var retreating_army = this.GetArmyById(args.args.retreating_army_id);
 				console.log(retreating_army);
@@ -243,7 +244,7 @@ define(
 				
 				if(this.isCurrentPlayerActive())
 				{
-					this.CreateRetreatOverlayIfNotExists(args);
+					this.CreateRetreatOverlayIfNotExists();
 				}
 			},
 			

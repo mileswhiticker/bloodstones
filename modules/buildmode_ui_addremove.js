@@ -87,7 +87,7 @@ define(
 			RefreshBuildModeUI : function()
 			{
 				//console.log("page::RefreshMoveModeUI()");
-				if(this.isCurrentPlayerBuildMode())
+				if(this.isCurrentPlayerBuildMode() || this.isCurrentPlayerFreeBuildMode())
 				{
 					this.RemoveBuildModeUI();
 					this.AddBuildModeUI();

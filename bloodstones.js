@@ -476,6 +476,7 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			this.num_attacker_tiles_rejected = 0;
 			this.num_defender_tiles_rejected = 0;
 			this.max_battle_tiles = 3;
+			this.retreat_prov_options = [];
 			
 			this.ATTACKER_TILE_TYPE = 84;
 			this.DEFENDER_TILE_TYPE = 98;

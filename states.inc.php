@@ -106,7 +106,7 @@ $machinestates = array(
 		"action" => "st_factionselect",
 		"description" => "Waiting for other players to choose...",
 		"descriptionmyturn" => "Choose your faction!",
-		"possibleactions" => array("action_chooseFaction","action_unchooseFaction","action_skip"),
+		"possibleactions" => array("action_chooseFaction","action_unchooseFaction","action_skip","action_playerDebug"),
 		"transitions" => array("initNewGame" => STATE_INITNEWGAME)
 	),
 	
@@ -124,7 +124,7 @@ $machinestates = array(
 		"descriptionmyturn" => clienttranslate('Choose a province to place your citadel'),
 		"type" => "activeplayer",
 		"args" => "args_citadelPlacement",
-		"possibleactions" => array("action_playerPlaceCitadel","action_skip"),
+		"possibleactions" => array("action_playerPlaceCitadel","action_skip","action_playerDebug"),
 		"transitions" => array("nextCitadel" => STATE_NEXTCITADEL)
 	),
 	

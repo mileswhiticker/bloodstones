@@ -141,7 +141,7 @@ define(
 				}
 				
 				//create the stack object for the temporary village
-				var village_info = {player_id: active_player_id, prov_name: prov_info.name, tiles: {}, id_num: this.getTempArmyId()};
+				var village_info = {player_id: active_player_id, province_name: prov_info.name, tiles: {}, id_num: this.getTempArmyId()};
 				var new_village = new modules.TileStack();
 				new_village.createAsVillage(this, "centrepanel", village_info);	//node id formerly "gamemap"
 				
@@ -309,7 +309,7 @@ define(
 					
 					//create the stack object... the id here is unused (fingers crossed)
 					//formerly used this.getTempArmyId() now using the tile id from the Deck object
-					var village_info = {player_id: owner_player_id, province_id: province_name, tiles: {}, id_num: village_info.id};
+					var village_info = {player_id: owner_player_id, province_name: province_name, tiles: {}, id_num: village_info.id};
 					var villagestack = new modules.TileStack();
 					villagestack.createAsVillage(this, "centrepanel", village_info);	//node id formerly "gamemap"
 					this.villagestacks_by_province[province_name] = villagestack;

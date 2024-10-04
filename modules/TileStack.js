@@ -268,7 +268,7 @@ define(
 				}*/
 				
 				//this method will "slide" it out across the board to the starting provine
-				window.gameui.MoveArmy(this, village_info.prov_name,  true);
+				window.gameui.MoveArmy(this, village_info.province_name,  true);
 			},
 			
 			addVillage(new_faction_id)

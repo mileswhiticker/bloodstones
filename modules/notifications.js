@@ -154,7 +154,8 @@ define(
 			
 			notif_playerChooseFaction : function(notif)
 			{
-				//console.log("page::notif_playerChooseFaction() player_id:" + notif.args.player_id + ", faction_id:" + notif.args.faction_id + ", old_faction_id:" + notif.args.old_faction_id);
+				//console.log("page::notif_playerChooseFaction()");
+				//console.log(notif.args);
 				this.SetPlayerFactionChoice(notif.args.player_id, notif.args.faction_id, notif.args.old_faction_id);
 			},
 			
@@ -212,10 +213,19 @@ define(
 			
 			notif_playerChooseFactionFail : function(notif)
 			{
-				//this is unused, it goes through notif_playerChooseFaction() above
-				//im going to leave it here just in case
-				console.log("page::notif_playerChooseFactionFail()");
-				//this.SetPlayerFactionChoice(notif.args.player_id, notif.args.faction_id, notif.args.old_faction_id);
+				//console.log("page::notif_playerChooseFactionFail()");
+				//console.log(notif.args);
+				
+				var player_id = notif.args.player_id;
+				if(player_id == this.getCurrentPlayer())
+				{
+					//SetPlayerFactionChoice : function(player_id, new_faction_id, old_faction_id)
+					this.showMessage(_("That faction has already been taken"), "error");
+					var faction_id = this.gamedatas.players[player_id].factionid;
+					
+					//-1 means the player hasnt chosen a faction yet, faction_id here is the faction they tried to choose (but it was probably already taken)
+					this.SetPlayerFactionChoice(player_id, -1, faction_id);
+				}
 			},
 			
 			notif_cycleHand : function(notif)

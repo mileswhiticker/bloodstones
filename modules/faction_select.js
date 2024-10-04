@@ -101,13 +101,15 @@ define(
 				//console.log("current_faction_id: " + current_faction_id);
 				if(faction_id == current_faction_id)
 				{
-					this.SetPlayerFactionChoice(current_player_id, -1, current_faction_id)
+					this.TrySetPlayerFactionChoice(current_player_id, -1, current_faction_id)
 					window.gameui.ServerUnchooseFaction(faction_id);
 				}
 				else
 				{
-					this.SetPlayerFactionChoice(current_player_id, faction_id, current_faction_id)
-					window.gameui.ServerChooseFaction(faction_id);
+					if(this.TrySetPlayerFactionChoice(current_player_id, faction_id, current_faction_id))
+					{
+						window.gameui.ServerChooseFaction(faction_id);
+					}
 				}
 			},
 			
@@ -130,19 +132,35 @@ define(
 				}
 			},
 			
+			TrySetPlayerFactionChoice: function(player_id, new_faction_id, old_faction_id)
+			{
+				if(this.getFactionPlayerId(new_faction_id) > 0)
+				{
+					//this feels like a bit of a hack but it should be fine
+					//occasionally i will deliberately pass around an invalid player id as '-1'
+					this.showMessage(_("That faction has already been taken"), "error");
+					return false;
+				}
+				return true;
+			},
+			
 			SetPlayerFactionChoice : function(player_id, new_faction_id, old_faction_id)
 			{
+				//console.log("page::SetPlayerFactionChoice(" + player_id + "," + new_faction_id + "," + old_faction_id + ")");
 				if(this.gamedatas.gamestate.name != "factionSelect")
 				{
 					//at this point the gamestate has already changed, so there's no point doing any UI updates
 					return;
 				}
 				//console.log("page::SetPlayerFactionChoice(" + player_id + "," + new_faction_id + "," + old_faction_id + ")");
-				this.gamedatas.players[player_id].factionid = new_faction_id;
 				
-				//add the selection UI effects to the new faction
+				//is this a valid faction id?
+				var unselect_old_faction = false;
 				if(this.isValidFactionId(new_faction_id))
 				{
+					//add the selection UI effects to the new faction
+					unselect_old_faction = true;
+					
 					//console.log("check1");
 					var factionbutton_id = this.getFactionButtonId(new_faction_id);
 					var factionbutton = dojo.byId(factionbutton_id);
@@ -163,12 +181,19 @@ define(
 						dojo.removeClass(factionbutton_id, "blst_button");
 						factionbutton.textContent = this.getPlayerFactionTitleString(player_id);
 					}
+					
+					//finally, update the saved value
+					this.gamedatas.players[player_id].factionid = new_faction_id;
+				}
+				else
+				{
+					//undo the faction selection choice for this player
+					unselect_old_faction = true;
 				}
 				
 				//remove the selection UI effects from the old faction
-				if(this.isValidFactionId(old_faction_id))
+				if(unselect_old_faction && this.isValidFactionId(old_faction_id))
 				{
-					//console.log("check4");
 					var factionbutton_id = this.getFactionButtonId(old_faction_id);
 					var factionbutton = dojo.byId(factionbutton_id);
 					dojo.addClass(factionbutton_id, "blst_button");

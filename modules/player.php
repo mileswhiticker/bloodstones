@@ -329,7 +329,7 @@ trait player_utils
 		}
 	}
 	
-	public function tryChooseFactionTemp($faction_id, $player_id = 0)
+	public function tryChooseFactionTemp($faction_id)
 	{
 		//self::checkAction('action_chooseFaction');
 		//$this->checkActionState("action_chooseFaction");
@@ -337,11 +337,7 @@ trait player_utils
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::tryChooseFactionTemp($faction_id)"));
 		
 		$faction_player_id = $this->GetFactionPlayer($faction_id);
-		$current_player_id = $player_id;
-		if(!$current_player_id)
-		{
-			$current_player_id = $this->getCurrentPlayerId();
-		}
+		$current_player_id = $this->getCurrentPlayerId();
 		if($faction_player_id == 0)
 		{
 			$old_faction_id = $this->GetPlayerFaction($current_player_id);
@@ -362,9 +358,8 @@ trait player_utils
 		}
 		else
 		{
-			self::notifyAllPlayers("debug", "", array('debugmessage' => "that faction id $faction_id is already taken by player $faction_player_id"));
+			//factionid is what the player tried to choose but it was already taken
 			self::notifyAllPlayers("playerChooseFactionFail", "", array('player_id' => $current_player_id, 'faction_id' => $faction_id));
-			//throw new BgaUserException( self::_("server::tryChooseFactionTemp() success2") );
 		}
 	}
 	
@@ -382,7 +377,7 @@ trait player_utils
 		$this->gamestate->setPlayersMultiactive(array($current_player_id), 'error');
 		
 		$player_name = $this->getPlayerNameById($current_player_id);
-		self::notifyAllPlayers("playerChooseFaction", "$player_name cancelled their faction choice", array('player_id' => $current_player_id, 'faction_id' => -1, 'old_faction_id' => $old_faction_id));
+		self::notifyAllPlayers("playerChooseFaction", clienttranslate('${player_name} has cancelled their faction choice'), array('player_name' => $player_name, 'player_id' => $current_player_id, 'faction_id' => -1, 'old_faction_id' => $old_faction_id));
 	}
 	
 	public function CanPlayerUndeadPhase($player_id)

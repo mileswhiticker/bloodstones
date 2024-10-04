@@ -41,7 +41,7 @@ trait setup
 		//self::initStat( 'player', 'player_teststat1', 0 );  // Init a player statistics (for all players)
 		
 		//todo: the current player turn number is already stored as a global variable, it doesnt need to be a game stat
-		$this->initStat("table", "winning_faction", -1);
+		//$this->initStat("table", "winning_faction", -1);
 		$this->initStat("table", "turns_number", 0);
 		$this->initStat("table", "battles_plains", 0);
 		$this->initStat("table", "battles_forest", 0);

@@ -100,6 +100,8 @@ trait citadel
 			$player_id = self::getActivePlayerId();
 		}
 		
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::GetPossibleCitadelProvinces($player_id, $use_prov_names)"));
+		
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "" . count($possible_province_names) . " legal provinces found after removing $num_removed, now checking citadel 2-layer adjacency..."));
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($possible_provinces,true)));
 		
@@ -107,7 +109,7 @@ trait citadel
 		//return $possible_province_names;
 		
 		//get all currently placed citadels
-        $players = self::getCollectionFromDb("SELECT player_id, player_citadel_prov FROM player");
+		$players = self::getCollectionFromDb("SELECT player_id, player_citadel_prov FROM player");
 		$blocking_prov_names = [];
 		
 		//loop over each player citadel
@@ -215,7 +217,7 @@ trait citadel
 			$cur_prov_name = $this->getProvinceName($cur_prov["id"]);
 			if(!$remove)
 			{
-				if(array_search($cur_prov_name, $blocking_prov_names) != false)
+				if(array_search($cur_prov_name, $blocking_prov_names) !== false)
 				{
 					$remove = true;
 				}

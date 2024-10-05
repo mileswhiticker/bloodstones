@@ -37,14 +37,14 @@ define(
 				dojo.addClass(button_debug, "blst_button topbutton");
 				dojo.connect(button_debug, "click", dojo.hitch(this, this.playerDebugAction));
 				
+				const button_cycle_hand = dojo.place("<div id=\"button_cycle_hand\"></div>","toppanel");
+				dojo.addClass(button_cycle_hand, "blst_button topbutton");
+				dojo.connect(button_cycle_hand, "click", dojo.hitch(this, this.playerCycleHand));
+				
 				/*
 				const button_spawnbattle = dojo.place("<div id=\"button_spawnbattle\"></div>","toppanel");
 				dojo.addClass(button_spawnbattle, "blst_button topbutton");
 				dojo.connect(button_spawnbattle, "click", dojo.hitch(this, this.spawnBattle));
-				
-				const button_cycle_hand = dojo.place("<div id=\"button_cycle_hand\"></div>","toppanel");
-				dojo.addClass(button_cycle_hand, "blst_button topbutton");
-				dojo.connect(button_cycle_hand, "click", dojo.hitch(this, this.playerCycleHand));
 				
 				const button_spawn = dojo.place("<div id=\"button_spawn\"></div>","toppanel");
 				dojo.addClass(button_spawn, "blst_button topbutton");
@@ -267,9 +267,6 @@ define(
 			
 			playerDebugAction : function(event)
 			{
-				this.DebugDrawAllProvinceOutlines();
-				return;
-				
 				console.log("page::playerDebugAction()");
 				
 				//is this move allowed?

@@ -838,13 +838,15 @@ trait player_utils
 		self::notifyAllPlayers("debug", "", array('debugmessage' => "server::playerDebugAction()"));
 		//note: this triggers a call to the args() function so i dont need to put anything else here
 		
-		$this->GetPlayerCitadelTileInfo(self::getActivePlayerId());
+		//$this->GetPlayerCitadelTileInfo(self::getActivePlayerId());
 		//$this->args_playermain();
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export(,true)));
 		
 		//$this->debugCreateUndead();
 		
 		//$this->KillActivePlayerDesertTiles();
+		
+		$this->GetPossibleCitadelProvinces();
 		
 		//for testing
 		//$current_player_id = self::getCurrentPlayerId();

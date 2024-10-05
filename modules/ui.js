@@ -515,6 +515,16 @@ define(
 			
 			GameLayerPaywindow : function()
 			{
+				return this.GameLayerBattlewindow() + 1;
+			},
+			
+			GameLayerBattlewindow : function()
+			{
+				return this.GameLayerBottomPanel() + 1;
+			},
+			
+			GameLayerBottomPanel : function()
+			{
 				return this.GameLayerProvinceInteract() + 1;
 			},
 			

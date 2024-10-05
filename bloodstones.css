@@ -157,7 +157,7 @@
 #leftpanel
 {
 	position: absolute;
-	width: 480px;
+	width: 475px;
 	height: 100%;
 	background-image: url('img/texture-left.png');
 	/*height: 1185px;*/ /*this is the max height*/
@@ -168,7 +168,7 @@
 
 #centrepanel {
 	position: absolute;
-	left: 480px;
+	left: 475px;
 	/*width: 1039px;*/
 	height: 100%;
 	/*filter: box-shadow(rgb(0,0,0) 0px 0px 4px);*/
@@ -702,7 +702,7 @@
 
 #army_selection_stack
 {
-	width: 180px;
+	width: 165px;
 }
 
 /*.blst_captured_citadels_container
@@ -744,10 +744,13 @@
 #selected_army {
 	position: absolute;
 	left: 290px;
-	width: 175px;
+	width: 170px;
 	top: 0px;
 	background-image: none;
-	padding: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
+	height: 100%;
+	overflow: hidden;
 }
 .selected_army_bg
 {
@@ -768,7 +771,7 @@
 }
 
 #gamemap {
-    background-image: url('img/bloodstones_testmap.jpg');
+	background-image: url('img/bloodstones_testmap.jpg');
 	background-repeat: no-repeat;
 	background-size: 100%;
 	height: 100%;
@@ -779,55 +782,58 @@
 }
 
 #battlewindow {
-    background-image: url('img/texture-paybucket.jpg');
+	background-image: url('img/texture-paybucket.jpg');
 	background-repeat: no-repeat;
 	background-size: cover;
-	width: 600px;
-	height: 800px;
+	width: 100%;
+	height: 100%;
 	position: absolute;
-	left: 900px;
-	top: 50px;
-	padding: 20px;
 	filter: box-shadow(rgb(0,0,0) 0px 0px 4px);
 	border-radius: 10px;
 	display: grid;
-	grid-template-columns: 1fr 0.2fr 1fr;
-	grid-template-rows: 1fr 3fr 1fr 1fr 1fr 0.5fr 0.5fr;
+	grid-template-columns: 10px 1fr 0.2fr 1fr 10px;
+	grid-template-rows: 10px 1fr 3fr 1fr 1fr 1fr 0.5fr 0.5fr 10px;
 	gap: 5px;
 }
 
 .battle_title_vs
 {
-    background-image: url('img/battle_trans.png');
+	background-image: url('img/battle_trans.png');
 	background-size: contain;
 	background-repeat: no-repeat;
-    grid-row-start: 1;
-    grid-column-start: 2;
+	grid-row-start: 2;
+	grid-column-start: 3;
 }
 
 .battle_attacker
 {
-    grid-column-start: 1;
+	grid-column-start: 2;
 	justify-self: start;
 }
 
 .battle_defender
 {
-    grid-column-start: 3;
+	grid-column-start: 4;
 	justify-self: end;
 }
 
 .battle_title
 {
 	font-size: 2em;
-    grid-row-start: 1;
+	grid-row-start: 2;
 }
 
 .battle_display
 {
-    grid-row-start: 2;
+	grid-row-start: 3;
 	display: flex;
 	width: 115px;
+	overflow: hidden;
+}
+
+.battle_display_preview
+{
+	grid-row-end: span 3;
 }
 
 .battle_display_tilebonus_container
@@ -846,8 +852,8 @@
 
 #battle_title_result
 {
-    grid-row: 2;
-    grid-column-start: 1;
+    grid-row: 3;
+    grid-column-start: 2;
     grid-column-end: span 3;
 	justify-self: center;
 }
@@ -855,8 +861,8 @@
 #battle_title_preview
 {
 	font-size: 4em;
-    grid-row-start: 5;
-    grid-column: 1;
+    grid-row-start: 6;
+    grid-column: 2;
     grid-column-end: span 3;
 	justify-self: center;
 }
@@ -864,8 +870,8 @@
 #battle_title_wait
 {
 	font-size: 2em;
-    grid-row-start: 5;
-    grid-column: 1;
+    grid-row-start: 6;
+    grid-column: 2;
     grid-column-end: span 3;
 	justify-self: center;
 }
@@ -873,41 +879,41 @@
 #battle_title_playtile
 {
 	font-size: 3em;
-    grid-row-start: 5;
-    grid-column: 1;
+    grid-row-start: 6;
+    grid-column: 2;
     grid-column-end: span 3;
 	justify-self: center;
 }
 
 #paycontainer_battle
 {
-    grid-row-start: 4;
-    grid-column-start: 1;
+    grid-row-start: 5;
+    grid-column-start: 2;
 	grid-row-end: span 2;
 }
 
 #paybucket_battle
 {
-    grid-row-start: 5;
+    grid-row-start: 6;
 }
 
 .battle_reject
 {
-	grid-row-start: 3;
+	grid-row-start: 4;
 	width: 250px;
 	height: 40px;
 }
 
 .battle_tiles
 {
-    grid-row-start: 4;
+    grid-row-start: 5;
 	width: 250px;
 	height: 40px;
 }
 
 .battle_temp
 {
-	grid-row-start: 5;
+	grid-row-start: 6;
 	align-self: center;
 	justify-self: center;
 	width: 0px;
@@ -917,7 +923,7 @@
 .battle_score
 {
 	font-size: 2em;
-    grid-row-start: 6;
+    grid-row-start: 7;
 	font-weight: bold;
 	color: darkslategrey;
 }
@@ -925,25 +931,25 @@
 #battle_score_attacker
 {
 	text-align: left;
-    grid-column-start: 1;
+    grid-column-start: 2;
 }
 
 #battle_score_defender
 {
 	text-align: right;
-    grid-column-start: 3;
+    grid-column-start: 4;
 }
 
 #battle_proceed
 {
-    grid-row-start: 7;
-    grid-column-start: 3;
+    grid-row-start: 8;
+    grid-column-start: 4;
 }
 
 #battle_withdraw
 {
-    grid-row-start: 7;
-    grid-column-start: 1;
+    grid-row-start: 8;
+    grid-column-start: 2;
 }
 
 .sacrifice1
@@ -993,7 +999,7 @@
 .paywindow_slidein
 {
 	animation-name: paywindow_slidein;
-	left: 480px;
+	left: 475px;
 }
 
 .paywindow_slideout
@@ -1010,7 +1016,7 @@
 	}
 	to
 	{
-		left: 480px;
+		left: 475px;
 	}
 }
 
@@ -1018,7 +1024,7 @@
 {
 	from
 	{
-		left: 480px;
+		left: 475px;
 	}
 	to
 	{
@@ -1059,14 +1065,14 @@
 .paywindow_unminimise
 {
 	animation-name: kf_paywindow_unminimise;
-	left: 480px;
+	left: 475px;
 }
 
 @keyframes kf_paywindow_minimise
 {
 	from
 	{
-		left: 480px;
+		left: 475px;
 	}
 	to
 	{
@@ -1082,7 +1088,7 @@
 	}
 	to
 	{
-		left: 480px;
+		left: 475px;
 	}
 }
 

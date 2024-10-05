@@ -50,6 +50,9 @@ define(
 					//as we are no longer previewing the battle at this point, we need to make some tweaks from the standard battle preview window
 					dojo.destroy("battle_title_preview");
 					
+					dojo.removeClass("battle_display_attacker", "battle_display_preview");
+					dojo.removeClass("battle_display_defender", "battle_display_preview");
+					
 					//when players specifically have the option to do stuff, the buttons can get re-enabled
 					if(dojo.byId("battle_proceed"))
 					{
@@ -122,7 +125,8 @@ define(
 				//also pending_battle_info.army_infos = ["army_id_string" = {}];
 				
 				//create the container node
-				var battlewindow = dojo.place("<div id=\"battlewindow\"></div>", "centrepanel", "after");
+				var battlewindow = dojo.place("<div id=\"battlewindow\"></div>", "centrepanel");
+				dojo.style(battlewindow, "z-index", this.GameLayerBattlewindow());
 				//dojo.style(battlewindow, 'zIndex', this.GameLayerDialogBase());
 				
 				//it's possible that this.gamedatas.attacking_player_id and defending_player_id will be undefined if there is no ongoing battle
@@ -143,6 +147,9 @@ define(
 				this.army_display_attacker.createAsBattleDisplay(this, "battlewindow", this.preview_attacking_player_id, true);
 				this.army_display_defender = new modules.TileStack();
 				this.army_display_defender.createAsBattleDisplay(this, "battlewindow", this.preview_defending_player_id, false);
+				
+				dojo.addClass("battle_display_attacker", "battle_display_preview");
+				dojo.addClass("battle_display_defender", "battle_display_preview");
 				
 				//display the tile bonuses in two inner columns
 				//var battle_display_tilebonus_attacker = dojo.place("<div id=\"battle_display_tilebonus_" + this.preview_attacking_player_id + "\" class=\"battle_display_tilebonus_container\"></div>", battle_display_attacker,"last");

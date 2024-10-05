@@ -85,6 +85,7 @@ define(
 				this.ui_attacker_layout = false;
 				
 				this.custom_item_render_callback = null;
+				this.custom_container_height_function = null;
 			},
 			
 			create: function(page, host_div_id/*,container_div, item_width, item_height*/)
@@ -149,7 +150,7 @@ define(
 					//create the random battle "dice" tiles
 					for(let rowoffset = 0; rowoffset <= 1; rowoffset++)
 					{
-						for(let tilenum = 0; tilenum <= 5; tilenum++)
+						for(let tilenum = 0; tilenum < gameui.TILE_DICE_NUM_TYPES; tilenum++)
 						{
 							var tile_type = this.battle_tiles_offset + tilenum + (rowoffset * this.image_items_per_row);
 							//console.log("creating battle tile: " + tile_type);
@@ -157,6 +158,13 @@ define(
 						}
 					}
 					
+					//create some invisible tiles
+					var numbattletiles_max = 4;
+					for(let numbattletiles = 0; numbattletiles < numbattletiles_max; numbattletiles++)
+					{
+						this.addItemType(gameui.ATTACKER_TILE_TYPE, gameui.ATTACKER_TILE_TYPE, g_gamethemeurl + 'img/spritesheet.png', gameui.ATTACKER_TILE_TYPE);
+						this.addItemType(gameui.DEFENDER_TILE_TYPE, gameui.DEFENDER_TILE_TYPE, g_gamethemeurl + 'img/spritesheet.png', gameui.DEFENDER_TILE_TYPE);
+					}
 				}
 				//console.log(this);
 			},
@@ -307,6 +315,7 @@ define(
 						container_div_id = "battle_display_";
 						this.extraClassesContainer += "battle_display ";
 						this.custom_item_render_callback = this.renderBattleDisplayTile;
+						this.custom_container_height_function = this.BattleDisplayApplyHeight;
 						
 						break;
 					}
@@ -1255,7 +1264,14 @@ define(
 				}
 				
 				var control_height = (lastLine+1) * ( this.item_height + vertical_overlap_px + this.item_margin );
-				dojo.style( this.control_name, 'height', control_height+'px' );
+				if(this.custom_container_height_function)
+				{
+					this.custom_container_height_function(control_height);
+				}
+				else
+				{
+					dojo.style( this.control_name, 'height', control_height+'px' );
+				}
 				
 				if( this.autowidth )
 				{
@@ -1265,6 +1281,11 @@ define(
 					}
 					dojo.style( this.control_name, 'width', control_new_width+'px' );
 				}
+			},
+			
+			BattleDisplayApplyHeight : function(control_height)
+			{
+				dojo.style( this.control_name,'height','100%');
 			},
 			
 			removeFromStockById: function( id, to, noupdate )

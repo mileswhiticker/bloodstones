@@ -78,7 +78,7 @@ trait setup
 	{
 		$tiles_attacker = [];
 		$tiles_defender = [];
-		for($i=0; $i<5; $i++)
+		for($i=0; $i<self::TILE_DICE_NUM_TYPES; $i++)
 		{
 			$tiles_attacker[] = array( 'type' => 'battle_tile', 'type_arg' => self::TILE_DICE_MIN + $i, 'nbr' => 2 );
 			$tiles_defender[] = array( 'type' => 'battle_tile', 'type_arg' => self::TILE_DICE_MIN + $i + self::SPRITESHEET_ROW_TILES, 'nbr' => 2 );

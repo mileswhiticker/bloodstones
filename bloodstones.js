@@ -343,8 +343,9 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			this.TILE_UNIT_MAX = 83;
 			
 			//used for battles
-			this.TILE_DICE_MIN = 84;
-			this.TILE_DICE_MAX = 111;
+			this.TILE_DICE_MIN = 86;
+			this.TILE_DICE_NUM_TYPES = 4;
+			this.TILE_DICE_MAX = 103;
 			
 			/* General UI */
 			

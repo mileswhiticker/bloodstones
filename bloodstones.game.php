@@ -113,8 +113,9 @@ class bloodstones extends Table
 	const TILE_UNIT_MAX = 83;
 	
 	//used for battles
-	const TILE_DICE_MIN = 85;
-	const TILE_DICE_MAX = 111;	//this one is unused i think
+	const TILE_DICE_MIN = 86;
+	const TILE_DICE_NUM_TYPES = 4;
+	const TILE_DICE_MAX = 103;	//this one is unused i think
 	
 	use battle;
 	use province;

@@ -204,10 +204,11 @@ define(
 				}
 			},
 			
-			UpdateBattleTilesHidden2 : function(battle_tilestack, num_tiles, tile_type)
+			UpdateBattleTilesHidden2 : function(battle_tilestack, num_tiles, tile_type, do_debug = false)
 			{
 				//console.log("page::UpdateBattleTilesHidden2([array]," + num_tiles + "," + tile_type + ")");
-				//console.log(battle_tilestack);
+				if(do_debug)	console.log("page::UpdateBattleTilesHidden2([battle_tilestack]," + num_tiles + "," + tile_type + ")");
+				if(do_debug)	console.log(battle_tilestack);
 				
 				var num_tiles_found = 0;
 				var tiles_to_remove = [];
@@ -247,7 +248,7 @@ define(
 				for(var i=0; i < num_tiles_new; i++)
 				{
 					//create an arbitrary id which hopefully wont conflict with anything
-					var new_id = tile_type + 10 + i;
+					var new_id = tile_type + 100 + i;
 					
 					//create a template for this tile
 					var template_tile_info = {
@@ -259,6 +260,7 @@ define(
 						type_arg: tile_type};
 						
 					//create the tile
+					if(do_debug)	console.log(template_tile_info);
 					battle_tilestack.SpawnTileInStack(template_tile_info);
 				}
 			},

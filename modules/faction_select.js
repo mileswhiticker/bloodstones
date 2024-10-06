@@ -53,7 +53,12 @@ define(
 					
 					//place a button for the player to choose this faction?
 					var factionbutton_id = this.getFactionButtonId(faction_id);
-					var factionbutton = dojo.place("<div id=\"" + factionbutton_id + "\" class=\"faction_title blst_button\">" + this.getChooseFactionTitleString(faction_id) + "</div>",faction_id_string);
+					var factionbutton = dojo.place("<div id=\"" + factionbutton_id + "\" class=\"faction_title\">" + this.getChooseFactionTitleString(faction_id) + "</div>",faction_id_string);
+					
+					if(!this.isSpectator)
+					{
+						dojo.addClass(factionbutton, "blst_button");
+					}
 					dojo.connect(factionbutton, "click", dojo.hitch(this, this.onClickFactionButton));
 					
 					//has a player already selected this faction?
@@ -196,7 +201,10 @@ define(
 				{
 					var factionbutton_id = this.getFactionButtonId(old_faction_id);
 					var factionbutton = dojo.byId(factionbutton_id);
-					dojo.addClass(factionbutton_id, "blst_button");
+					if(!this.isSpectator)
+					{
+						dojo.addClass(factionbutton_id, "blst_button");
+					}
 					factionbutton.textContent = this.getChooseFactionTitleString(old_faction_id);
 					
 					var faction_id_string = this.getFactionContainerId(old_faction_id);

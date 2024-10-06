@@ -1638,9 +1638,37 @@
 
 #faction_info_holder
 {
-	width: 450px;
-	height: 350px;
+	width: 267px;
+	height: 100%;
 	grid-row-start: 3;
+}
+
+@media screen and (height >= 500px) and (height < 600px)
+{
+	/*
+	33% of height is 200
+	4/3 of thiss => 44% = 267px
+	#faction_info_holder
+	{
+		width: 267px;
+	}
+	*/
+}
+
+@media screen and (height >= 600px) and (height < 800px)
+{
+	#faction_info_holder
+	{
+		width: 355px;
+	}
+}
+
+@media screen and (height >= 800px) and (height < 1200px)
+{
+	#faction_info_holder
+	{
+		width: 533px;
+	}
 }
 
 #info

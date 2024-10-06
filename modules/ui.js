@@ -636,6 +636,13 @@ define(
 				return this.getNextCycleColour();
 			},
 			
+			setArmyUIScale : function(newScale)
+			{
+				//console.log("page::setArmyUIScale(" + newScale + ")");
+				this.army_tile_scale = newScale;
+				dojo.query(".map_army_transformable").style("transform", "scale(" + newScale + ")");
+			}
+			
 		});
 		
 		return instance;

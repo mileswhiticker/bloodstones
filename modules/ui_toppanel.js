@@ -41,6 +41,9 @@ define(
 				dojo.addClass(button_cycle_hand, "blst_button topbutton");
 				dojo.connect(button_cycle_hand, "click", dojo.hitch(this, this.playerCycleHand));
 				
+				const slidecontainer = dojo.place("<div id=\"slidecontainer\" class=\"blst_button slidecontainer\"></div>","toppanel");
+				const slider = dojo.place("<input type=\"range\" min=\"1\" max=\"100\" value=\"50\" class=\"slider\" id=\"army_scale_slider\">","slidecontainer");
+				dojo.connect(slider, "input", dojo.hitch(this, this.onInputArmyScaleSlider));
 				/*
 				const button_spawnbattle = dojo.place("<div id=\"button_spawnbattle\"></div>","toppanel");
 				dojo.addClass(button_spawnbattle, "blst_button topbutton");
@@ -66,6 +69,15 @@ define(
 				dojo.addClass(button_right, "blst_button topbutton");
 				dojo.connect(button_right, "click", dojo.hitch(this, this.onClickScrollRight));
 				*/
+			},
+			
+			onInputArmyScaleSlider : function()
+			{
+				//console.log("page::onInputArmyScaleSlider() gameui.army_tile_scale: " + gameui.army_tile_scale);
+				var slider = dojo.byId("army_scale_slider");
+				var percent = Number(slider.value) / 100;
+				var army_tile_scale_range = this.army_tile_scale_max - this.army_tile_scale_min;
+				gameui.setArmyUIScale(percent * army_tile_scale_range);
 			},
 			
 			spawnBattle : function(event)

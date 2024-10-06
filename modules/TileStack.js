@@ -201,6 +201,7 @@ define(
 				this.item_width = 99;
 				this.item_height = 50;
 				this.container_div.style.width = "99px";
+				dojo.addClass(this.id_string, "map_army_transformable");
 				//this.container_div.style.height = "50px";		//this is automatically overriden
 				
 				this.setSelectionMode(3);
@@ -251,6 +252,7 @@ define(
 				this.item_width = 50;
 				this.item_height = 50;
 				this.container_div.style.width = "50px";
+				dojo.addClass(this.id_string, "map_army_transformable");
 				//this.container_div.style.height = "50px";		//this is automatically overriden
 				this.backgroundSize = "100% 100%";
 				this.setSelectionMode(3);

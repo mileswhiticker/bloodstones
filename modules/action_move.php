@@ -34,7 +34,7 @@ trait action_move
 		if($success)
 		{
 			$longest_move_length = $this->getStat("longest_move", $current_player_id);
-			
+			$army_unit_strings = [];
 			foreach($action_info as $army_id_string => $army_action_steps)
 			{
 				$source_army_id = self::GetArmyIdNumFromString($army_id_string);
@@ -140,6 +140,10 @@ trait action_move
 				
 				//todo: handle any army splits here using the same steps as movement
 				
+				//prepare the string for player log
+				$army_unit_strings;
+				
+				//update client UI
 				self::notifyAllPlayers('playerArmyMove', '', array(
 					'moving_player_id' => $current_player_id,
 					'moving_player_name' => $current_player_name,
@@ -165,6 +169,24 @@ trait action_move
 			{
 				$this->ChaosHordeMoveUpdate();
 			}
+		
+			//showMessage
+			//$source_army = self::getObjectFromDB("SELECT army_id, province_id, player_id FROM armies WHERE army_id=$source_army_id");
+			
+			//send a message to the log
+			self::notifyAllPlayers('showMessage', '', array(
+				'player_id' => $current_player_id,
+				'player_name' => $current_player_name,
+				'army_id_num' => ""
+			));
+			
+			//test
+			/*$this->notifyAllPlayers('message',clienttranslate('Game moves ${token_name_rec}'),
+				['token_name_rec'=>[
+					'log' => '${token_name} #${token_number}',
+					'args' => ['token_name'=>clienttranslate('Boo'), 'token_number'=>$number, 'i18n'=>['token_name']]
+					]
+				]);*/
 		}
 		/*else
 		{

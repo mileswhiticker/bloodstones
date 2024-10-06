@@ -322,7 +322,7 @@
 
 .map_army_transformable
 {
-	/*transform: scale(1);*/
+	transform: scale(0.75);
 }
 
 .slidecontainer

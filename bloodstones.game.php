@@ -250,9 +250,9 @@ class bloodstones extends Table
 		
 		$result["all_provinces"] = $this->getAllProvinces();
 		
-		if($this->ArePlayerDecksLinked())
+		if($this->ArePlayerDecksLinked() && !$this->isSpectator())
 		{
-			$current_player_id = self::getCurrentPlayerId();    // !! We must only return informations visible by this player !!
+			$current_player_id = self::getCurrentPlayerId();
 			$current_player_deck = $this->player_decks[$current_player_id];
 			$result['hand'] = $current_player_deck->getCardsInLocation('hand');
 		}

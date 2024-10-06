@@ -545,7 +545,9 @@ define(
 				var newTop = item_marginBox.t + 14;
 				node_tilebonus.style.top = newTop + "px";
 				var newLeft = item_marginBox.l;
-				if(is_attacker)
+				
+				//render them all to the left for now
+				if(is_attacker || true)
 				{
 					newLeft += (this.item_width + 10);
 				}

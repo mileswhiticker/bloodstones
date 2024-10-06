@@ -872,8 +872,8 @@
 {
 	grid-row-start: 3;
 	display: flex;
-	width: 115px;
-	overflow: hidden;
+	width: 200px;
+	overflow-y: scroll;
 }
 
 .battle_display_preview

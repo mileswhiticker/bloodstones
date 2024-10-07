@@ -641,6 +641,12 @@ define(
 				//console.log("page::setArmyUIScale(" + newScale + ")");
 				this.army_tile_scale = newScale;
 				dojo.query(".map_army_transformable").style("transform", "scale(" + newScale + ")");
+				
+				for(var i=0; i<this.all_army_zones.length; i++)
+				{
+					var cur_zone = this.all_army_zones[i];
+					cur_zone.updateDisplayNewDimensions(this.army_tile_scale * this.zone_item_width_base, this.army_tile_scale * this.zone_item_height_base);
+				}
 			}
 			
 		});

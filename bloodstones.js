@@ -394,11 +394,14 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			/* Camera, World and View */
 			
 			this.map_province_radius = 50;
+			this.zone_item_width_base = 115;
+			this.zone_item_height_base = 50;
 			this.svg_scale_factor = 0.32;
 			this.display_as_buildable = 3;
 			this.army_tile_scale = 1;
 			this.army_tile_scale_min = 0.2;
 			this.army_tile_scale_max = 2;
+			this.all_army_zones = [];
 			
 			//camera coords here are in world space
 			//note: anchor for world coords here is bottom right, so +x goes left and +y goes right

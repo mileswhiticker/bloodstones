@@ -86,6 +86,7 @@ define(
 			//override this function for nicer layouting when there is <=4  items
 			itemIdToCoordsEllipticalFit: function( i, control_width, control_height, items_nbr )
 			{
+				//console.log("page::itemIdToCoordsEllipticalFit() " + i + "," + control_width + "," + control_height + "," + items_nbr)
 				var ellipse_center_x = control_width / 2;            
 				var ellipse_center_y = control_height / 2;
 				var pi = 3.1415927;
@@ -93,71 +94,50 @@ define(
 				var res = {};
 				res.w = this.item_width;
 				res.h = this.item_height;
+				var ellipse_radius_x = res.w;
+				var ellipse_radius_y = res.h * ellipse_center_y / ellipse_center_x;
 				
 				// Start from last
+				//i runs from 0 to (num_items - 1)
 				var j = items_nbr - (i + 1);
+				var circumference_items = 6;
+				if(circumference_items > items_nbr)
+				{
+					circumference_items = items_nbr;
+				}
+				ellipse_radius_x -= ellipse_radius_x / circumference_items;
+				ellipse_radius_y -= ellipse_radius_y / circumference_items;
 				
+				//special handling for solo elements
+				if(circumference_items == 1)
+				{
+					res.x = 0;
+					res.y = 0;
+				}
 				// Around and around ; i starts at 0
-				var item_margin = 0;//this.army_selection_border_width
-				if (items_nbr <= 1) {
-					res.x = ellipse_center_x - this.item_width/2 - item_margin;
-					res.y = ellipse_center_y - this.item_height/2 - item_margin;
-				} else if (items_nbr == 2) {
-					if(control_width > control_height)
-					{
-						//horizontal alignment
-						res.x = ellipse_center_x - this.item_width/2 - item_margin - (this.item_width+item_margin)/2 + j * (this.item_width+item_margin);
-						res.y = ellipse_center_y - this.item_height/2 - item_margin;
-					}
-					else
-					{
-						//vertical alignment
-						res.x = ellipse_center_x - this.item_width/2 - item_margin;
-						res.y = ellipse_center_y - this.item_height/2 - item_margin - (this.item_height+item_margin)/2 + j * (this.item_height+item_margin);
-					}
-				} else if (items_nbr == 3) {
-					if(control_width > control_height)
-					{
-						//horizontal alignment
-						res.x = ellipse_center_x - this.item_width/2 - item_margin - 2*(this.item_width+item_margin)/2 + j * (this.item_width+item_margin);
-						res.y = ellipse_center_y - this.item_height/2 - item_margin;
-					}
-					else
-					{
-						//vertical alignment
-						res.x = ellipse_center_x - this.item_width/2 - item_margin;
-						res.y = ellipse_center_y - this.item_height/2 - item_margin - 2*(this.item_height+item_margin)/2 + j * (this.item_height+item_margin);
-					}
-				} else if (items_nbr == 4) {
-					if(control_width > control_height)
-					{
-						var ellipse_radius_x = res.w;
-						var ellipse_radius_y = res.h * ellipse_center_y / ellipse_center_x;
-						var angle = pi/4 + j * (2 * pi / 4);
-						res.x = ellipse_center_x + ellipse_radius_x * Math.cos(angle) - (res.w+item_margin) / 2;
-						res.y = ellipse_center_y + ellipse_radius_y * Math.sin(angle) - (res.h+item_margin) / 2;
-					}
-					else
-					{
-						//vertical alignment
-						res.x = ellipse_center_x - this.item_width/2 - 24;
-						res.y = ellipse_center_y - this.item_height/2 - 24 - 3*(this.item_height+item_margin)/2 + j * (this.item_height+item_margin);
-					}
-				} else if (j <= 4) {
-					var ellipse_radius_x = res.w;
-					var ellipse_radius_y = res.h * ellipse_center_y / ellipse_center_x;
-					var angle = pi + j * (2 * pi / 5);
-					res.x = ellipse_center_x + ellipse_radius_x * Math.cos(angle) - res.w / 2;
-					res.y = ellipse_center_y + ellipse_radius_y * Math.sin(angle) - res.h / 2;
-				} else if (j > 4) {
-					var ellipse_radius_x = res.w * 2;
-					var ellipse_radius_y = res.h * 2 * ellipse_center_y / ellipse_center_x;
-					var angle = pi - pi / 2 + (j-4) * (2 * pi / Math.max(10, items_nbr - 5));
-					res.x = ellipse_center_x + ellipse_radius_x * Math.cos(angle) - res.w / 2;
-					res.y = ellipse_center_y + ellipse_radius_y * Math.sin(angle) - res.h / 2;
+				else if (j < circumference_items)
+				{
+					var angle = pi + j * (2 * pi / circumference_items);
+					res.x = 0 + ellipse_radius_x * Math.cos(angle);// - res.w / 2;
+					res.y = 0 + ellipse_radius_y * Math.sin(angle);// - res.h / 2;
+				}
+				else if (j >= circumference_items)
+				{
+					ellipse_radius_x *= 2;
+					ellipse_radius_y *= 2;
+					var angle = pi - pi / 2 + (j-circumference_items + 1) * (2 * pi / Math.max(10, items_nbr - circumference_items));
+					res.x = 0 + ellipse_radius_x * Math.cos(angle);// - res.w / 2;
+					res.y = 0 + ellipse_radius_y * Math.sin(angle);// - res.h / 2;
 				}
 				
 				return res;
+			},
+			
+			updateDisplayNewDimensions : function(new_item_width, new_item_height)
+			{
+				this.item_width = new_item_width;
+				this.item_height = new_item_height;
+				this.updateDisplay();
 			},
 			
 			// Update the display completely

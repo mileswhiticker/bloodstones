@@ -68,9 +68,10 @@ define(
 					
 					//create an ebg/zone to hold all the armies
 					var newZone = new modules.ArmyZone();
-					newZone.create(this, zone_div, this.map_province_radius, this.map_province_radius);
+					newZone.create(this, zone_div, this.army_tile_scale * this.zone_item_width_base, this.army_tile_scale * this.zone_item_height_base);
 					newZone.setPattern("ellipticalfit");
 					province.zone = newZone;
+					this.all_army_zones.push(newZone);
 					
 					//this function will create the outline and make sure it's properly scaled for the current user zoom level
 					this.RegenerateProvinceUI(province, context, area_element, do_debug);

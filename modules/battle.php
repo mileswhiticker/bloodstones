@@ -405,12 +405,12 @@ trait battle
 		if($attacker_army_size > $defender_army_size)
 		{
 			$num_attacker_tiles = 4;
-			self::notifyAllPlayers("debug", "", array('debugmessage' => "attacker army is larger, their tile count set to 4)"));
+			self::notifyAllPlayers("debug", "", array('debugmessage' => "attacker army is larger, their tile count set to 4), attacker $attacker_army_size vs defender $defender_army_size"));
 		}
-		else if($attacker_army_size > $defender_army_size)
+		else if($attacker_army_size < $defender_army_size)
 		{
 			$num_defender_tiles = 4;
-			self::notifyAllPlayers("debug", "", array('debugmessage' => "defender army is larger, their tile count set to 4)"));
+			self::notifyAllPlayers("debug", "", array('debugmessage' => "defender army is larger, their tile count set to 4), attacker $attacker_army_size vs defender $defender_army_size"));
 		}
 		
 		//second, check if the hill folk are playing in the battle (special rule)

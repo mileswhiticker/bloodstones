@@ -127,9 +127,16 @@ define(
 				//create the container node
 				var battlewindow = dojo.place("<div id=\"battlewindow\"></div>", "centrepanel");
 				dojo.style(battlewindow, "z-index", this.GameLayerBattlewindow());
+				dojo.addClass(battlewindow, "battlewindow_anim_maximise");
 				//dojo.style(battlewindow, 'zIndex', this.GameLayerDialogBase());
 				
 				//it's possible that this.gamedatas.attacking_player_id and defending_player_id will be undefined if there is no ongoing battle
+				
+				//minimise button which sits outside normal flow
+				const button_battlewindow_minimise = dojo.place("<div id=\"button_battlewindow_minimise\"></div>",battlewindow);
+				dojo.addClass(button_battlewindow_minimise, "blst_button");
+				dojo.connect(button_battlewindow_minimise, "click", dojo.hitch(this, this.onClickBattlewindowMinimise));
+				
 				
 				//create the titles at the top of the window
 				var attacker_faction_name = this.getFactionName(this.getPlayerFactionId(this.preview_attacking_player_id));
@@ -216,6 +223,21 @@ define(
 					dojo.connect(proceed_battle_button, "click", dojo.hitch(this, this.onClickProceedBattle));
 				}
 			},
+			
+			onClickBattlewindowMinimise : function(event)
+			{
+				//console.log("page::onClickBattlewindowMinimise()");
+				if(dojo.hasClass("battlewindow","battlewindow_anim_minimise"))
+				{
+					dojo.removeClass("battlewindow","battlewindow_anim_minimise");
+					dojo.addClass("battlewindow","battlewindow_anim_maximise");
+				}
+				else
+				{
+					dojo.addClass("battlewindow","battlewindow_anim_minimise");
+					dojo.removeClass("battlewindow","battlewindow_anim_maximise");
+				}
+			}
 			
 		});
 		

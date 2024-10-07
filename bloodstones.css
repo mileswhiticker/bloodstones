@@ -831,7 +831,6 @@
 	background-repeat: no-repeat;
 	background-size: cover;
 	width: 100%;
-	height: 100%;
 	position: absolute;
 	filter: box-shadow(rgb(0,0,0) 0px 0px 4px);
 	border-radius: 10px;
@@ -839,6 +838,60 @@
 	grid-template-columns: 10px 1fr 0.2fr 1fr 10px;
 	grid-template-rows: 10px 1fr 3fr 1fr 1fr 1fr 0.5fr 0.5fr 10px;
 	gap: 5px;
+	overflow: hidden;
+}
+
+#button_battlewindow_minimise
+{
+	width: 30px;
+	height: 30px;
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	background-image: url('img/minimise.png');
+	background-size: contain;
+}
+
+.battlewindow_anim_minimise
+{
+	animation-name: battlewindow_kf_minimise;
+	animation-duration: 0.5s;
+	animation-iteration-count: 1;
+	animation-timing-function: ease-in;
+	height: 65px;
+}
+
+.battlewindow_anim_maximise
+{
+	animation-name: battlewindow_kf_maximise;
+	animation-duration: 0.5s;
+	animation-iteration-count: 1;
+	animation-timing-function: ease-in;
+	height: 100%;
+}
+
+@keyframes battlewindow_kf_minimise
+{
+	0%
+	{
+		height: 100%;
+	}
+	100%
+	{
+		height: 10%;
+	}
+}
+
+@keyframes battlewindow_kf_maximise
+{
+	0%
+	{
+		height: 10%;
+	}
+	100%
+	{
+		height: 100%;
+	}
 }
 
 .battle_title_vs

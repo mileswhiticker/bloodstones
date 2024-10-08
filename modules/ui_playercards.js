@@ -93,6 +93,7 @@ define(
 					
 					//villages not yet built from this player
 					let player_villages_text = dojo.place("<div></div>", playercard_elements_grid);
+					player_villages_text.id = this.GetVillagesRemainingCounterNodeId(player_id);
 					player_villages_text.innerHTML = player.villages_available;
 					dojo.addClass(player_villages_text,"player_villages_text");
 					dojo.addClass(player_villages_text,faction_color_css);
@@ -396,6 +397,11 @@ define(
 			GetCitadelsCapturedTextNodeId : function(player_id)
 			{
 				return "citadels_captured_text_" + player_id;
+			},
+			
+			GetVillagesRemainingCounterNodeId : function(player_id)
+			{
+				return "villages_remaining_" + player_id;
 			},
 			
 			AddCitadelsCaptured : function(player_id, captured_faction)

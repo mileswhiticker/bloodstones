@@ -675,7 +675,8 @@ class bloodstones extends Table
 						//success
 						self::notifyAllPlayers('newVillages', '', array(
 							'player_id' => $owner_player_id,
-							'villages_built' => $result["newly_built_villages"]
+							'villages_built' => $result["newly_built_villages"],
+							'villages_available' => $this->countPlayerVillagesAvailable($owner_player_id)
 						));
 						
 						//end the turn... players can only do 1 set of village building per turn

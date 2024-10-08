@@ -597,6 +597,10 @@ define(
 				//update gamedatas
 				this.gamedatas.players[owner_player_id].villages_built = notif.args.villages_built;
 				
+				//update the ui
+				player_villages_text = dojo.byId(this.GetVillagesRemainingCounterNodeId(owner_player_id));
+				player_villages_text.innerHTML = notif.args.villages_available;
+				
 				this.UIClearBuildVillages();
 			},
 			

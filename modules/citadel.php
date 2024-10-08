@@ -93,7 +93,7 @@ trait citadel
 		return $citadel_tile;
 	}
 	
-	public function GetPossibleCitadelProvinces($player_id, $use_prov_names = true)
+	public function GetPossibleCitadelProvinces($player_id = 0, $use_prov_names = true)
 	{
 		if($player_id == 0)
 		{

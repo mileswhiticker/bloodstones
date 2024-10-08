@@ -58,8 +58,25 @@ define(
 				//this is a hacky way to prevent that, but i think it should be safe
 				//if(event.pageX != 0 && event.pageY != 0)
 				{
+					var max_scroll = 5;
 					var deltaX = window.gameui.map_drag_prev_x - event.pageX;
 					var deltaY = window.gameui.map_drag_prev_y - event.pageY;
+					if(deltaX > max_scroll)
+					{
+						deltaX = max_scroll;
+					}
+					if(deltaX < -max_scroll)
+					{
+						deltaX = -max_scroll;
+					}
+					if(deltaY > max_scroll)
+					{
+						deltaY = max_scroll;
+					}
+					if(deltaY < -max_scroll)
+					{
+						deltaY = -max_scroll;
+					}
 					//console.log("MapDrag() deltaX:" + deltaX + ", deltaY:" + deltaY);
 
 					var coords = {x: window.gameui.camera_coords_world.x + deltaX, y: window.gameui.camera_coords_world.y + deltaY};

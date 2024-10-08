@@ -76,7 +76,7 @@ define(
 				//dojo.style(canvas, 'zIndex', this.GameLayerDefault());
 				//dojo.style(provinceclickareas, 'zIndex', this.GameLayerProvinceInteract());
 				dojo.style(leftpanel, 'zIndex', this.GameLayerLeftpanel());
-				dojo.style(gamemap, 'zIndex', this.GameLayerMap());
+				//dojo.style(gamemap, 'zIndex', this.GameLayerMap());
 				
 				//Setup the zindex layering so that click detection works properly
 				//todo: where am i doing this now? does it need a refactoring pass?

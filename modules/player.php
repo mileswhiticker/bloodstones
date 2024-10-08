@@ -406,11 +406,15 @@ trait player_utils
 		return false;
 	}
 	
-	public function CanPlayerBuildVillages($player_id)
+	public function CanPlayerBuildVillages($player_id = 0)
 	{
 		//take a shortcut here and just check if they have villages left to deploy
 		//if the player doesn't have any valid locations to build there will be a different check for that later
-		$villages_avail = $this->countPlayerVillagesAvailable($active_player_id);
+		if($player_id == 0)
+		{
+			$player_id = $this->getActivePlayerId();
+		}
+		$villages_avail = $this->countPlayerVillagesAvailable($player_id);
 		if($villages_avail == 0)
 		{
 			return false;
@@ -660,6 +664,7 @@ trait player_utils
 	{
 		//is this action allowed in this game state
 		//$this->checkAction( $actionName, $bThrowException=true )
+		self::notifyAllPlayers("debug", "", array('debugmessage' => "server::playerEndTurn()"));
         if(!$this->IsCurrentPlayerActive())
 		{
 			throw new BgaUserException( self::_("You cannot end the turn when you are not the active player!") );

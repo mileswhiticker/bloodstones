@@ -400,10 +400,15 @@ define(
 				return false;
 			},
 			
-			GetTileMoveCost : function(tile_id, province_type)
+			GetTileMoveCost : function(type_arg, province_type)
 			{
 				//console.log("page::GetTileMoveCost(" + tile_id + "," + province_type + ")");
-				//todo: custom unit movement cost rules
+				//dragons can move into any province at a cost of 1
+				if(this.IsTileTypeDragon(type_arg))
+				{
+					return 1;
+				}
+				
 				switch(province_type)
 				{
 					case 'Hills':
@@ -411,7 +416,7 @@ define(
 						//hill folk have cheaper movement
 						var active_player = this.gamedatas.players[this.getActivePlayerId()];
 						var factionid = active_player.factionid;
-						if(factionid == 1)
+						if(factionid == this.FACTION_HILLFOLK)
 						{
 							return 2;
 						}
@@ -439,7 +444,7 @@ define(
 					}
 					default:
 					{
-						console.log("WARNING: Can't get move cost for unknown province type \"" + province_type + "\" and tile_id:" + tile_id);
+						console.log("WARNING: Can't get move cost for unknown province type \"" + province_type + "\" and type_arg:" + type_arg);
 						break;
 					}
 				}

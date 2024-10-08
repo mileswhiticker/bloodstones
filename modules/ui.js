@@ -555,7 +555,7 @@ define(
 			
 			GameLayerMap : function()
 			{
-				return this.GameLayerDefault() + 1;
+				return this.GameLayerDefault() -1;
 			},
 			
 			GameLayerDefault : function()

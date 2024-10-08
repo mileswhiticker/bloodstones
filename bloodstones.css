@@ -396,30 +396,36 @@
 	background-image: url('img/minus.jpg');
 }
 
-#button_left
+#button_left,#button_right,#button_up,#button_down
 {
-	background-image: url('img/arrow_left.jpg');
-}
-
-#button_right
-{
-	background-image: url('img/arrow_right.jpg');
+	position: relative;
+	background-image: url('../../../img/common/arrows.png');
+	width: 32px;
+	height: 32px;
+	background-size: 200%;
 }
 
 #button_up
 {
-	background-image: url('img/arrow_up.jpg');
+	background-position: 0px -50px;
 }
-
+#button_left
+{
+	background-position: -50px 0px;
+}
+#button_right
+{
+	background-position: 0px 0px;
+}
 #button_down
 {
-	background-image: url('img/arrow_down.jpg');
+	background-position: -50px -50px;
 }
 
 .battle_circle
 {
 	/*note the width and height get scaled in the code if the player zooms in or out*/
-    background-image: url('img/loupe-mag.png');
+	background-image: url('img/loupe-mag.png');
 	background-size: contain;
 	position: absolute;
 	width: 200px;

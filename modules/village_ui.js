@@ -30,7 +30,7 @@ define(
 			UICanvasRenderBuildVillagesOverlay : function()
 			{
 				//console.log("page::UICanvasRenderBuildVillagesOverlay()");
-				this.StartAnimatedCanvas(this.UICanvasRenderBuildVillagesOverlay);
+				//this.StartAnimatedCanvas(this.UICanvasRenderBuildVillagesOverlay);
 				//loop over the provinces and add an overlay for all the ones that are valid for player to build in
 				//console.log(this.buildable_province_names);
 				
@@ -46,7 +46,10 @@ define(
 					{
 						continue;
 					}
-					if(cur_province.name == this.pulsing_province_id)
+					//temporarily disable animated pulse now because it's crashing the live playtests
+					//todo: fix this
+					//todo: test the other animated province pulsing in playtests
+					if(cur_province.name == this.pulsing_province_id && false)
 					{
 						var overlayColor = this.GetProvinceOverlayColour(PROV_BUILDABLE_LAND);
 						var fillColor = this.GetProvinceOverlayColour(PROV_BUILDABLE_LAND_TRANS);
@@ -117,7 +120,7 @@ define(
 			
 			UIClearBuildVillages : function()
 			{
-				this.StopAnimatedCanvas();
+				//this.StopAnimatedCanvas();
 				this.ClearCanvas();
 			},
 			

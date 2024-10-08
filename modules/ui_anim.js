@@ -20,6 +20,7 @@ define(
 			
 			StartAnimatedCanvas : function(render_function)
 			{
+				console.log("page::StartAnimatedCanvas() render_function:" + render_function);
 				//console.log("page::StartAnimatedCanvas()");
 				this.canvas_render_function = render_function;
 				this.previous_canvas_render_function = render_function
@@ -33,6 +34,7 @@ define(
 			
 			StopAnimatedCanvas : function()
 			{
+				console.log("page::StartAnimatedCanvas() this.canvas_render_function" + this.canvas_render_function);
 				window.cancelAnimationFrame(this.canvas_anim_cancel_frame);
 				this.canvas_render_function = null;
 			},
@@ -78,7 +80,7 @@ define(
 						//i'll need to look into it at some point but it's not a real problem
 						//todo: rewrite the "pulsing" system to use css animations instead of window animation frames, the code will be much shorter and cleaner
 						//window.gameui.previous_canvas_render_function
-						console.log("WARNING: page::blstAnimFrame(" + prev_frame_time + ") called with null canvas_render_function (1)");
+						console.log("WARNING: page::blstAnimFrame(" + prev_frame_time + ") called with null canvas_render_function (instance 1)");
 					}
 				}
 				else if(window.gameui.pulsing_province_time != window.gameui.pulsing_province_default)
@@ -92,7 +94,7 @@ define(
 					}
 					else
 					{
-						console.log("ERROR: page::blstAnimFrame(" + prev_frame_time + ") called with null canvas_render_function (2)");
+						console.log("ERROR: page::blstAnimFrame(" + prev_frame_time + ") called with null canvas_render_function (instance 2)");
 					}
 				}
 				

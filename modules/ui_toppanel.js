@@ -44,14 +44,6 @@ define(
 				const slidecontainer = dojo.place("<div id=\"slidecontainer\" class=\"blst_button slidecontainer\"></div>","toppanel");
 				const slider = dojo.place("<input type=\"range\" min=\"1\" max=\"100\" value=\"50\" class=\"slider\" id=\"army_scale_slider\">","slidecontainer");
 				dojo.connect(slider, "input", dojo.hitch(this, this.onInputArmyScaleSlider));
-				/*
-				const button_spawnbattle = dojo.place("<div id=\"button_spawnbattle\"></div>","toppanel");
-				dojo.addClass(button_spawnbattle, "blst_button topbutton");
-				dojo.connect(button_spawnbattle, "click", dojo.hitch(this, this.spawnBattle));
-				
-				const button_spawn = dojo.place("<div id=\"button_spawn\"></div>","toppanel");
-				dojo.addClass(button_spawn, "blst_button topbutton");
-				dojo.connect(button_spawn, "click", dojo.hitch(this, this.playerSpawnTestArmy));
 				
 				const button_up = dojo.place("<div id=\"button_up\"></div>","toppanel");
 				dojo.addClass(button_up, "blst_button topbutton");
@@ -68,6 +60,14 @@ define(
 				const button_right = dojo.place("<div id=\"button_right\"></div>","toppanel");
 				dojo.addClass(button_right, "blst_button topbutton");
 				dojo.connect(button_right, "click", dojo.hitch(this, this.onClickScrollRight));
+				/*
+				const button_spawnbattle = dojo.place("<div id=\"button_spawnbattle\"></div>","toppanel");
+				dojo.addClass(button_spawnbattle, "blst_button topbutton");
+				dojo.connect(button_spawnbattle, "click", dojo.hitch(this, this.spawnBattle));
+				
+				const button_spawn = dojo.place("<div id=\"button_spawn\"></div>","toppanel");
+				dojo.addClass(button_spawn, "blst_button topbutton");
+				dojo.connect(button_spawn, "click", dojo.hitch(this, this.playerSpawnTestArmy));
 				*/
 			},
 			

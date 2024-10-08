@@ -301,18 +301,18 @@ define(
 					return false;
 				}
 				
+				//dragons can move everywhere
+				if(this.IsTileTypeDragon(tile_type))
+				{
+					//unit can move here
+					return true;
+				}
+				
 				//console.log("page::TileCanMove(" + tile_type + "," + province_type + ")");
 				switch(province_type)
 				{
 					case 'Mountains':
 					{
-						//is the tile a dragon?
-						if(this.IsTileTypeDragon(tile_type))
-						{
-							//unit can move here
-							return true;
-						}
-						
 						//is the player a hill folk faction?
 						if(this.getActivePlayerFactionId() == this.FACTION_HILLFOLK)
 						{
@@ -327,13 +327,6 @@ define(
 					{
 						//is the tile a ship?
 						if(this.IsTileTypeShip(tile_type))
-						{
-							//unit can move here
-							return true;
-						}
-						
-						//is the tile a dragon?
-						if(this.IsTileTypeDragon(tile_type))
 						{
 							//unit can move here
 							return true;
@@ -432,7 +425,7 @@ define(
 					}
 					case 'Mountains':
 					{
-						return 1;
+						return 3;
 					}
 					case 'Desert':
 					{

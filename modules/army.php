@@ -230,4 +230,17 @@ trait army
 		
 		return $pending_capture_armies;
 	}
+	
+	function GetUnitsInArmyString($army_id, $player_id)
+	{
+		$player_deck = $this->player_decks[$player_id];
+		$tiles = $player_deck->getCardsInLocation('army', $army_id);
+		$tile_name_strings = [];
+		foreach($tiles as $tile_id => $tile_info)
+		{
+			$tile_name_strings[] = $this->getTileNameFromType($tile_info["type_arg"]);
+		}
+		$units_string = implode(", ",$tile_name_strings);
+		return $units_string;
+	}
 }

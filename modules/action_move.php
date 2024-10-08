@@ -151,6 +151,18 @@ trait action_move
 					'pending_battles_update' => $this->GetPendingBattleProvincesAll(),
 					'dest_province_id' => $dest_province_name
 				));
+					
+				//send a message to the log
+				$army_tiles_string = $this->GetUnitsInArmyString($source_army_id, $current_player_id);
+				$dest_province_num = $this->getProvinceIdFromName($dest_province_name);
+				$terrain = $this->GetProvinceTypeName($dest_province_num);
+				$province_desc = "Province $dest_province_num ($terrain)";
+				self::notifyAllPlayers('showMessage', clienttranslate('${player_name} has moved ${army_tiles_string} to ${province_desc}'), array(
+					'player_id' => $current_player_id,
+					'player_name' => $current_player_name,
+					'army_tiles_string' => $army_tiles_string,
+					'province_desc' => $province_desc
+				));
 			}
 			
 			//do we need to update this?
@@ -172,13 +184,6 @@ trait action_move
 		
 			//showMessage
 			//$source_army = self::getObjectFromDB("SELECT army_id, province_id, player_id FROM armies WHERE army_id=$source_army_id");
-			
-			//send a message to the log
-			self::notifyAllPlayers('showMessage', '', array(
-				'player_id' => $current_player_id,
-				'player_name' => $current_player_name,
-				'army_id_num' => ""
-			));
 			
 			//test
 			/*$this->notifyAllPlayers('message',clienttranslate('Game moves ${token_name_rec}'),

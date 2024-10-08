@@ -407,11 +407,11 @@
 
 #button_up
 {
-	background-position: 0px -50px;
+	background-position: 0px -44px;
 }
 #button_left
 {
-	background-position: -50px 0px;
+	background-position: -44px 0px;
 }
 #button_right
 {
@@ -419,7 +419,7 @@
 }
 #button_down
 {
-	background-position: -50px -50px;
+	background-position: -44px -44px;
 }
 
 .battle_circle

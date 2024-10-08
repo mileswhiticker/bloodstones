@@ -69,17 +69,9 @@ define(
 				canvas.width = box.w;
 				canvas.height = box.h;
 				
-				//no longer using zindex here, i think it was over complicating this
-				//dojo.style(gamewindow, 'zIndex', this.GameLayerDefault());
-				//dojo.style(centrepanel, 'zIndex', this.GameLayerDefault());
-				//dojo.style(gamemap, 'zIndex', this.GameLayerMap());
-				//dojo.style(canvas, 'zIndex', this.GameLayerDefault());
-				//dojo.style(provinceclickareas, 'zIndex', this.GameLayerProvinceInteract());
-				dojo.style(leftpanel, 'zIndex', this.GameLayerLeftpanel());
-				//dojo.style(gamemap, 'zIndex', this.GameLayerMap());
-				
 				//Setup the zindex layering so that click detection works properly
 				//todo: where am i doing this now? does it need a refactoring pass?
+				//no longer using zindex here, i think it was over complicating this
 				/*
 				GameLayerArmy : function()
 				GameLayerMovementRouteRender : function()
@@ -88,11 +80,14 @@ define(
 				GameLayerBackgroundRender : function()
 				GameLayerDefault : function()
 				*/
-				//dojo.style(gamemap, 'zIndex', this.GameLayerProvinceInteract());
-				//dojo.style(canvas, 'zIndex', this.GameLayerProvinceOverlayRender());
-				//dojo.style(canvas, 'zIndex', this.GameLayerBackgroundRender());
+				
+				//dojo.style(gamewindow, 'zIndex', this.GameLayerDefault());
+				//dojo.style(centrepanel, 'zIndex', this.GameLayerDefault());
+				//dojo.style(gamemap, 'zIndex', this.GameLayerMap());
+				//dojo.style(canvas, 'zIndex', this.GameLayerDefault());
 				//dojo.style(provinceclickareas, 'zIndex', this.GameLayerProvinceInteract());
-				//dojo.style(leftpanel, 'zIndex', this.GameLayerDefault());
+				dojo.style(leftpanel, 'zIndex', this.GameLayerLeftpanel());
+				//dojo.style(gamemap, 'zIndex', this.GameLayerMap());
 				
 				//player input callbacks
 				//dojo.connect(gamemap, "onkeydown ", dojo.hitch(this, this.onKeyDown));
@@ -100,6 +95,8 @@ define(
 				dojo.connect(canvas, "click", dojo.hitch(this, this.onClickCanvas));
 				dojo.connect(centrepanel, "click", dojo.hitch(this, this.onClickCentrepanel));
 				//dojo.connect(provinceclickareas, "click", dojo.hitch(this, this.onClickProvinceAreas));
+				
+				centrepanel.onwheel = this.onMouseWheelZoom;
 				
 				//these are created programmatically because it's a little easier than having them as a block of strings
 				this.CreateFactionTileStrings();

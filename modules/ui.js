@@ -391,6 +391,53 @@ define(
 				}
 			},
 			
+			onMouseWheelZoom : function(ev)
+			{
+				//console.log("page::onMouseWheelZoom()");
+				//console.log(ev);
+				
+				//stop the page from scrolling
+				ev.preventDefault();
+				
+				if(ev.deltaY > 0)
+				{
+					gameui.MapZoomOut();
+				}
+				else if(ev.deltaY < 0)
+				{
+					gameui.MapZoomIn();
+				}
+				
+			},
+			
+			MapZoomIn : function()
+			{
+				/*
+				this.map_view_scale = 1.0;
+				this.map_view_scale_min = 0.1;
+				this.map_view_scale_max = 10;
+				this.map_view_scale_increment = 0.1;
+				*/
+				var new_map_scale = this.map_view_scale;
+				if(new_map_scale + this.map_view_scale_increment <= this.map_view_scale_max)
+				{
+					new_map_scale += this.map_view_scale_increment;
+					this.SetMapViewScale(new_map_scale);
+					//console.log("new scale: " + new_map_scale);
+				}
+			},
+			
+			MapZoomOut : function()
+			{
+				var new_map_scale = this.map_view_scale;
+				if(new_map_scale - this.map_view_scale_increment >= this.map_view_scale_min)
+				{
+					new_map_scale -= this.map_view_scale_increment;
+					this.SetMapViewScale(new_map_scale);
+					//console.log("new scale: " + new_map_scale);
+				}
+			},
+			
 			onClickCentrepanel : function(event)
 			{
 				//console.log("page::onClickCentrepanel()");

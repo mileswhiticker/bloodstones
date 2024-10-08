@@ -153,31 +153,13 @@ define(
 			onClickZoomIn : function(event)
 			{
 				//console.log("page::onClickZoomIn()");
-				/*
-				this.map_view_scale = 1.0;
-				this.map_view_scale_min = 0.1;
-				this.map_view_scale_max = 10;
-				this.map_view_scale_increment = 0.1;
-				*/
-				var new_map_scale = this.map_view_scale;
-				if(new_map_scale + this.map_view_scale_increment <= this.map_view_scale_max)
-				{
-					new_map_scale += this.map_view_scale_increment;
-					this.SetMapViewScale(new_map_scale);
-					//console.log("new scale: " + new_map_scale);
-				}
+				this.MapZoomIn();
 			},
 			
 			onClickZoomOut : function(event)
 			{
 				//console.log("page::onClickZoomOut()");
-				var new_map_scale = this.map_view_scale;
-				if(new_map_scale - this.map_view_scale_increment >= this.map_view_scale_min)
-				{
-					new_map_scale -= this.map_view_scale_increment;
-					this.SetMapViewScale(new_map_scale);
-					//console.log("new scale: " + new_map_scale);
-				}
+				this.MapZoomOut();
 			},
 			
 			onClickScrollUp : function(event)

@@ -231,12 +231,22 @@ define(
 			notif_cycleHand : function(notif)
 			{
 				//console.log("page::notif_cycleHand()");
-				if(parseInt(notif.args.target_player_id) == this.getCurrentPlayer())
+				console.log(notif);
+				//note: this function technically passes private info to all players but it's a debug cheat so that's ok
+				var player_id = parseInt(notif.args.target_player_id);
+				if(player_id == this.getCurrentPlayer())
 				{
 					window.gameui.DiscardPlayerHandTiles();
 					window.gameui.gamedatas.hand = notif.args.new_hand;
 					window.gameui.CreatePlayerHandTiles();
 				}
+				
+				//update the ui
+				//todo: this is experimental and might not work
+				var player = window.gameui.gamedatas.players[player_id];
+				player.cards_visible = notif.args.num_hand_tiles;
+				window.gameui.SetHiddenHandTiles(player_id, player.cards_visible);
+				window.gameui.UpdateHiddenHandTiles(player_id, player.cards_visible);
 			},
 			
 			notif_regroup : function(notif)
@@ -534,18 +544,15 @@ define(
 			{
 				//console.log("page::notif_playerHandChanged()");
 				//console.log(notif);
-				if(notif.args.player_id != this.getCurrentPlayer())
-				{
-					//console.log("updating hidden hand tiles for other player " + notif.args.player_id);
-					this.SetHiddenHandTiles(notif.args.player_id, notif.args.num_hand_tiles);
-					this.UpdateHiddenHandTiles(notif.args.player_id);
-				}
+				this.SetHiddenHandTiles(notif.args.player_id, notif.args.num_hand_tiles);
+				this.UpdateHiddenHandTiles(notif.args.player_id, notif.args.num_hand_tiles);
 			},
 			
 			notif_playerHandDraw : function(notif)
 			{
 				//console.log("page::notif_playerHandDraw()");
 				//console.log(notif);
+				//todo: i think this function is unused
 				window.gameui.DrawNewHandTiles(notif.args.tiles_drawn);
 			},
 			

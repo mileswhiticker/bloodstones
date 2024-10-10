@@ -952,7 +952,7 @@ class bloodstones extends Table
 			. " | tiles in bag: "
 			. sizeof($tiles_in_bag)
 			));
-		self::notifyAllPlayers("cycleHand", "", array('new_hand' => $active_hand_tiles_new, 'target_player_id' => $active_player_id));
+		self::notifyAllPlayers("cycleHand", "", array('new_hand' => $active_hand_tiles_new, 'target_player_id' => $active_player_id, 'num_hand_tiles' => 6));
 		
 	}
 	

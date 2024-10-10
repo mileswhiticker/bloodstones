@@ -596,6 +596,37 @@
 	grid-column-start: 1;
 }
 
+.playerboard_faction_name
+{
+	font-size: 20px;
+}
+
+.playerboard_container
+{
+	background-size: contain;
+	background-position: right;
+	background-repeat: no-repeat;
+	font-size: 16px;
+	position: relative;
+	width: 40px;
+}
+
+.playerboard_container_item
+{
+	position: absolute;
+	top: 0px;
+	height: 20px;
+	width: 20px
+}
+
+.playerboard_container_item_long
+{
+	position: absolute;
+	top: 0px;
+	height: 20px;
+	width: 40px
+}
+
 .playercard {
 	filter: drop-shadow(3px 3px 3px);
 	border-radius: 15px;

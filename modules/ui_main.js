@@ -110,6 +110,7 @@ define(
 				this.SetupVillages(gamedatas);
 				//this.SetupCitadels(gamedatas);
 				this.SetupLeftUI(gamedatas);
+				this.SetupPlayerboards();
 			},
 			
 			SetupProvinces : function()

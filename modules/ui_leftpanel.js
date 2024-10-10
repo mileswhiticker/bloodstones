@@ -18,10 +18,10 @@ define(
 		var instance = declare("_ui_leftpanel", null, {
 			//put your functions here
 			
-			SetupLeftUI : function(gamedatas)
+			SetupLeftUI : function()
 			{
 				//console.log("page::SetupLeftUI()");
-				this.SetupPlayercards(gamedatas);
+				this.SetupPlayercards();
 				
 				//add a hint telling the player they can select an army there
 				this.CreateArmySelectPanelTitle();

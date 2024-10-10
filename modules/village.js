@@ -92,7 +92,7 @@ define(
 					var cur_province = this.provinces_by_name[prov_info.name];
 					//cur_province.zone.removeFromZone(new_village.id_string, false);
 					var duration = 500;
-					current_player_villages = dojo.byId("current_player_villages");
+					current_player_villages = dojo.byId(gameui.GetCurrentPlayerVillagesDivId());
 					var clone = dojo.place("<div class=\"village0\"></div>","centrepanel");
 					//this.placeOnObjectPos(mobile_obj: ElementOrId, target_obj: ElementOrId, target_x: number, target_y: number): void
 					clone.style.left = cur_province.centre.x;
@@ -109,7 +109,7 @@ define(
 					clone.style.top = marginBox.t;
 					
 					//slideToObjectAndDestroy
-					//this.slideToObject(new_village.container_div, "current_player_villages", duration);
+					//this.slideToObject(new_village.container_div, gameui.GetCurrentPlayerVillagesDivId(), duration);
 					//setTimeout(this.DestroyTempVillage(new_village), duration);
 					return;
 					*/

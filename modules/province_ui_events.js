@@ -120,7 +120,7 @@ define(
 				}
 				else if(window.gameui.isCurrentPlayerVillagesState())
 				{
-					if(window.gameui.dragging_data_id == "current_player_villages")
+					if(window.gameui.dragging_data_id == gameui.GetCurrentPlayerVillagesDivId())
 					{
 						var prov_name = window.gameui.GetProvNameFromAreaElement(event.target.id);
 						//var province_info = window.gameui.provinces_by_name[prov_name]
@@ -157,7 +157,7 @@ define(
 				}
 				else if(window.gameui.isCurrentPlayerVillagesState())
 				{
-					if(window.gameui.dragging_data_id == "current_player_villages")
+					if(window.gameui.dragging_data_id == gameui.GetCurrentPlayerVillagesDivId())
 					{
 						var prov_name = window.gameui.GetProvNameFromAreaElement(event.target.id);
 						//var province_info = window.gameui.provinces_by_name[prov_name]
@@ -289,7 +289,7 @@ define(
 				}
 				else if(window.gameui.isCurrentPlayerVillagesState())
 				{
-					if(window.gameui.dragging_data_id == "current_player_villages")
+					if(window.gameui.dragging_data_id == gameui.GetCurrentPlayerVillagesDivId())
 					{
 						event.preventDefault();
 						

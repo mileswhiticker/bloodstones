@@ -555,12 +555,12 @@ define(
 				return this.GameLayerDialogBase() + 1;
 			},
 			
-			GameLayerLeftpanel : function()
+			GameLayerPaywindow : function()
 			{
-				return this.GameLayerPaywindow() + 1;
+				return this.GameLayerLeftpanel() + 1;
 			},
 			
-			GameLayerPaywindow : function()
+			GameLayerLeftpanel : function()
 			{
 				return this.GameLayerBattlewindow() + 1;
 			},

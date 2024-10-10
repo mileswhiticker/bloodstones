@@ -123,7 +123,10 @@ define(
 			notif_scoreChanged : function(notif)
 			{
 				var player_score_div = dojo.byId(this.GetPlayerScoreDivId(notif.args.player_id));
-				player_score_div.innerHTML = notif.args.new_score;
+				if(player_score_div)
+				{
+					player_score_div.innerHTML = notif.args.new_score;
+				}
 				
 				this.scoreCtrl[notif.args.player_id].toValue(notif.args.new_score);
 			},

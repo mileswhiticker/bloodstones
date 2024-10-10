@@ -438,7 +438,10 @@ define(
 			{
 				//console.log("page::SetPlayerUIScore(" + player_id + "," + new_score + ")");
 				var player_score_div = dojo.byId(this.GetPlayerScoreDivId(player_id));
-				player_score_div.innerHTML = new_score;
+				if(player_score_div)
+				{
+					player_score_div.innerHTML = new_score;
+				}
 			},
 			
 			DiscardPlayerHandTiles : function()

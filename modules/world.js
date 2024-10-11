@@ -53,48 +53,41 @@ define(
 			{
 				//console.log("page::MapDrag()");
 				//console.log(event);
+				
+				var newPageY = event.pageY;
+				var newPageX = event.pageX;
+				var do_move = false;
+				
 				//pageX and pageY are set to 0 under certain conditions
 				//if so, then deltaX and deltaY below will "reset" the whole drag movement
-				//this is a hacky way to prevent that, but i think it should be safe
-				//if(event.pageX != 0 && event.pageY != 0)
+				var coords = {x: window.gameui.camera_coords_world.x, y: window.gameui.camera_coords_world.y};
+				if(newPageX != 0)
 				{
-					var max_scroll = 5;
-					var deltaX = window.gameui.map_drag_prev_x - event.pageX;
-					var deltaY = window.gameui.map_drag_prev_y - event.pageY;
-					if(deltaX > max_scroll)
+					var deltaX = window.gameui.map_drag_prev_x - newPageX;
+					coords.x = coords.x + deltaX;
+					if(coords.x != window.gameui.camera_coords_world.x)
 					{
-						deltaX = max_scroll;
-					}
-					if(deltaX < -max_scroll)
-					{
-						deltaX = -max_scroll;
-					}
-					if(deltaY > max_scroll)
-					{
-						deltaY = max_scroll;
-					}
-					if(deltaY < -max_scroll)
-					{
-						deltaY = -max_scroll;
-					}
-					//console.log("MapDrag() deltaX:" + deltaX + ", deltaY:" + deltaY);
-
-					var coords = {x: window.gameui.camera_coords_world.x + deltaX, y: window.gameui.camera_coords_world.y + deltaY};
-					coords = window.gameui.applyBoundedCoords(coords);
-					//console.log(coords.y);
-					
-					//console.log(coords);
-					//console.log(window.gameui.camera_coords_world);
-					if(coords.x != window.gameui.camera_coords_world.x || coords.y != window.gameui.camera_coords_world.y)
-					{
-						window.gameui.MoveCameraWorld(coords.x, coords.y);
-						//console.log("new camera: (" + coords.x + "," + coords.y + ")");
-						//console.log(event);
-						
-						window.gameui.map_drag_prev_x = event.pageX;
-						window.gameui.map_drag_prev_y = event.pageY;
+						window.gameui.map_drag_prev_x = newPageX;
+						do_move = true;
 					}
 				}
+				if(newPageY != 0)
+				{
+					var deltaY = window.gameui.map_drag_prev_y - newPageY;
+					coords.y = coords.y + deltaY;
+					if(coords.y != window.gameui.camera_coords_world.y)
+					{
+						window.gameui.map_drag_prev_y = newPageY;
+						do_move = true;
+					}
+				}
+				
+				if(do_move)
+				{
+					coords = window.gameui.applyBoundedCoords(coords);
+					window.gameui.MoveCameraWorld(coords.x, coords.y);
+				}
+				
 			},
 			
 			getBoundsRect : function()

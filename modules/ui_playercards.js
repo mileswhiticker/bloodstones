@@ -152,14 +152,15 @@ define(
 				}
 				
 				//number of tiles in hand for this player
-				//player regroup counter
-				let player_hidden_hand_tiles = dojo.place("<div id=\"" + this.GetPlayerHiddenHandDivId(player_id) + "\">" + player.cards_visible + "</div>", player_board);
+				let player_hidden_hand_tiles = dojo.place("<div id=\"" + this.GetPlayerHiddenHandDivId(player_id) + "\"></div>", player_board);
 				dojo.addClass(player_hidden_hand_tiles,'playerboard_container');
 				dojo.addClass(player_hidden_hand_tiles,faction_color_css);
+				let player_hidden_hand_text = dojo.place("<div id=\"" + this.GetPlayerHiddenHandTextDivId(player_id) + "\">" + player.cards_visible + "</div>", player_hidden_hand_tiles);
+				dojo.addClass(player_hidden_hand_text,"playerboard_container_item");
 				
 				//create an icon for the player tile
 				var current_left_offset = 20;
-				let player_tile = dojo.place("<div></div>", player_hidden_hand_tiles);
+				let player_tile = dojo.place("<div>hand</div>", player_hidden_hand_tiles);
 				dojo.addClass(player_tile,'playerboard_container');
 				dojo.addClass(player_tile,'playerboard_container_item_long');
 				dojo.addClass(player_tile,'blanktile' + factionid);
@@ -434,6 +435,10 @@ define(
 				return "hidden_hand_tiles_" + player_id;
 			},
 			
+			GetPlayerHiddenHandTextDivId : function(player_id)
+			{
+				return "hidden_hand_text_" + player_id;
+			},
 			SetPlayerUIScore : function(player_id, new_score)
 			{
 				//console.log("page::SetPlayerUIScore(" + player_id + "," + new_score + ")");
@@ -523,12 +528,6 @@ define(
 				//console.log("HandTileDrop");
 			},
 			
-			SetHiddenHandTiles : function(player_id, num_hand_tiles)
-			{
-				var player = this.gamedatas.players[player_id];
-				player.cards_visible = num_hand_tiles;
-			},
-			
 			GetVillagesCapturedContainerId : function(player_id)
 			{
 				return "villages_captured_" + player_id;
@@ -581,12 +580,18 @@ define(
 			{
 			},
 			
+			SetHiddenHandTiles : function(player_id, num_hand_tiles)
+			{
+				var player = this.gamedatas.players[player_id];
+				player.cards_visible = num_hand_tiles;
+			},
+			
 			UpdateHiddenHandTiles : function(player_id, new_tiles)
 			{
 				//console.log("page::UpdateHiddenHandTiles(" + player_id + "," + new_tiles + ")");
 				var player = this.gamedatas.players[player_id];
-				let hidden_hand_tiles = dojo.byId(this.GetPlayerHiddenHandDivId(player_id));
-				hidden_hand_tiles.innerText = new_tiles;//player.cards_visible;
+				let hidden_hand_text = dojo.byId(this.GetPlayerHiddenHandTextDivId(player_id));
+				hidden_hand_text.innerText = new_tiles;//player.cards_visible;
 				
 				//old code when enemy playercards were on the left but im leaving it here just in case
 				let enemy_tiles = dojo.byId("enemy_tiles_" + player_id);

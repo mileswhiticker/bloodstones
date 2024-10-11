@@ -245,7 +245,6 @@ define(
 				}
 				
 				//update the ui
-				//todo: this is experimental and might not work
 				var player = window.gameui.gamedatas.players[player_id];
 				player.cards_visible = notif.args.num_hand_tiles;
 				window.gameui.SetHiddenHandTiles(player_id, player.cards_visible);

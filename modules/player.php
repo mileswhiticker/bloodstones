@@ -246,7 +246,7 @@ trait player_utils
 			*/
 			
 			self::notifyPlayer($player_id, "playerHandDraw", "", array('tiles_drawn' => $tiles_drawn_indexed));
-			$this->notifyPlayerHandChanged($player_id, $hand_size);
+			$this->notifyPlayerHandChanged($player_id);
 		}
 	}
 	
@@ -277,21 +277,25 @@ trait player_utils
 			'location_from' => "paystack"
 		));
 		
-		$this->updatePlayerHandChanged($owner_player_id);
+		$this->notifyPlayerHandChanged($owner_player_id);
 		
 		return $pips_spent;
 	}
 	
-	function updatePlayerHandChanged($player_id)
+	function notifyPlayerHandChanged($player_id)
 	{
+		//get the relevant info
 		$player_deck = $this->player_decks[$player_id];
-		$num_tiles = $player_deck->countCardInLocation('hand');
-		$this->notifyPlayerHandChanged($player_id, $num_tiles);
-	}
-	
-	function notifyPlayerHandChanged($player_id, $num_tiles)
-	{
-		self::notifyAllPlayers("playerHandChanged", "", array('player_id' => $player_id, 'num_hand_tiles' => $num_tiles));
+		$num_hand_tiles = $player_deck->countCardInLocation('hand');
+		$num_bag_tiles = $player_deck->countCardInLocation('bag');
+		$num_discard_tiles = $player_deck->countCardInLocation('discard');
+		
+		//tell all the players to update their ui
+		self::notifyAllPlayers("playerHandChanged", "", array(
+			'player_id' => $player_id, 
+			'num_hand_tiles' => $num_hand_tiles, 
+			'num_bag_tiles' => $num_bag_tiles, 
+			'num_discard_tiles' => $num_discard_tiles));
 	}
 	
 	public function AssignRandomPlayerFactions()

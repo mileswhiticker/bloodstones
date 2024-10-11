@@ -128,7 +128,7 @@ trait action_capture
 			'location_from' => "paystack"
 		));
 		
-		$this->updatePlayerHandChanged($active_player_id);
+		$this->notifyPlayerHandChanged($active_player_id);
 		
 		//now, finish the player's turn because only one capture action is allowed at a time
 		//chaos horde can only do one capture, but they can keep doing with their main state after capturing

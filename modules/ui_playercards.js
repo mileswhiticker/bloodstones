@@ -43,32 +43,42 @@ define(
 			SetupPlayerboard : function(player_id)
 			{
 				//this player board goes on the far right floating panel
-				//const overall_player_board = $("overall_player_board_" + player_id);
-				//const player_board_inner = overall_player_board.firstChild;
-				console.log("page::SetupPlayerboard(" + player_id + ")");
+				//console.log("page::SetupPlayerboard(" + player_id + ")");
+				const overall_player_board = dojo.byId("overall_player_board_" + player_id);
+				const player_name = dojo.byId("player_name_" + player_id);
 				const player_board = dojo.byId("player_board_" + player_id);
+				const player_board_content = dojo.place("<div class=\"playerboard_bloodstones_content\"></div>",player_board);
 				
 				//grab some useful info
 				var player = this.gamedatas.players[player_id];
 				var factionid = player.factionid;
 				
+				//background image
+				dojo.addClass(overall_player_board,'playercard_' + factionid);
+				
+				//white background highlight for player name
+				dojo.style(player_name, "background-color", "white");
+				
 				//player faction name
 				var faction_color_css = "faction" + factionid + "_color";
-				let faction_name = dojo.place("<div>" + this.faction_strings[factionid].title + "</div>",player_board);
+				let faction_name = dojo.place("<div>" + this.faction_strings[factionid].title + "</div>",player_board_content);
 				dojo.addClass(faction_name,faction_color_css);
 				dojo.addClass(faction_name,'playerboard_faction_name');
+				dojo.addClass(faction_name,'grid11');
 				
 				//player regroup counter
-				let player_regroups_container = dojo.place("<div id=\"" + this.GetPlayerRegroupsDivId(player_id) + "\">" + player.regroups + "</div>", player_board);
+				let player_regroups_container = dojo.place("<div id=\"" + this.GetPlayerRegroupsDivId(player_id) + "\">" + player.regroups + "</div>", player_board_content);
 				dojo.addClass(player_regroups_container,'playerboard_container');
 				dojo.addClass(player_regroups_container,'regroup' + factionid);
 				dojo.addClass(player_regroups_container,faction_color_css);
+				dojo.addClass(player_regroups_container,'grid12');
 				
 				//villages not yet built from this player
-				let player_villages_container = dojo.place("<div id=\"" + this.GetVillagesRemainingCounterNodeId(player_id) + "\">" + player.villages_available + "</div>", player_board);
+				let player_villages_container = dojo.place("<div id=\"" + this.GetVillagesRemainingCounterNodeId(player_id) + "\">" + player.villages_available + "</div>", player_board_content);
 				dojo.addClass(player_villages_container,faction_color_css);
 				dojo.addClass(player_villages_container,"playerboard_container");
 				dojo.addClass(player_villages_container,'village' + factionid);
+				dojo.addClass(player_villages_container,'grid13');
 				
 				//chaos horde cannot build villages
 				if(factionid == this.FACTION_CHAOSHORDE)
@@ -77,9 +87,10 @@ define(
 				}
 				
 				//citadels captured by this player
-				let captured_citadels_container = dojo.place("<div id=\"" + this.GetCitadelsCapturedTextNodeId(player_id) + "\">" + player.captured_citadels + "</div>", player_board);
+				let captured_citadels_container = dojo.place("<div id=\"" + this.GetCitadelsCapturedTextNodeId(player_id) + "\">" + player.captured_citadels + "</div>", player_board_content);
 				dojo.addClass(captured_citadels_container,faction_color_css);
 				dojo.addClass(captured_citadels_container,'playerboard_container');
+				dojo.addClass(captured_citadels_container,'grid14');
 				
 				//dynamically generate an icon for the captured citadels
 				var current_left_offset = 20;
@@ -115,9 +126,10 @@ define(
 				}
 				
 				//villages captured by this player
-				let player_captured_villages_container = dojo.place("<div id=\"" + this.GetVillagesCapturedTextNodeId(player_id) + "\">" + player.villages_captured + "</div>", player_board);
+				let player_captured_villages_container = dojo.place("<div id=\"" + this.GetVillagesCapturedTextNodeId(player_id) + "\">" + player.villages_captured + "</div>", player_board_content);
 				dojo.addClass(player_captured_villages_container,faction_color_css);
 				dojo.addClass(player_captured_villages_container,'playerboard_container');
+				dojo.addClass(player_captured_villages_container,'grid15');
 				
 				//dynamically generate an icon for the captured villages
 				var current_left_offset = 20;
@@ -152,17 +164,55 @@ define(
 				}
 				
 				//number of tiles in hand for this player
-				let player_hidden_hand_tiles = dojo.place("<div id=\"" + this.GetPlayerHiddenHandDivId(player_id) + "\"></div>", player_board);
+				let player_hidden_hand_tiles = dojo.place("<div id=\"" + this.GetPlayerHiddenHandDivId(player_id) + "\"></div>", player_board_content);
 				dojo.addClass(player_hidden_hand_tiles,'playerboard_container');
 				dojo.addClass(player_hidden_hand_tiles,faction_color_css);
-				let player_hidden_hand_text = dojo.place("<div id=\"" + this.GetPlayerHiddenHandTextDivId(player_id) + "\">" + player.cards_visible + "</div>", player_hidden_hand_tiles);
+				dojo.addClass(player_hidden_hand_tiles,'grid22');
+				let player_hidden_hand_text = dojo.place("<div id=\"" + this.GetPlayerHiddenHandTextDivId(player_id) + "\">" + player.tiles_hand + "</div>", player_hidden_hand_tiles);
 				dojo.addClass(player_hidden_hand_text,"playerboard_container_item");
-				
+				//
 				//create an icon for the player tile
 				var current_left_offset = 20;
-				let player_tile = dojo.place("<div>hand</div>", player_hidden_hand_tiles);
+				var player_tile = dojo.place("<div>hand</div>", player_hidden_hand_tiles);
 				dojo.addClass(player_tile,'playerboard_container');
 				dojo.addClass(player_tile,'playerboard_container_item_long');
+				dojo.addClass(player_tile,'playerboard_smalltext');
+				dojo.addClass(player_tile,'blanktile' + factionid);
+				dojo.style(player_tile, "left", current_left_offset + "px");
+				
+				
+				//number of tiles in bag for this player
+				let player_hidden_bag_tiles = dojo.place("<div id=\"" + this.GetPlayerHiddenBagDivId(player_id) + "\"></div>", player_board_content);
+				dojo.addClass(player_hidden_bag_tiles,'playerboard_container');
+				dojo.addClass(player_hidden_bag_tiles,faction_color_css);
+				dojo.addClass(player_hidden_bag_tiles,'grid23');
+				let player_hidden_bag_text = dojo.place("<div id=\"" + this.GetPlayerHiddenBagTextDivId(player_id) + "\">" + player.tiles_bag + "</div>", player_hidden_bag_tiles);
+				dojo.addClass(player_hidden_bag_text,"playerboard_container_item");
+				//
+				//create an icon for the player tile
+				var current_left_offset = 20;
+				var player_tile = dojo.place("<div>bag</div>", player_hidden_bag_tiles);
+				dojo.addClass(player_tile,'playerboard_container');
+				dojo.addClass(player_tile,'playerboard_container_item_long');
+				dojo.addClass(player_tile,'playerboard_smalltext');
+				dojo.addClass(player_tile,'blanktile' + factionid);
+				dojo.style(player_tile, "left", current_left_offset + "px");
+				
+				
+				//number of tiles in discard for this player
+				let player_hidden_discard_tiles = dojo.place("<div id=\"" + this.GetPlayerHiddenDiscardDivId(player_id) + "\"></div>", player_board_content);
+				dojo.addClass(player_hidden_discard_tiles,'playerboard_container');
+				dojo.addClass(player_hidden_discard_tiles,faction_color_css);
+				dojo.addClass(player_hidden_discard_tiles,'grid24');
+				let player_hidden_discard_text = dojo.place("<div id=\"" + this.GetPlayerHiddenDiscardTextDivId(player_id) + "\">" + player.tiles_discard + "</div>", player_hidden_discard_tiles);
+				dojo.addClass(player_hidden_discard_text,"playerboard_container_item");
+				//
+				//create an icon for the player tile
+				var current_left_offset = 20;
+				var player_tile = dojo.place("<div>disc</div>", player_hidden_discard_tiles);
+				dojo.addClass(player_tile,'playerboard_container');
+				dojo.addClass(player_tile,'playerboard_container_item_long');
+				dojo.addClass(player_tile,'playerboard_smalltext');
 				dojo.addClass(player_tile,'blanktile' + factionid);
 				dojo.style(player_tile, "left", current_left_offset + "px");
 			},
@@ -400,7 +450,7 @@ define(
 					
 					//a container for this enemy player tiles
 					let enemy_tiles = dojo.place("<div id=\"enemy_tiles_" + player.id + "\" class=\"enemy_tiles\"></div>", playercard_elements_grid);
-					this.UpdateHiddenHandTiles(player.id, player.cards_visible);
+					this.UpdateHiddenHandTiles(player.id, player.tiles_hand);
 				}
 			},
 			
@@ -439,6 +489,27 @@ define(
 			{
 				return "hidden_hand_text_" + player_id;
 			},
+			
+			GetPlayerHiddenBagDivId : function(player_id)
+			{
+				return "hidden_bag_tiles_" + player_id;
+			},
+			
+			GetPlayerHiddenBagTextDivId : function(player_id)
+			{
+				return "hidden_bag_text_" + player_id;
+			},
+			
+			GetPlayerHiddenDiscardDivId : function(player_id)
+			{
+				return "hidden_discard_tiles_" + player_id;
+			},
+			
+			GetPlayerHiddenDiscardTextDivId : function(player_id)
+			{
+				return "hidden_discard_text_" + player_id;
+			},
+			
 			SetPlayerUIScore : function(player_id, new_score)
 			{
 				//console.log("page::SetPlayerUIScore(" + player_id + "," + new_score + ")");
@@ -580,10 +651,36 @@ define(
 			{
 			},
 			
+			SetHiddenBagTiles : function(player_id, num_tiles)
+			{
+				var player = this.gamedatas.players[player_id];
+				player.tiles_bag = num_tiles;
+			},
+			
+			UpdateHiddenBagTiles : function(player_id, new_tiles)
+			{
+				var player = this.gamedatas.players[player_id];
+				let hidden_bag_text = dojo.byId(this.GetPlayerHiddenBagTextDivId(player_id));
+				hidden_bag_text.innerText = new_tiles;
+			},
+			
+			SetHiddenDiscardTiles : function(player_id, num_tiles)
+			{
+				var player = this.gamedatas.players[player_id];
+				player.tiles_discard = num_tiles;
+			},
+			
+			UpdateHiddenDiscardTiles : function(player_id, new_tiles)
+			{
+				var player = this.gamedatas.players[player_id];
+				let hidden_discard_text = dojo.byId(this.GetPlayerHiddenDiscardTextDivId(player_id));
+				hidden_discard_text.innerText = new_tiles;
+			},
+			
 			SetHiddenHandTiles : function(player_id, num_hand_tiles)
 			{
 				var player = this.gamedatas.players[player_id];
-				player.cards_visible = num_hand_tiles;
+				player.tiles_hand = num_hand_tiles;
 			},
 			
 			UpdateHiddenHandTiles : function(player_id, new_tiles)
@@ -591,7 +688,7 @@ define(
 				//console.log("page::UpdateHiddenHandTiles(" + player_id + "," + new_tiles + ")");
 				var player = this.gamedatas.players[player_id];
 				let hidden_hand_text = dojo.byId(this.GetPlayerHiddenHandTextDivId(player_id));
-				hidden_hand_text.innerText = new_tiles;//player.cards_visible;
+				hidden_hand_text.innerText = new_tiles;//player.tiles_hand;
 				
 				//old code when enemy playercards were on the left but im leaving it here just in case
 				let enemy_tiles = dojo.byId("enemy_tiles_" + player_id);
@@ -601,7 +698,7 @@ define(
 				}
 				
 				//create some new tiles
-				var new_tiles = player.cards_visible - enemy_tiles.childNodes.length;
+				var new_tiles = player.tiles_hand - enemy_tiles.childNodes.length;
 				var factionid = player.factionid;
 				for(var tilesleft = new_tiles; tilesleft > 0; tilesleft--)
 				{
@@ -609,7 +706,7 @@ define(
 				}
 				
 				//remove any extra tiles
-				var remove_left = enemy_tiles.childNodes.length - player.cards_visible;
+				var remove_left = enemy_tiles.childNodes.length - player.tiles_hand;
 				for(var i=remove_left; i > 0; i--)
 				{
 					dojo.destroy(enemy_tiles.firstChild);

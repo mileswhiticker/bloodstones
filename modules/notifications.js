@@ -243,12 +243,6 @@ define(
 					window.gameui.gamedatas.hand = notif.args.new_hand;
 					window.gameui.CreatePlayerHandTiles();
 				}
-				
-				//update the ui
-				var player = window.gameui.gamedatas.players[player_id];
-				player.cards_visible = notif.args.num_hand_tiles;
-				window.gameui.SetHiddenHandTiles(player_id, player.cards_visible);
-				window.gameui.UpdateHiddenHandTiles(player_id, player.cards_visible);
 			},
 			
 			notif_regroup : function(notif)
@@ -548,6 +542,10 @@ define(
 				//console.log(notif);
 				this.SetHiddenHandTiles(notif.args.player_id, notif.args.num_hand_tiles);
 				this.UpdateHiddenHandTiles(notif.args.player_id, notif.args.num_hand_tiles);
+				this.SetHiddenBagTiles(notif.args.player_id, notif.args.num_bag_tiles);
+				this.UpdateHiddenBagTiles(notif.args.player_id, notif.args.num_bag_tiles);
+				this.SetHiddenDiscardTiles(notif.args.player_id, notif.args.num_discard_tiles);
+				this.UpdateHiddenDiscardTiles(notif.args.player_id, notif.args.num_discard_tiles);
 			},
 			
 			notif_playerHandDraw : function(notif)

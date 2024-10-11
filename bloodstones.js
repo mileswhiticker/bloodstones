@@ -567,9 +567,6 @@ function (dojo, declare, lang, fx, on, domAttr) {
 		
 		getActivePlayer : function()
 		{
-			/*
-			ack: "ack",avatar: "000000",beginner: true,cards_visible: "6",color: "0000ff",color_back: null,eliminated: 0,factionid: "2",id: "2371112",is_ai: "0",name: "milesw0",regroups: "0",score: "0",villages_available: "20",villages_captured: "0",zombie: 0,
-			*/
 			//this relies on BGA framework so it should be safe
 			return this.gamedatas.players[this.getActivePlayerId()];
 		},

@@ -78,7 +78,7 @@ trait action_build
 				$pips_spent = $this->DiscardTilesFromHand($paid_tile_infos, $current_player_id);
 				$this->incStat($pips_spent, "pips_built", $current_player_id);
 				
-				$this->updatePlayerHandChanged($current_player_id);
+				$this->notifyPlayerHandChanged($current_player_id);
 			}
 			
 			$units_built_string = "nothing";

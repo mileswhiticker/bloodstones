@@ -237,8 +237,9 @@ class bloodstones extends Table
 				//info about cards relevant to this player
 				if($player_deck)
 				{
-					$num_hand_tiles = $player_deck->countCardInLocation("hand");
-					$player["cards_visible"] = $num_hand_tiles;
+					$player["tiles_hand"] = $player_deck->countCardInLocation("hand");
+					$player["tiles_bag"] = $player_deck->countCardInLocation("bag");
+					$player["tiles_discard"] = $player_deck->countCardInLocation("discard");
 				}
 			}
 			
@@ -953,7 +954,7 @@ class bloodstones extends Table
 			. sizeof($tiles_in_bag)
 			));
 		self::notifyAllPlayers("cycleHand", "", array('new_hand' => $active_hand_tiles_new, 'target_player_id' => $active_player_id, 'num_hand_tiles' => 6));
-		
+		$this->notifyPlayerHandChanged($active_player_id);
 	}
 	
 	function OnDeckAutoshuffle()
@@ -1210,7 +1211,7 @@ class bloodstones extends Table
 				$current_player_deck->moveCard($swap_tile_id, "battle");
 				//self::notifyAllPlayers("debug", "", array('debugmessage' => "trySwapTile() check4"));
 				
-				$this->updatePlayerHandChanged($attacking_player_id);
+				$this->notifyPlayerHandChanged($attacking_player_id);
 			}
 			else
 			{

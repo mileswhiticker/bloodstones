@@ -165,7 +165,7 @@ define(
 			onClickScrollUp : function(event)
 			{
 				//console.log("page::onClickScrollUp()");
-				var new_pos = this.camera_coords_world.y - this.GetCameraScrollIncrement();
+				var new_pos = this.camera_coords_world.y - this.GetCameraScrollIncrementY();
 				var edge_pos = this.getBoundsMinY();
 				if(new_pos < edge_pos)
 				{
@@ -182,7 +182,7 @@ define(
 			onClickScrollDown : function(event)
 			{
 				//console.log("page::onClickScrollDown()");
-				var new_pos = this.camera_coords_world.y + this.GetCameraScrollIncrement();
+				var new_pos = this.camera_coords_world.y + this.GetCameraScrollIncrementY();
 				var edge_pos = this.getBoundsMaxY();
 				if(new_pos > edge_pos)
 				{
@@ -199,7 +199,7 @@ define(
 			onClickScrollLeft : function(event)
 			{
 				//console.log("page::onClickScrollLeft()");
-				var new_pos = this.camera_coords_world.x - this.GetCameraScrollIncrement();
+				var new_pos = this.camera_coords_world.x - this.GetCameraScrollIncrementX();
 				var edge_pos = this.getBoundsMinX();
 				if(new_pos < edge_pos)
 				{
@@ -216,7 +216,7 @@ define(
 			onClickScrollRight : function(event)
 			{
 				//console.log("page::onClickScrollRight()");
-				var new_pos = this.camera_coords_world.x + this.GetCameraScrollIncrement();
+				var new_pos = this.camera_coords_world.x + this.GetCameraScrollIncrementX();
 				var edge_pos = this.getBoundsMaxX();
 				if(new_pos > edge_pos)
 				{

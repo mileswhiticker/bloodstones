@@ -290,7 +290,21 @@ define(
 			
 			GetCameraScrollIncrement : function()
 			{
-				return this.map_view_scale * this.camera_scroll_increment;
+				console.log("WARNING: calling deprecated GetCameraScrollIncrement(), you should use GetCameraScrollIncrementX() or GetCameraScrollIncrementy() instead");
+				var inc = (this.GetCameraScrollIncrementX() + this.GetCameraScrollIncrementY()) / 2;
+				return inc;
+			},
+			
+			GetCameraScrollIncrementX : function()
+			{
+				var box = dojo.marginBox(dojo.byId("gamemap"));
+				return this.map_view_scale * box.w / 10;
+			},
+			
+			GetCameraScrollIncrementY : function()
+			{
+				var box = dojo.marginBox(dojo.byId("gamemap"));
+				return this.map_view_scale * box.h / 10;
 			},
 		});
 		

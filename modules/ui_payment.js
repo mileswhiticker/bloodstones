@@ -90,11 +90,11 @@ define(
 				var approve_button = dojo.place("<div id=\"approve_button\" class=\"action_approve blst_button\">" + this.GetActionApproveString(payment_mode) + "</div>", paywindow);
 				dojo.connect(approve_button, "click", dojo.hitch(this, this.PayAction));
 				
-				//button to minimise the paywindow to reveal more screen space over themap
+				//nonfunctional button to indicate the paywindow can be dragged (note: user can click and drag from anywhere on the paywindow)
 				var paywindow_drag = dojo.place("<div id=\"paywindow_drag_button\"></div>",paywindow);
 				//dojo.addClass(paywindow_drag, "blst_button");
 				
-				//button to indicate the paywindow can be dragged (note: user can click and drag from anywhere on the paywindow)
+				//button to minimise the paywindow to reveal more screen space over themap
 				var paywindow_minimise_button = dojo.place("<div id=\"paywindow_minimise_button\"><</div>",paywindow);
 				dojo.addClass(paywindow_minimise_button, "blst_button");
 				dojo.connect(paywindow_minimise_button, "click", dojo.hitch(this, this.MinimisePaywindow));
@@ -105,29 +105,7 @@ define(
 				paywindow.ondrag = window.gameui.PaywindowDrag;
 				paywindow.ondrop = window.gameui.PaywindowDrop;
 				this.paywindowPrevY = 0;
-			},
-			
-			MinimisePaywindow : function(event)
-			{
-				//console.log("page::MinimisePaywindow()");
-				var paywindow = dojo.byId("paywindow");
-				if(paywindow)
-				{
-					var paywindow_minimise_button = dojo.byId("paywindow_minimise_button");
-					if(dojo.hasClass(paywindow, "paywindow_minimise"))
-					{
-						dojo.removeClass(paywindow, "paywindow_minimise");
-						dojo.addClass(paywindow, "paywindow_unminimise");
-						paywindow_minimise_button.innerText = "<";
-					}
-					else
-					{
-						dojo.removeClass(paywindow, "paywindow_unminimise");
-						dojo.removeClass(paywindow, "paywindow_slidein");
-						dojo.addClass(paywindow, "paywindow_minimise");
-						paywindow_minimise_button.innerText = ">";
-					}
-				}
+				this.paywindowPrevX = 0;
 			},
 			
 			CreatePaymentNode : function(parent_id, container_id, payment_string, paystack_node_id = "paystack")
@@ -602,41 +580,94 @@ define(
 				return this.paid_amount;
 			},
 			
+			MinimisePaywindow : function(event)
+			{
+				//console.log("page::MinimisePaywindow()");
+				var paywindow = dojo.byId("paywindow");
+				if(paywindow)
+				{
+					var paywindow_minimise_button = dojo.byId("paywindow_minimise_button");
+					
+					//snap back to the default position
+					paywindow.style.removeProperty('top');
+					paywindow.style.removeProperty('left');	
+					if(dojo.hasClass(paywindow, "paywindow_minimise"))
+					{
+						dojo.removeClass(paywindow, "paywindow_minimise");
+						dojo.addClass(paywindow, "paywindow_unminimise");
+						paywindow_minimise_button.innerText = "<";
+					}
+					else
+					{
+						dojo.removeClass(paywindow, "paywindow_unminimise");
+						dojo.removeClass(paywindow, "paywindow_slidein");
+						dojo.addClass(paywindow, "paywindow_minimise");
+						paywindow_minimise_button.innerText = ">";
+					}
+				}
+			},
+			
 			PaywindowDragStart : function(event)
 			{
 				//console.log("page::PaywindowDragStart()");
 				window.gameui.paywindowPrevY = event.pageY;
+				window.gameui.paywindowPrevX = event.pageX;
+				
+				var paywindow = dojo.byId("paywindow");
+				if(dojo.hasClass(paywindow, "paywindow_minimise"))
+				{
+					var paywindow_minimise_button = dojo.byId("paywindow_minimise_button");
+					dojo.removeClass(paywindow, "paywindow_minimise");
+					paywindow_minimise_button.innerText = "<";
+				}
+				else if(dojo.hasClass(paywindow, "paywindow_minimise"))
+				{
+					var paywindow_minimise_button = dojo.byId("paywindow_minimise_button");
+					dojo.removeClass(paywindow, "paywindow_unminimise");
+					paywindow_minimise_button.innerText = "<";
+				}
 			},
 			
 			PaywindowDrag : function(event)
 			{
-				//console.log("page::PaywindowDrag()");
 				//console.log(event);
+				
 				var newPageY = event.pageY;
-				//console.log("newPageY:" + newPageY);
+				var newPageX = event.pageX;
+				
+				//console.log("page::PaywindowDrag() newPageX:" + newPageX + ", newPageY:" + newPageY);
+				//console.log(event);
+				
+				//get some useful stuff
+				var paywindow = dojo.byId("paywindow");
+				var paywindow_marginbox = dojo.marginBox(paywindow);
+				var container_marginbox = dojo.marginBox(dojo.byId("gamewindow"));
+				
 				if(newPageY != 0)
 				{
-					//console.log("shifting box...");
-					var paywindow = dojo.byId("paywindow");
-					var paywindow_marginbox = dojo.marginBox(paywindow);
 					var deltaY = (window.gameui.paywindowPrevY - newPageY);
-					//console.log("deltaY:" + deltaY);
 					
-					var gamemap = dojo.byId("gamemap");
-					gamemap_marginbox = dojo.marginBox(gamemap);
-					var maxY = gamemap_marginbox.h - paywindow_marginbox.h;
-					//console.log("maxY:" + maxY);
-					
+					var maxY = container_marginbox.h - paywindow_marginbox.h;
 					var minY = 0;
 					var newDivY = paywindow_marginbox.t - deltaY;
-					//console.log("newDivY:" + newDivY);
-					//console.log(paywindow_marginbox);
-					//console.log(deltaY);
-					//console.log(newDivY);
 					if(newDivY < maxY && newDivY > minY)
 					{
 						dojo.style(paywindow,"top", newDivY + "px");
 						window.gameui.paywindowPrevY = newPageY;
+					}
+				}
+				if(newPageX != 0)
+				{
+					var deltaX = (window.gameui.paywindowPrevX - newPageX);
+					
+					var maxX = container_marginbox.w - paywindow_marginbox.w;
+					var minX = 0;
+					var newDivX = paywindow_marginbox.l - deltaX;
+					if(newDivX < maxX && newDivX > minX)
+					{
+						//console.log("positioned");
+						dojo.style(paywindow,"left", newDivX + "px");
+						window.gameui.paywindowPrevX = newPageX;
 					}
 				}
 			},

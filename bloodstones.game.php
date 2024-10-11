@@ -681,7 +681,7 @@ class bloodstones extends Table
 						));
 						
 						//end the turn... players can only do 1 set of village building per turn
-						$this->gamestate->nextState('nextPlayer');
+						$this->activePlayerCompleteState();
 						break;
 					}
 					default:

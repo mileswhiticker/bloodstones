@@ -134,7 +134,7 @@ define(
 				this.UIBattleGeneric(args);
 				
 				//the winner's victory score has now changed
-				this.SetPlayerUIScore(args.args.winning_player_id, args.args.winning_player_score);
+				this.UpdatePlayerScoreUI(args.args.winning_player_id, args.args.winning_player_score);
 				
 				//handle any state specific UI updates eg buttons, titles etc
 				if(this.isCurrentPlayerActive())

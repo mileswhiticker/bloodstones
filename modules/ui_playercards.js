@@ -66,15 +66,20 @@ define(
 				dojo.addClass(faction_name,'playerboard_faction_name');
 				dojo.addClass(faction_name,'grid11');
 				
+				//make some tweaks to the default bga playerboard on the right panel
+				let playerboard_score = dojo.byId(this.GetPlayerboardScoreDivId(player_id));
+				dojo.addClass(playerboard_score,faction_color_css);
+				//todo: change star icon to bloodstones victory points icon
+				
 				//player regroup counter
-				let player_regroups_container = dojo.place("<div id=\"" + this.GetPlayerRegroupsDivId(player_id) + "\">" + player.regroups + "</div>", player_board_content);
+				let player_regroups_container = dojo.place("<div id=\"" + this.GetPlayerboardRegroupsDivId(player_id) + "\">" + player.regroups + "</div>", player_board_content);
 				dojo.addClass(player_regroups_container,'playerboard_container');
 				dojo.addClass(player_regroups_container,'regroup' + factionid);
 				dojo.addClass(player_regroups_container,faction_color_css);
 				dojo.addClass(player_regroups_container,'grid12');
 				
 				//villages not yet built from this player
-				let player_villages_container = dojo.place("<div id=\"" + this.GetVillagesRemainingCounterNodeId(player_id) + "\">" + player.villages_available + "</div>", player_board_content);
+				let player_villages_container = dojo.place("<div id=\"" + this.GetVillagesAvailablePlayerboardTextDivId(player_id) + "\">" + player.villages_available + "</div>", player_board_content);
 				dojo.addClass(player_villages_container,faction_color_css);
 				dojo.addClass(player_villages_container,"playerboard_container");
 				dojo.addClass(player_villages_container,'village' + factionid);
@@ -256,7 +261,7 @@ define(
 				
 				//player regroup counter
 				let player_regroups_text = dojo.place("<div></div>", playercard_elements_grid);
-				player_regroups_text.id = "regroups_" + player_id;
+				player_regroups_text.id = this.GetPlayercardRegroupsDivId(player_id);
 				player_regroups_text.innerHTML = player.regroups;
 				dojo.addClass(player_regroups_text,faction_color_css);
 				dojo.addClass(player_regroups_text,'player_regroups_text');
@@ -267,10 +272,10 @@ define(
 				dojo.addClass(player_regroups_icon,'player_regroups_icon');
 				dojo.addClass(player_regroups_icon,'playercard_icon');
 				
-				//player score counter (victory poinst)
+				//player score counter (victory points)
 				let player_score_text = dojo.place("<div></div>", playercard_elements_grid);
 				dojo.addClass(player_score_text,player_score_text);
-				player_score_text.id = this.GetPlayerScoreDivId(player_id);
+				player_score_text.id = this.GetPlayercardScoreDivId(player_id);
 				player_score_text.innerHTML = player.score;
 				dojo.addClass(player_score_text,faction_color_css);
 				dojo.addClass(player_score_text,'player_score_text');
@@ -283,7 +288,7 @@ define(
 				
 				//villages not yet built from this player
 				let player_villages_text = dojo.place("<div></div>", playercard_elements_grid);
-				player_villages_text.id = this.GetVillagesRemainingCounterNodeId(player_id);
+				player_villages_text.id = this.GetVillagesAvailablePlayercardTextDivId(player_id);
 				player_villages_text.innerHTML = player.villages_available;
 				dojo.addClass(player_villages_text,"player_villages_text");
 				dojo.addClass(player_villages_text,faction_color_css);
@@ -470,14 +475,21 @@ define(
 				return "player_villages_" + player_id;
 			},
 			
-			GetPlayerScoreDivId : function(player_id)
+			GetPlayercardScoreDivId : function(player_id)
 			{
-				return "playerscore_" + player_id;
+				return "playerboard_score_" + player_id;
 			},
 			
-			GetPlayerRegroupsDivId : function(player_id)
+			GetPlayercardRegroupsDivId : function(player_id)
 			{
-				return "regroups_" + player_id;
+				//left panel
+				return "playercard_regroups_" + player_id;
+			},
+			
+			GetPlayerboardRegroupsDivId : function(player_id)
+			{
+				//right panel
+				return "playerboard_regroups_" + player_id;
 			},
 			
 			GetPlayerHiddenHandDivId : function(player_id)
@@ -510,14 +522,22 @@ define(
 				return "hidden_discard_text_" + player_id;
 			},
 			
-			SetPlayerUIScore : function(player_id, new_score)
+			GetPlayerboardScoreDivId : function(player_id)
 			{
-				//console.log("page::SetPlayerUIScore(" + player_id + "," + new_score + ")");
-				var player_score_div = dojo.byId(this.GetPlayerScoreDivId(player_id));
+				//player boards on the right panel... this is also from the default bga playerboard
+				return "player_score_" + player_id;
+			},
+			
+			UpdatePlayerScoreUI : function(player_id, new_score)
+			{
+				var player_score_div = dojo.byId(this.GetPlayercardScoreDivId(player_id));
 				if(player_score_div)
 				{
-					player_score_div.innerHTML = new_score;
+					player_score_div.innerText = new_score;
 				}
+				
+				//this is an ebg counter from the default bga playerboard so it's handled a little differently
+				this.scoreCtrl[player_id].toValue(new_score);
 			},
 			
 			DiscardPlayerHandTiles : function()
@@ -630,8 +650,15 @@ define(
 				return "citadels_captured_text_" + player_id;
 			},
 			
-			GetVillagesRemainingCounterNodeId : function(player_id)
+			GetVillagesAvailablePlayerboardTextDivId : function(player_id)
 			{
+				//note: this is for playerboard (right panel) version
+				return "villages_remaining_" + player_id;
+			},
+			
+			GetVillagesAvailablePlayercardTextDivId : function(player_id)
+			{
+				//note: this is for playercard (left panel) version
 				return "villages_remaining_" + player_id;
 			},
 			
@@ -647,50 +674,119 @@ define(
 				player_captured_villages.innerHTML = player.villages_captured;*/
 			},
 			
-			SetPlayerRegroups : function(player_id, new_regroups)
+			SetPlayerRegroups : function(player_id, new_regroups, ui_update = true)
 			{
+				var player = this.gamedatas.players[player_id];
+				player.regroups = new_regroups;
+				
+				//update the ui now that it's changed
+				if(ui_update)
+				{
+					this.UpdatePlayerRegroupsUI(player_id, new_regroups);
+				}
 			},
 			
-			SetHiddenBagTiles : function(player_id, num_tiles)
+			UpdatePlayerRegroupsUI : function(player_id, new_regroups)
+			{
+				//left panel (only exists on current player client)
+				var playercard_regroups = dojo.byId(this.GetPlayercardRegroupsDivId(player_id));
+				if(playercard_regroups)
+				{
+					playercard_regroups.innerText = new_regroups;
+				}
+				
+				//right panel (exists for every player client)
+				var playerboard_regroups = dojo.byId(this.GetPlayerboardRegroupsDivId(player_id));
+				playerboard_regroups.innerText = new_regroups;
+			},
+			
+			SetVillagesRemaining : function(player_id, villages_available, ui_update = true)
+			{
+				var player = this.gamedatas.players[player_id];
+				player.villages_available = villages_available;
+				
+				//update the ui now that it's changed
+				if(ui_update)
+				{
+					this.UpdateVillagesRemainingUI(player_id, villages_available);
+				}
+			},
+			
+			UpdateVillagesRemainingUI : function(player_id, villages_available)
+			{
+				//right panel (exists for every player client)
+				var villages_available_playerboard = dojo.byId(this.GetVillagesAvailablePlayerboardTextDivId(player_id))
+				villages_available_playerboard.innerText = villages_available;
+				
+				//left panel (only exists on current player client)
+				var villages_available_playercard = dojo.byId(this.GetVillagesAvailablePlayercardTextDivId(owner_player_id));
+				if(villages_available_playercard)
+				{
+					villages_available_playercard.innerHTML = villages_available;
+				}
+			},
+			
+			SetHiddenBagTiles : function(player_id, num_tiles, ui_update = true)
 			{
 				var player = this.gamedatas.players[player_id];
 				player.tiles_bag = num_tiles;
+				
+				//update the ui now that it's changed
+				if(ui_update)
+				{
+					this.UpdateHiddenBagTilesUI(player_id, num_tiles);
+				}
 			},
 			
-			UpdateHiddenBagTiles : function(player_id, new_tiles)
+			UpdateHiddenBagTilesUI : function(player_id, num_tiles)
 			{
 				var player = this.gamedatas.players[player_id];
 				let hidden_bag_text = dojo.byId(this.GetPlayerHiddenBagTextDivId(player_id));
-				hidden_bag_text.innerText = new_tiles;
+				hidden_bag_text.innerText = num_tiles;
 			},
 			
-			SetHiddenDiscardTiles : function(player_id, num_tiles)
+			SetHiddenDiscardTiles : function(player_id, num_tiles, ui_update = true)
 			{
 				var player = this.gamedatas.players[player_id];
 				player.tiles_discard = num_tiles;
+				
+				//update the ui now that it's changed
+				if(ui_update)
+				{
+					this.UpdateHiddenDiscardTilesUI(player_id, num_tiles);
+				}
 			},
 			
-			UpdateHiddenDiscardTiles : function(player_id, new_tiles)
+			UpdateHiddenDiscardTilesUI : function(player_id, num_tiles)
 			{
 				var player = this.gamedatas.players[player_id];
 				let hidden_discard_text = dojo.byId(this.GetPlayerHiddenDiscardTextDivId(player_id));
-				hidden_discard_text.innerText = new_tiles;
+				hidden_discard_text.innerText = num_tiles;
 			},
 			
-			SetHiddenHandTiles : function(player_id, num_hand_tiles)
+			SetHiddenHandTiles : function(player_id, num_tiles, ui_update = true)
 			{
 				var player = this.gamedatas.players[player_id];
-				player.tiles_hand = num_hand_tiles;
-			},
-			
-			UpdateHiddenHandTiles : function(player_id, new_tiles)
-			{
-				//console.log("page::UpdateHiddenHandTiles(" + player_id + "," + new_tiles + ")");
-				var player = this.gamedatas.players[player_id];
-				let hidden_hand_text = dojo.byId(this.GetPlayerHiddenHandTextDivId(player_id));
-				hidden_hand_text.innerText = new_tiles;//player.tiles_hand;
+				player.tiles_hand = num_tiles;
 				
-				//old code when enemy playercards were on the left but im leaving it here just in case
+				//update the ui now that it's changed
+				if(ui_update)
+				{
+					this.UpdateHiddenHandTilesUI(player_id, num_tiles);
+				}
+			},
+			
+			UpdateHiddenHandTilesUI : function(player_id, num_tiles)
+			{
+				//console.log("page::UpdateHiddenHandTiles(" + player_id + "," + num_tiles + ")");
+				var player = this.gamedatas.players[player_id];
+				
+				//player boards right panel
+				let hidden_hand_text = dojo.byId(this.GetPlayerHiddenHandTextDivId(player_id));
+				hidden_hand_text.innerText = num_tiles;//player.tiles_hand;
+				
+				//old code when enemy playercards were on the left panel but im leaving it here just in case
+				/*
 				let enemy_tiles = dojo.byId("enemy_tiles_" + player_id);
 				if(!enemy_tiles)
 				{
@@ -711,6 +807,7 @@ define(
 				{
 					dojo.destroy(enemy_tiles.firstChild);
 				}
+				*/
 			}
 			
 		});

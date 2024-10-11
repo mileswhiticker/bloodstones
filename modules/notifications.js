@@ -122,13 +122,7 @@ define(
 			
 			notif_scoreChanged : function(notif)
 			{
-				var player_score_div = dojo.byId(this.GetPlayerScoreDivId(notif.args.player_id));
-				if(player_score_div)
-				{
-					player_score_div.innerHTML = notif.args.new_score;
-				}
-				
-				this.scoreCtrl[notif.args.player_id].toValue(notif.args.new_score);
+				this.UpdatePlayerScoreUI(notif.args.player_id, notif.args.new_score);
 			},
 			
 			notif_debug : function(notif) {
@@ -247,8 +241,7 @@ define(
 			
 			notif_regroup : function(notif)
 			{
-				let regroups_left = dojo.byId("regroups_" + notif.args.player_id);
-				regroups_left.innerHTML = notif.args.regroups;
+				this.SetPlayerRegroups(notif.args.player_id, notif.args.regroups);
 			},
 			
 			notif_endTurn : function(notif)
@@ -541,11 +534,8 @@ define(
 				//console.log("page::notif_playerHandChanged()");
 				//console.log(notif);
 				this.SetHiddenHandTiles(notif.args.player_id, notif.args.num_hand_tiles);
-				this.UpdateHiddenHandTiles(notif.args.player_id, notif.args.num_hand_tiles);
 				this.SetHiddenBagTiles(notif.args.player_id, notif.args.num_bag_tiles);
-				this.UpdateHiddenBagTiles(notif.args.player_id, notif.args.num_bag_tiles);
 				this.SetHiddenDiscardTiles(notif.args.player_id, notif.args.num_discard_tiles);
-				this.UpdateHiddenDiscardTiles(notif.args.player_id, notif.args.num_discard_tiles);
 			},
 			
 			notif_playerHandDraw : function(notif)
@@ -605,8 +595,7 @@ define(
 				this.gamedatas.players[owner_player_id].villages_built = notif.args.villages_built;
 				
 				//update the ui
-				player_villages_text = dojo.byId(this.GetVillagesRemainingCounterNodeId(owner_player_id));
-				player_villages_text.innerHTML = notif.args.villages_available;
+				this.SetVillagesRemaining(owner_player_id, notif.args.villages_available);
 				
 				this.UIClearBuildVillages();
 			},

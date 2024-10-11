@@ -235,15 +235,6 @@ trait player_utils
 				$tiles_drawn_indexed[$tile['id']] = $tile;
 			}
 			//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($tiles_drawn_indexed, true)));
-			/*
-			notif_playerHandChanged : function(notif)
-			{
-				console.log("page::notif_playerHandChanged()");
-				console.log(notif);
-				this.SetHiddenHandTiles(notif.args.player_id, notif.args.num_hand_tiles);
-				this.UpdateHiddenHandTiles(notif.args.player_id);
-			},
-			*/
 			
 			self::notifyPlayer($player_id, "playerHandDraw", "", array('tiles_drawn' => $tiles_drawn_indexed));
 			$this->notifyPlayerHandChanged($player_id);

@@ -437,22 +437,36 @@ define(
 						var tile_desc = "ERR_TILE_DESC";
 						switch(basetypeid)
 						{
+							case this.UNIT_ATTACKER:
+							{
+								if(factionid == this.FACTION_DRAGONRIDERS)
+								{
+									tile_name = "Lizardman";
+									tile_desc : "+1 in combat when attacking. May remain in deserts.";
+								}
+								else if(factionid == this.FACTION_NECROMANCERS)
+								{
+									tile_name = "Goblin";
+									tile_desc : "+1 in combat when attacking. May remain in deserts.";
+								}
+								break;
+							}
 							case this.UNIT_SPECIALONE:
 							{
 								if(factionid == this.FACTION_HILLFOLK)
 								{
 									tile_name = "Giant";
-									tile_desc = "+2 in combat. Always draw four tiles if present in battle."
+									tile_desc = "+2 in combat. Always draw four tiles if present in battle.";
 								}
 								else if(factionid == this.FACTION_DRAGONRIDERS)
 								{
 									tile_name = "Dragon";
-									tile_desc = "+4 in combat. Discard after a successful attack. A force with dragons can always withdraw. No opposing force can withdraw from dragons. May fight in ship combat. Only costs 1 pip of movement regardless of terrain type. May remain in mountain, desert and sea areas."
+									tile_desc = "+4 in combat. Discard after a successful attack. A force with dragons can always withdraw. No opposing force can withdraw from dragons. May fight in ship combat. Only costs 1 pip of movement regardless of terrain type. May remain in mountain, desert and sea areas.";
 								}
 								else if(factionid == this.FACTION_NECROMANCERS)
 								{
 									tile_name = "Necromancer";
-									tile_desc = "+1 in combat. If part of a winning battle, replace each eliminated unit with one Undead unit."
+									tile_desc = "+1 in combat. If part of a winning battle, replace each eliminated unit with one Undead unit.";
 								}
 								else
 								{
@@ -466,7 +480,7 @@ define(
 								if(factionid == this.FACTION_NECROMANCERS)
 								{
 									tile_name = "Undead";
-									tile_desc = "+1 in combat. Can only move during the Move Undead phase. Ignore terrain costs. Can enter mountains and remain in deserts."
+									tile_desc = "+1 in combat. Can only move during the Move Undead phase. Ignore terrain costs. Can enter mountains and remain in deserts.";
 								}
 								else
 								{

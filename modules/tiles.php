@@ -62,7 +62,7 @@ trait tiles
 			}
 			case self::TILE_KOBOLD:
 			{
-				return "Kobold";
+				return "Lizardman";
 			}
 			case self::TILE_DRAGON:
 			{

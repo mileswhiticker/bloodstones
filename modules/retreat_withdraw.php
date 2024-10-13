@@ -295,9 +295,11 @@ trait retreat_withdraw
 		$defender_faction_name = $this->getPlayerFactionName($defending_player_id);
 		
 		//tell all the players what happened
-		$message = clienttranslate('${defender_faction_name} have withdrawn from battle.');
-		$this->notifyAllPlayers('logPlayerMessage', $message,[
-			'defender_faction_name'=>$defender_faction_name
+		$prov_id = $this->getProvinceIdFromName($retreat_prov_name);
+		$province_ui_name = $this->GetProvinceNameUIString($prov_id);
+		$this->notifyAllPlayers('logPlayerMessage', clienttranslate('${defender_faction_name} have withdrawn from battle to ${province_ui_name}'), [
+			'defender_faction_name' => $defender_faction_name,
+			'province_ui_name' => $province_ui_name
 		]);
 		
 		//finally, move on with the battle
@@ -402,13 +404,15 @@ trait retreat_withdraw
 			$this->incStat($num_tiles_killed, "terrain_losses", $retreat_player_id);
 			
 			//tell the players
-			self::notifyAllPlayers('playerArmyRetreat', clienttranslate('${player_name} loses ${killed_tiles_string} in the rout!'), 
+			$province_ui_name = $this->GetProvinceNameUIString($retreat_prov_id);
+			self::notifyAllPlayers('playerArmyRetreat', clienttranslate('${player_name} loses ${killed_tiles_string} while retreating to ${province_ui_name}'), 
 				array(
 					'killed_tiles_string' => $killed_tiles_string,
 					'player_name' => $player_name,
 					'retreating_army_id' => $retreating_army_id,
 					'retreat_prov_name' => $retreat_prov_name,
-					'killed_tiles' => $killed_tiles
+					'killed_tiles' => $killed_tiles,
+					'province_ui_name' => $province_ui_name
 				));
 		}
 		

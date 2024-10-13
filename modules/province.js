@@ -685,6 +685,17 @@ define(
 			{
 				return this.provinces[prov_id];
 			},
+			
+			GetProvinceType : function(prov_id)
+			{
+				var prov_info = this.GetProvinceById(prov_id);
+				return prov_info.type;
+			},
+			
+			GetProvinceNameUIString : function(prov_id)
+			{
+				return "Area " + prov_id + "(" + this.GetProvinceType(prov_id) + ")";
+			}
 		});
 			
 		return instance;

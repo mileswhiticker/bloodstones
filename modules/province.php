@@ -364,4 +364,9 @@ trait province
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::countProvinceVillagesBuilt($province_id, $faction_id): $num"));
 		return $num;
 	}
+	
+	function GetProvinceNameUIString($prov_id)
+	{
+		return "Area $prov_id (" . $this->GetProvinceTypeName($prov_id) . ")";
+	}
 }

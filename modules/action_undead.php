@@ -69,11 +69,14 @@ trait action_undead
 					self::notifyAllPlayers("debug", "", array('debugmessage' => "WARNING: army move ended at same province it started"));
 				}
 				
-				self::notifyAllPlayers('playerUndeadMove', '', array(
+				$prov_id = $this->getProvinceIdFromName($dest_province_name);
+				$province_ui_name = $this->GetProvinceNameUIString($prov_id);
+				self::notifyAllPlayers('playerUndeadMove', clienttranslate('${player_name} has moved undead to ${province_ui_name}'), array(
 					'moving_player_id' => $current_player_id,
 					'moving_player_name' => $current_player_name,
 					'army_id_num' => $source_army_id,
-					'dest_province_name' => $dest_province_name
+					'dest_province_name' => $dest_province_name,
+					'province_ui_name' => $province_ui_name
 				));
 			}
 			

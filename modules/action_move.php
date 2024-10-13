@@ -155,13 +155,12 @@ trait action_move
 				//send a message to the log
 				$army_tiles_string = $this->GetUnitsInArmyString($source_army_id, $current_player_id);
 				$dest_province_num = $this->getProvinceIdFromName($dest_province_name);
-				$terrain = $this->GetProvinceTypeName($dest_province_num);
-				$province_desc = "Province $dest_province_num ($terrain)";
-				self::notifyAllPlayers('showMessage', clienttranslate('${player_name} has moved ${army_tiles_string} to ${province_desc}'), array(
+				$province_ui_name = $this->GetProvinceNameUIString(dest_province_num);
+				self::notifyAllPlayers('showMessage', clienttranslate('${player_name} has moved ${army_tiles_string} to ${province_ui_name}'), array(
 					'player_id' => $current_player_id,
 					'player_name' => $current_player_name,
 					'army_tiles_string' => $army_tiles_string,
-					'province_desc' => $province_desc
+					'province_ui_name' => $province_ui_name
 				));
 			}
 			

@@ -114,7 +114,9 @@ trait action_build
 				$units_built_string = implode(", ", $built_tile_names);
 			}
 			$this->incStat($tiles_built, "tiles_built", $current_player_id);
-			self::notifyAllPlayers('playerBuild', clienttranslate('${player_name} builds ${units_built_string}'), 
+			$prov_id = $this->getProvinceIdFromName($prov_name);
+			$province_ui_name = $this->GetProvinceNameUIString($prov_id);
+			self::notifyAllPlayers('playerBuild', clienttranslate('${player_name} builds ${units_built_string} in ${province_ui_name}'), 
 				array(
 					'units_built_string' => $units_built_string,
 					'player_name' => $current_player_name,
@@ -122,6 +124,7 @@ trait action_build
 					'pending_battles_update' => $this->GetPendingBattleProvincesAll(),
 					'built_armies' => $built_armies,
 					'built_armies_existing' => $built_armies_existing,
+					'province_ui_name' => $province_ui_name
 				));
 			
 			//special handling for freebuild mode

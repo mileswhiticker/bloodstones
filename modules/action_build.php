@@ -31,6 +31,7 @@ trait action_build
 		{
 			//each province will have 1 new army
 			$built_armies = [];
+			$built_armies_existing = [];
 			$built_tile_names = [];
 			foreach($action_info as $prov_name => $build_action_prov)
 			{
@@ -44,16 +45,41 @@ trait action_build
 				$built_tile_infos = [];
 				$built_tile_ids = [];
 				
-				$army_info = self::createArmy($prov_name, $current_player_id, $tile_ids, false);
-				$built_tile_infos = $army_info["tiles"];
-				/*$built_tile_infos = $player_deck->getCardsInLocation('army', $new_army["id_num"]);
+				//check if we have a pre-existing army in this province
+				//if not, create a new one
+				$army_info = $this->GetMainPlayerArmyInProvinceFromProvName($current_player_id, $prov_name);
+				if($army_info != null)
+				{
+					//merge in these newly built tiles
+					$army_id = $army_info["army_id"];
+					
+					//grab the appropriate tile deck
+					$player_deck = $this->player_decks[$current_player_id];
+					
+					//move the list of card ids over to the new army
+					//if they are already in another army, this will automatically update them
+					$player_deck->moveCards($tile_ids, 'army', $army_id);
+					try
+					{
+						$starting_tiles = $player_deck->getCards($tile_ids);
+						$army_info["tiles"] = $player_deck->getCardsInLocation('army', $army_id);
+					}
+					catch(Exception $e)
+					{
+						self::notifyAllPlayers("debug", "", array('debugmessage' => "Exception caught in call to getCards() inside server::HandleBuildAction(), the problem was most likely \$tile_ids"));
+						self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($e, true)));
+						self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($tile_ids, true)));
+					}
+				}
+				else
+				{
+					//create a new army
+					$army_info = self::createArmy($prov_name, $current_player_id, $tile_ids, false);
+				}
 				
-				$army_info = [
-					"army_id" => $new_army["id_num"],
-					"province_id" => $prov_name,
-					"player_id" => $current_player_id,
-					"tiles" => $built_tile_infos,
-				];*/
+				//$built_tile_infos = $army_info["tiles"];
+				$army_id = $army_info["army_id"];
+				$built_tile_infos = $player_deck->getCards($tile_ids);
 				
 				$built_armies[$army_info["army_id"]] = $army_info;
 				
@@ -88,13 +114,14 @@ trait action_build
 				$units_built_string = implode(", ", $built_tile_names);
 			}
 			$this->incStat($tiles_built, "tiles_built", $current_player_id);
-			self::notifyAllPlayers('playerBuildSuccess', clienttranslate('${player_name} builds ${units_built_string}'), 
+			self::notifyAllPlayers('playerBuild', clienttranslate('${player_name} builds ${units_built_string}'), 
 				array(
 					'units_built_string' => $units_built_string,
 					'player_name' => $current_player_name,
 					'player_id' => $current_player_id,
 					'pending_battles_update' => $this->GetPendingBattleProvincesAll(),
-					'built_armies' => $built_armies
+					'built_armies' => $built_armies,
+					'built_armies_existing' => $built_armies_existing,
 				));
 			
 			//special handling for freebuild mode

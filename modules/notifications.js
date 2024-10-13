@@ -57,7 +57,7 @@ define(
 				dojo.subscribe('playerMoveFail', this, "notif_playerMoveFail");
 				dojo.subscribe('playerArmyTransfer', this, "notif_playerArmyTransfer");
 				dojo.subscribe('playerBuildFail', this, "notif_playerBuildFail");
-				dojo.subscribe('playerBuildSuccess', this, "notif_playerBuildSuccess");
+				dojo.subscribe('playerBuild', this, "notif_playerBuild");
 				dojo.subscribe('changePhase', this, "notif_changePhase");
 				dojo.subscribe('tileDiscard', this, "notif_tileDiscard");
 				dojo.subscribe('tileRefund', this, "notif_tileRefund");
@@ -310,6 +310,7 @@ define(
 				{
 					this.enterSmallPhase(gameui.STATE_MAIN_DEFAULT);
 				}
+				this.DestroyPayWindow();
 				
 				//in case of replay mode
 				this.RemoveMoveModeUI();
@@ -326,9 +327,9 @@ define(
 				//todo: reset the move
 			},
 			
-			notif_playerBuildSuccess : function(notif)
+			notif_playerBuild : function(notif)
 			{
-				//console.log("page::notif_playerBuildSuccess()");
+				//console.log("page::notif_playerBuild()");
 				
 				for(var army_id in notif.args.built_armies)
 				{

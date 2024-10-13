@@ -98,6 +98,51 @@ define(
 				this.UIRefreshBuildVillages();
 			},
 
+			// onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
+			//                        action status bar (ie: the HTML links in the status bar).
+			//        
+			onUpdateActionButtons: function( stateName, args )
+			{
+				//console.log( 'onUpdateActionButtons: '+stateName );
+				//console.log(args);
+				
+				
+				//reset the current player battle stage
+				//var new_battle_stage = this.current_player_battle_stage;
+				
+				//!this.isSpectator
+				//if(this.isCurrentPlayerActive())
+				switch( stateName )
+				{
+/*               
+				 Example:
+ 
+				 case 'myGameState':
+					
+					// Add 3 action buttons in the action status bar:
+					
+					this.addActionButton( 'button_1_id', _('Button 1 label'), 'onMyMethodToCall1' ); 
+					this.addActionButton( 'button_2_id', _('Button 2 label'), 'onMyMethodToCall2' ); 
+					this.addActionButton( 'button_3_id', _('Button 3 label'), 'onMyMethodToCall3' ); 
+					break;
+*/
+					/*
+					case 'battleTile':
+					{
+						new_battle_stage = BATTLE_TILE;
+						break;
+					}
+					
+					case 'battleWait':
+					{
+						new_battle_stage = BATTLE_WAIT;
+						break;
+					}
+					*/
+				}
+				
+			},
+			
 			///////////////////////////////////////////////////
 			//// Game & client states
 			

@@ -178,10 +178,14 @@ trait army
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::GetMainPlayerArmyInProvinceFromProvName($player_id, $province_name)"));
 		$player_province_armies = $this->GetPlayerArmiesInProvinceFromProvName($player_id, $province_name);
 		
-		//todo: for now just return the first one we find
+		//return the first non-citadel army we find
+		$citadel_army_id = $this->GetCitadelArmyId($player_id);
 		foreach($player_province_armies as $army_id => $army)
 		{
-			return $army;
+			if($citadel_army_id != $army_id)
+			{
+				return $army;
+			}
 		}
 		return null;
 	}

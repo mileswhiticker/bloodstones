@@ -258,4 +258,14 @@ trait citadel
 		}
 		return $citadel_prov_names;
 	}
+	
+	public function GetCitadelArmyId($player_id)
+	{
+		$citadel_tile_info = $this->GetPlayerCitadelTile($player_id);
+		if($citadel_tile_info["location"] == "army")
+		{
+			return $citadel_tile_info["location_arg"];
+		}
+		return -1;
+	}
 }

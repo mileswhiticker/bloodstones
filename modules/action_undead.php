@@ -38,7 +38,7 @@ trait action_undead
 				
 				$army_name = $army_action_info["army_name"];
 				$source_army_id = self::GetArmyIdNumFromString($army_name);
-				$source_army = self::getObjectFromDB("SELECT army_id, province_id, player_id FROM armies WHERE army_id='$source_army_id'");
+				$source_army = $this->GetArmy($source_army_id);
 				$dest_province_name = "NA";
 				
 				//loop over all province steps and get the final destination
@@ -50,7 +50,7 @@ trait action_undead
 				//self::notifyAllPlayers("debug", "", array('debugmessage' => "dest_province_name:$dest_province_name"));
 				
 				//finally, move the army
-				if($dest_province_name != $source_army['province_id'])
+				if($dest_province_name != $source_army["prov_name"])
 				{
 					//self::notifyAllPlayers("debug", "", array('debugmessage' => "updating database..."));
 					//update the database with the army's new province

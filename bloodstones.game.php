@@ -278,8 +278,8 @@ class bloodstones extends Table
 		
 		//get info on the armies on the board
 		//todo: this seems more intricate than it needs to be. i wonder if there's a simpler way to do this? 
-		$armies = self::getCollectionFromDb("SELECT army_id, player_id, province_id prov_name FROM armies", false);
-		foreach($armies as $army_id => $army)
+		$armies = $this->GetAllArmies();
+		foreach($armies as $army_id => &$army)
 		{
 			//first, get the tile deck for this player's army
 			$army_player_deck = $this->player_decks[$army["player_id"]];
@@ -472,17 +472,17 @@ class bloodstones extends Table
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::tryArmyStackTransfer($source_army_id,$target_army_id,$tile_ids_string,$target_province_override,$temp_army_id_num)"));
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($tile_ids,true)));
 		//
-		$source_army = self::getObjectFromDB("SELECT * FROM armies WHERE army_id=$source_army_id");
+		$source_army = $this->GetArmy($source_army_id);
 		$target_army = null;
 		if($target_army_id == null)
 		{
 			//create a new army stack in the province
-			$target_province = $target_province_override;
-			if($target_province == null)
+			$target_province_name = $target_province_override;
+			if($target_province_name == null)
 			{
-				$target_province = $source_army['province_id'];
+				$target_province_name = $source_army["prov_name"];
 			}
-			$target_army = $this->createArmy($target_province, $source_army['player_id'], $tile_ids, false);
+			$target_army = $this->createArmy($target_province_name, $source_army['player_id'], $tile_ids, false);
 			$target_army_id = $target_army["army_id"];
 		}
 		else
@@ -508,7 +508,7 @@ class bloodstones extends Table
 			if(count($tiles_left) == 0)
 			{
 				//delete it from our database
-				self::DbQuery("DELETE FROM armies WHERE army_id='$source_army_id';");
+				$this->DeleteArmy($source_army_id);
 			}
 		}
 		
@@ -550,7 +550,7 @@ class bloodstones extends Table
 		{
 			//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($new_army,true)));
 			$new_army_id = $new_army["army_id"];
-			self::DbQuery("DELETE FROM armies WHERE army_id='$new_army_id';");
+			$this->DeleteArmy($new_army_id);
 			self::notifyAllPlayers("debug", "", array('debugmessage' => "Warning: no more tiles in player deck to spawn"));
 		}
 		else
@@ -1053,7 +1053,7 @@ class bloodstones extends Table
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::tryStartBattle($battling_province_name)"));
 		
 		//safety check to make sure a battle is possible here
-		$province_armies = self::getCollectionFromDb("SELECT * FROM armies WHERE province_id='$battling_province_name'");
+		$province_armies = $this->GetArmiesInProvinceFromProvName($battling_province_name);
 		$active_player_present = false;
 		$other_player_present = false;
 		$active_player_id = $this->getActivePlayerId();
@@ -1543,7 +1543,8 @@ class bloodstones extends Table
 		
 		//some helpful info about the retreating army
 		$battling_province_name = $this->getProvinceName($battling_province_id);
-		$retreating_army_id = self::getUniqueValueFromDB("SELECT army_id FROM armies WHERE province_id='$battling_province_name' AND player_id=$losing_player");
+		$retreating_army = $this->GetMainPlayerArmyInProvinceFromProvName($losing_player, $battling_province_name);
+		$retreating_army_id = $retreating_army["army_id"];
 		$args['retreating_army_id'] = $retreating_army_id;
 		
 		return $args;

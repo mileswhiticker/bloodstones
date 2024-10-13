@@ -132,20 +132,68 @@ trait army
 		return false;
 	}
 	
+	function GetArmy($army_id)
+	{
+		return self::getObjectFromDB("SELECT army_id, player_id, province_id prov_name FROM armies WHERE army_id=$army_id", false);
+	}
+	
+	function GetAllArmies()
+	{
+		return self::getCollectionFromDb("SELECT army_id, player_id, province_id prov_name FROM armies", false);
+	}
+	
 	function GetArmiesInProvinceFromProvId($prov_id)
 	{
+		//this is necessary because the db expects "province_id" to be a string, whereas ive now separated it from str "prov_name" and int "province_id"
 		$prov_name = $this->getProvinceName($prov_id);
 		return $this->GetArmiesInProvinceFromProvName($prov_name);
 	}
 	
 	function GetArmiesInProvinceFromProvName($prov_name)
 	{
-		return self::getCollectionFromDb("SELECT * FROM armies WHERE province_id='$prov_name';", false);
+		return self::getCollectionFromDb("SELECT army_id, player_id, province_id prov_name FROM armies WHERE province_id='$prov_name'", false);
+	}
+	
+	function GetPlayerArmiesInProvinceFromProvId($player_id, $prov_id)
+	{
+		//this is necessary because the db expects "province_id" to be a string, whereas ive now separated it from str "prov_name" and int "province_id"
+		$prov_name = $this->getProvinceName($prov_id);
+		return $this->GetPlayerArmiesInProvinceFromProvName($player_id, $prov_name);
+	}
+	
+	function GetPlayerArmiesInProvinceFromProvName($player_id, $prov_name)
+	{
+		return self::getCollectionFromDb("SELECT army_id, player_id, province_id prov_name FROM armies WHERE player_id='$player_id' AND province_id='$prov_name'", false);
+	}
+	
+	function GetMainPlayerArmyInProvinceFromProvId($player_id, $prov_id)
+	{
+		//this is necessary because the db expects "province_id" to be a string, whereas ive now separated it from str "prov_name" and int "province_id"
+		$prov_name = $this->getProvinceName($prov_id);
+		return $this->GetMainPlayerArmyInProvinceFromProvName($player_id, $prov_name);
+	}
+	
+	function GetMainPlayerArmyInProvinceFromProvName($player_id, $province_name)
+	{
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::GetMainPlayerArmyInProvinceFromProvName($player_id, $province_name)"));
+		$player_province_armies = $this->GetPlayerArmiesInProvinceFromProvName($player_id, $province_name);
+		
+		//todo: for now just return the first one we find
+		foreach($player_province_armies as $army_id => $army)
+		{
+			return $army;
+		}
+		return null;
 	}
 	
 	function GetPlayerArmies($player_id)
 	{
-		return self::getCollectionFromDb("SELECT * FROM armies WHERE player_id='$player_id';", false);
+		return self::getCollectionFromDb("SELECT army_id, player_id, province_id prov_name FROM armies WHERE player_id='$player_id'", false);
+	}
+	
+	function DeleteArmy($army_id)
+	{
+		self:$this->DbQuery("DELETE FROM armies WHERE army_id='$army_id';");
 	}
 	
 	function GetPendingCaptureArmiesAll()
@@ -209,7 +257,7 @@ trait army
 			foreach($armies as $army_id => $army_info)
 			{
 				//check if this army is in the province
-				$army_province_name = $army_info["province_id"];	//old format
+				$army_province_name = $army_info["prov_name"];	//old format
 				$army_province_id = $this->getProvinceIdFromName($army_province_name);
 				//self::notifyAllPlayers("debug", "", array('debugmessage' => "checking army in prov:$army_province_id"));
 				//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($army_info, true)));

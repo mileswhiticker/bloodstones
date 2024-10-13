@@ -72,8 +72,7 @@ trait province
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::MergePlayerArmiesInProvince($prov_id, $player_id)"));
 		
 		//merge together all of this player's armies in this province
-		$province_name = $this->getProvinceName($prov_id);
-		$merging_armies = self::getCollectionFromDb("SELECT * FROM armies WHERE province_id='$province_name' AND player_id=$player_id");
+		$merging_armies = $this->GetPlayerArmiesInProvinceFromProvId($player_id, $prov_id);
 		
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($merging_armies,true)));
 		$merged_army_ids = [];
@@ -112,7 +111,7 @@ trait province
 		$battle_prov_name = $this->getProvinceName($prov_id);
 		
 		//get the retreating armies in this province so we can get a list of tiles
-		$retreating_armies = self::getCollectionFromDb("SELECT * FROM armies WHERE province_id='$battle_prov_name'");
+		$retreating_armies = $this->GetArmiesInProvinceFromProvName("battle_prov_name");
 		$retreating_tiles_deck = $this->player_decks[$retreat_player_id];
 		$retreating_tiles = [];
 		

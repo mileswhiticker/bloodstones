@@ -43,20 +43,19 @@ trait battle
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::GetPendingBattleProvincesPlayer($target_player_id)"));
 		//note: this function is from the perspective of the player_id that is passed in
 		//make sure that player is actually a valid attacker! 
-		//self::notifyAllPlayers("debug", "", array('debugmessage' => 'server::GetPendingBattleProvincesPlayer('.$target_player_id.')'));
-		$unchecked_armies = self::getCollectionFromDb("SELECT * FROM armies");
+		$unchecked_armies = $this->GetAllArmies();
 		$pending_battle_provinces = [];
 		$armies_by_province = [];
 		
 		//first, sort all the armies by province
 		foreach($unchecked_armies as $cur_army_id => $cur_army)
 		{
-			$cur_province = $cur_army["province_id"];
-			$armies_by_province[$cur_province][] = $cur_army;
+			$cur_prov_name = $cur_army["prov_name"];
+			$armies_by_province[$cur_prov_name][] = $cur_army;
 		}
 		
 		//second, check each province for a battle with this target player
-		foreach($armies_by_province as $cur_province_id => $cur_province_armies)
+		foreach($armies_by_province as $cur_prov_name => $cur_province_armies)
 		{
 			$battle_with_target_player = false;
 			$defending_player_id = 0;
@@ -84,10 +83,10 @@ trait battle
 			if($battle_with_target_player && $defending_player_id != 0)
 			{
 				//there is a valid battle here
-				$pending_battle_provinces[$cur_province_id] = [];
-				$pending_battle_provinces[$cur_province_id]["armies"] = $cur_province_armies;
-				$pending_battle_provinces[$cur_province_id]["attacking_player_id"] = $target_player_id;
-				$pending_battle_provinces[$cur_province_id]["defending_player_id"] = $defending_player_id;
+				$pending_battle_provinces[$cur_prov_name] = [];
+				$pending_battle_provinces[$cur_prov_name]["armies"] = $cur_province_armies;
+				$pending_battle_provinces[$cur_prov_name]["attacking_player_id"] = $target_player_id;
+				$pending_battle_provinces[$cur_prov_name]["defending_player_id"] = $defending_player_id;
 			}
 		}
 		
@@ -101,7 +100,7 @@ trait battle
 		
 		//on the rare chance there are multiple factions in a province, then the current "defender" will always be the one with the lowest faction id that isnt the main player
 		//loop over armies in this province
-		$battling_armies = self::getCollectionFromDb("SELECT * FROM armies WHERE province_id='$battle_province_name'");
+		$battling_armies = $this->GetArmiesInProvinceFromProvName($battle_province_name);
 		foreach($battling_armies as $check_army_id => $check_army)
 		{
 			$check_player_id = $check_army["player_id"];
@@ -236,7 +235,7 @@ trait battle
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "combat score check 2, attacker:$attacker_final_score defender:$defender_final_score"));
 		
 		//get all attacking armies in the province
-		$armies = self::getCollectionFromDb("SELECT army_id, player_id FROM armies WHERE province_id='$prov_name'");
+		$armies = $this->GetArmiesInProvinceFromProvName($prov_name);
 		
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "checking attacker armies"));
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($armies,true)));
@@ -260,7 +259,7 @@ trait battle
 		}
 		
 		//get all defending armies in the province
-		$armies = self::getCollectionFromDb("SELECT army_id, player_id FROM armies WHERE province_id='$prov_name'");
+		$armies = $this->GetArmiesInProvinceFromProvName($prov_name);
 		$defender_shield_tiebreaker = false;
 		$numtypes = 13;
 		foreach($armies as $army_id => $army_info)
@@ -380,7 +379,7 @@ trait battle
 		//first, check which player has a larger army (default rule)
 		
 		//calculate total attacker army size
-		$attacker_armies = self::getCollectionFromDb("SELECT * FROM armies WHERE province_id='$battling_province_name' AND player_id='$attacking_player_id'");
+		$attacker_armies = $this->GetPlayerArmiesInProvinceFromProvName($attacking_player_id, $battling_province_name);
 		$attacker_army_size = 0;
 		$attacker_army_deck = $this->player_decks[$attacking_player_id];
 		foreach($attacker_armies as $check_army_id => $check_army)
@@ -391,7 +390,7 @@ trait battle
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "attacker_army_size:$attacker_army_size"));
 		
 		//calculate total defender army size
-		$defender_armies = self::getCollectionFromDb("SELECT * FROM armies WHERE province_id='$battling_province_name' AND player_id='$defending_player_id'");
+		$defender_armies = $this->GetPlayerArmiesInProvinceFromProvName($defending_player_id, $battling_province_name);
 		$defender_army_size = 0;
 		$defender_army_deck = $this->player_decks[$defending_player_id];
 		foreach($defender_armies as $check_army_id => $check_army)
@@ -499,7 +498,7 @@ trait battle
 		$losing_player_deck = $this->player_decks[$losing_player];
 		$battling_province_id = $this->getGameStateValue("battling_province_id");
 		$province_name = $this->getProvinceName($battling_province_id);
-		$armies = self::getCollectionFromDb("SELECT * FROM armies WHERE province_id='$province_name' AND player_id=$losing_player");
+		$armies = $this->GetPlayerArmiesInProvinceFromProvName($losing_player, $province_name);
 		foreach($armies as $army_id => $army)
 		{
 			//destroy the first one we find
@@ -567,7 +566,7 @@ trait battle
 			//get all winning armies in the province
 			$winning_player_id = $this->getLastBattleWinner();
 			$prov_name = $this->getProvinceName($this->getGameStateValue("battling_province_id"));
-			$armies = self::getCollectionFromDb("SELECT army_id, player_id FROM armies WHERE province_id='$prov_name' AND player_id='$winning_player_id'");
+			$armies = $this->GetPlayerArmiesInProvinceFromProvName($winning_player_id, $prov_name);
 			
 			//loop over all of these armies
 			$necromancer_found = false;
@@ -612,7 +611,7 @@ trait battle
 			//self::notifyAllPlayers("debug", "", array('debugmessage' => "check1"));
 			$dragon_tiles = [];
 			$prov_name = $this->getProvinceName($this->getGameStateValue("battling_province_id"));
-			$armies = self::getCollectionFromDb("SELECT army_id FROM armies WHERE province_id='$prov_name' AND player_id='$attacking_player_id'");
+			$armies = $this->GetPlayerArmiesInProvinceFromProvName($attacking_player_id, $prov_name);
 			$player_deck = $this->player_decks[$attacking_player_id];
 			
 			//get all attacking armies in the province
@@ -650,7 +649,7 @@ trait battle
 				if($tilesleft == 0)
 				{
 					//self::notifyAllPlayers("debug", "", array('debugmessage' => "deleting empty army $army_id"));
-					self::DbQuery("DELETE FROM armies WHERE army_id='$army_id';");
+					$this->DeleteArmy($army_id);
 				}
 				else
 				{
@@ -669,7 +668,7 @@ trait battle
 		$army_tiles = $losing_player_deck->getCardsInLocation('army', $sacrifice_army_id);
 		if(count($army_tiles) == 0)
 		{
-			self::DbQuery("DELETE FROM armies WHERE army_id='$sacrifice_army_id';");
+			$this->DeleteArmy($sacrifice_army_id);
 			
 			//there are no armies to retreat, so go straight to cleanup
 			$this->gamestate->nextState('battleCleanup');

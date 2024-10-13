@@ -262,7 +262,7 @@ trait village
 			//i have since changed the standard that "X_id" be reserved for int types
 			//"X_name" should now be used for varchar(16) types which contain the int id somewhere in them
 			//the database is one of the last holdouts of the old system that uses "X_id" for an int type
-			$province_name = $army_info["province_id"];
+			$province_name = $army_info["prov_name"];
 			
 			//cant build villages at the citadel
 			if(!in_array($province_name, $possible_provinces))

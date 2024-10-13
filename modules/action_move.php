@@ -53,7 +53,7 @@ trait action_move
 						continue;
 					}
 				}
-				$source_army = self::getObjectFromDB("SELECT army_id, province_id, player_id FROM armies WHERE army_id=$source_army_id");
+				$source_army = $this->GetArmy($source_army_id);
 				//$num_steps = count($army_action_steps);
 				//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($army_action_steps,true)));
 				
@@ -113,7 +113,7 @@ trait action_move
 				}
 				
 				//sanity check: does this army want to move to a different province?
-				if($dest_province_name != $source_army['province_id'])
+				if($dest_province_name != $source_army["prov_name"])
 				{
 					//update the database with the army's new province
 					$sql_update = "UPDATE armies SET province_id='$dest_province_name' WHERE army_id='$source_army_id';";
@@ -181,17 +181,6 @@ trait action_move
 			{
 				$this->ChaosHordeMoveUpdate();
 			}
-		
-			//showMessage
-			//$source_army = self::getObjectFromDB("SELECT army_id, province_id, player_id FROM armies WHERE army_id=$source_army_id");
-			
-			//test
-			/*$this->notifyAllPlayers('message',clienttranslate('Game moves ${token_name_rec}'),
-				['token_name_rec'=>[
-					'log' => '${token_name} #${token_number}',
-					'args' => ['token_name'=>clienttranslate('Boo'), 'token_number'=>$number, 'i18n'=>['token_name']]
-					]
-				]);*/
 		}
 		/*else
 		{

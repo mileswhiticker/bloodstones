@@ -35,8 +35,8 @@ trait retreat_withdraw
 		$attacking_player_id = $this->getGameStateValue("attacking_player_id");
 		$defending_player_id = $this->getGameStateValue("defending_player_id");
 		
-		$attacker_armies = self::getCollectionFromDb("SELECT * FROM armies WHERE province_id='$battling_province_name' AND player_id='$attacking_player_id'");
-		$defender_armies = self::getCollectionFromDb("SELECT * FROM armies WHERE province_id='$battling_province_name' AND player_id='$defending_player_id'");
+		$attacker_armies = $this->GetPlayerArmiesInProvinceFromProvName($attacking_player_id, $battling_province_name);
+		$defender_armies = $this->GetPlayerArmiesInProvinceFromProvName($defending_player_id, $battling_province_name);
 		
 		$defender_deck = $this->player_decks[$defending_player_id];
 		$attacker_deck = $this->player_decks[$attacking_player_id];
@@ -153,7 +153,7 @@ trait retreat_withdraw
 					
 					//check all armies in this sea province
 					$linked_prov_name = $this->getProvinceName($linked_prov_id);
-					$armies = self::getCollectionFromDb("SELECT * FROM armies WHERE province_id='$linked_prov_name' AND player_id='$attacking_player_id'");
+					$armies = $this->GetPlayerArmiesInProvinceFromProvName($attacking_player_id, $linked_prov_name);
 					foreach($armies as $army_id => $army)
 					{
 						//check all tiles in this army looking for a ship (note: there is 100% chance of it being a ship but lets be thorough as a sanity check)
@@ -330,7 +330,7 @@ trait retreat_withdraw
 		
 		//get some info about the retreating army... there should only be 1 army here
 		//you can add LIMIT 1 to the sql call to make it simply select the first row... but it's probably better to throw an exception if there is bad behaviour here so i can find and fix it
-		$retreating_army = self::getObjectFromDB("SELECT * FROM armies WHERE province_id='$battle_prov_name' AND player_id=$retreat_player_id");
+		$retreating_army = $this->GetMainPlayerArmyInProvinceFromProvName($retreat_player_id, $battle_prov_name);
 		$retreating_army_id = $retreating_army["army_id"];
 		$retreating_deck = $this->player_decks[$retreat_player_id];
 		$retreating_tiles = $retreating_deck->getCardsInLocation("army", $retreating_army_id);
@@ -429,7 +429,7 @@ trait retreat_withdraw
 		else
 		{
 			//delete it from our database
-			self::DbQuery("DELETE FROM armies WHERE army_id='$retreating_army_id';");
+			$this->DeleteArmy($retreating_army_id);
 		}
 	}
 }

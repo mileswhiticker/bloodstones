@@ -538,7 +538,7 @@ trait player_utils
 		
 		foreach($armies as $army_id => $army)
 		{
-			$prov_name = $army["province_id"];
+			$prov_name = $army["prov_name"];
 			$prov_id = $this->getProvinceIdFromName($prov_name);
 			$province_ids[] = $prov_id;
 			
@@ -689,7 +689,7 @@ trait player_utils
 		foreach($armies as $army_id => $army)
 		{
 			//check the province this army is in
-			$province_name = $army["province_id"];
+			$province_name = $army["prov_name"];
 			//self::notifyAllPlayers("debug", "", array('debugmessage' => "checking army$army_id in province $province_name"));
 			
 			//is this a desert province?
@@ -731,7 +731,7 @@ trait player_utils
 				$tiles = $player_deck->getCardsInLocation("army", $army_id);
 				if(count($tiles) == 0)
 				{
-					self::DbQuery("DELETE FROM armies WHERE army_id='$army_id';");
+					$this->DeleteArmy($army_id);
 				}
 			}
 		}

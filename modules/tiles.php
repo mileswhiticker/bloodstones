@@ -373,17 +373,16 @@ trait tiles
 				{
 					//siege engine
 					//+2 in combat against castle or citadel
-					$attacking_player_id = $this->getGameStateValue("attacking_player_id");
-					$defending_player_id = $this->getGameStateValue("defending_player_id");
-					$enemy_player_id = $attacking_player_id;
-					if($player_id == $attacking_player_id)
-					{
-						$enemy_player_id = $defending_player_id;
-					}
-					$enemy_player_deck = $this->player_decks[$enemy_player_id];
-					$enemy_armies = self::getCollectionFromDb("SELECT army_id, province_id FROM armies WHERE player_id='$enemy_player_id'");
+					//assume the enemy player is always a defender here... castles and citadels can only ever be defending
+					//this is safe in 99% of cases so i think we are ok
+					$enemy_player_id = $this->getGameStateValue("defending_player_id");
+					
+					//get enemy armies in this province
+					$province_id = $cur_province["id"];
+					$enemy_armies = $this->GetPlayerArmiesInProvinceFromProvId($enemy_player_id, $province_id);
 					
 					//loop over enemy armies to find a citadel or castle
+					$enemy_player_deck = $this->player_decks[$enemy_player_id];
 					foreach($enemy_armies as $army_id => $army_info)
 					{
 						//get all tiles in this army

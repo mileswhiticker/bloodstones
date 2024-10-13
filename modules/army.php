@@ -99,6 +99,9 @@ trait army
 	
     function tryArmyStackTransfer($source_army_id, $target_army_id, $tile_ids = null, $selection_flag = self::SELECT_ARMY_TARGET, $target_province_override = null, $temp_army_id_num = null)
 	{
+		//this is bugged and randomly interfering with other client UIs so force it to not select anything for now
+		$selection_flag = self::SELECT_ARMY_NONE;
+		
 		$current_player_id = $this->getCurrentPlayerId();
 		//$current_player = self::getObjectFromDB("SELECT player_id id, player_factionid factionid FROM player WHERE player_id='$current_player_id'");
 		$tile_ids_string = "";
@@ -262,6 +265,7 @@ trait army
 		$player_province_armies = $this->GetPlayerArmiesInProvinceFromProvName($player_id, $province_name);
 		
 		//return the first non-citadel army we find
+		//todo: skip undead armies also
 		$citadel_army_id = $this->GetCitadelArmyId($player_id);
 		foreach($player_province_armies as $army_id => $army)
 		{

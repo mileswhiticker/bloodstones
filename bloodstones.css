@@ -899,7 +899,8 @@
 	padding-left: 10px;
 	padding-right: 10px;
 	height: 100%;
-	overflow: hidden;
+	overflow-y: scroll;
+	overflow-x: hidden;
 }
 .selected_army_bg
 {

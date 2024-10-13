@@ -81,6 +81,89 @@ trait army
 		return $newarmy;
 	}
 	
+	function tryArmyStackSplit($source_army_id, $tile_ids)
+	{
+		//is this action allowed in this game state?
+        self::checkAction("action_tryArmyStackSplit");
+		
+		$this->tryArmyStackTransfer($source_army_id, null, $tile_ids, self::SELECT_ARMY_SOURCE);
+	}
+	
+	function tryArmyStackMerge($source_army_id, $target_army_id, $tile_ids)
+	{
+		//is this action allowed in this game state?
+        self::checkAction("action_tryArmyStackMerge");
+		
+		$this->tryArmyStackTransfer($source_army_id, $target_army_id, $tile_ids, self::SELECT_ARMY_TARGET);
+	}
+	
+    function tryArmyStackTransfer($source_army_id, $target_army_id, $tile_ids = null, $selection_flag = self::SELECT_ARMY_TARGET, $target_province_override = null, $temp_army_id_num = null)
+	{
+		$current_player_id = $this->getCurrentPlayerId();
+		//$current_player = self::getObjectFromDB("SELECT player_id id, player_factionid factionid FROM player WHERE player_id='$current_player_id'");
+		$tile_ids_string = "";
+		if(!is_null($tile_ids))
+		{
+			$tile_ids_string = implode(",",$tile_ids);
+		}
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::tryArmyStackTransfer($source_army_id,$target_army_id,$tile_ids_string,$target_province_override,$temp_army_id_num)"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($tile_ids,true)));
+		//
+		$source_army = $this->GetArmy($source_army_id);
+		$target_army = null;
+		if($target_army_id == null)
+		{
+			//create a new army stack in the province
+			$target_province_name = $target_province_override;
+			if($target_province_name == null)
+			{
+				$target_province_name = $source_army["prov_name"];
+			}
+			$target_army = $this->createArmy($target_province_name, $source_army['player_id'], $tile_ids, false);
+			$target_army_id = $target_army["army_id"];
+		}
+		else
+		{
+			//we are moving these tiles into an existing army
+			
+			//grab the player's deck
+			$player_deck = $this->player_decks[$current_player_id];
+			
+			//we are merging these tiles into an existing army
+			if(is_null($tile_ids) || count($tile_ids) == 0)
+			{
+				//by default, move all cards over
+				$player_deck->moveAllCardsInLocation('army', 'army', $source_army_id, $target_army_id);
+			}
+			else
+			{
+				$player_deck->moveCards($tile_ids, 'army', $target_army_id);
+			}
+			
+			//have we completely emptied the old army?
+			$tiles_left = $player_deck->getCardsInLocation('army', $source_army_id);
+			if(count($tiles_left) == 0)
+			{
+				//delete it from our database
+				$this->DeleteArmy($source_army_id);
+			}
+		}
+		
+		self::notifyAllPlayers('playerArmyTransfer', '', 
+			array(
+				'player_id' => $current_player_id,
+				'player_name' => $this->getPlayerNameById($current_player_id),
+				'source_army_id' => $source_army_id,
+				'target_army_id' => $target_army_id,
+				'temp_army_id' => $temp_army_id_num,
+				'selection_flag' => $selection_flag,
+				'tile_ids' => $tile_ids,
+				'target_province_override' => $target_province_override
+			));
+		
+		return $target_army;
+	}
+	
 	function GetArmyIdNumFromString($army_id_string)
 	{
 		//return "blstarmystack" + army_id_num;

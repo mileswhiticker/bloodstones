@@ -2,6 +2,12 @@
 
 trait village
 {
+	function beginBuildVillages()
+	{
+		self::checkAction('action_beginBuildVillages'); 
+		$this->gamestate->nextState('playerVillages');
+	}
+	
 	function tryPlayerBuildVillages($action_type, $action_info, $paid_tile_infos)
 	{
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::tryPlayerBuildVillages($action_type, [...], [...])"));

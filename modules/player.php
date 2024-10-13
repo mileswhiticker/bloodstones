@@ -875,4 +875,82 @@ trait player_utils
 			'prov_name' => $prov_name,
 			'undead_army' => $new_army));
 	}
+	
+	function playerSpawnTestArmy()
+	{
+		//is this action allowed in this game state
+		//$this->checkAction( $actionName, $bThrowException=true )
+		self::checkAction("action_playerSpawnTestArmy");
+		
+		//hijack this debug function rather than create a new one
+		//$this->debugCreateCapturableVillages();
+		//return;
+		
+		//grab some useful info
+		$owner_player_id = $this->getActivePlayerId();
+		
+		//pick a random province
+		$all_provinces = $this->getAllProvinces();
+		$random_province_id = rand(0, count($all_provinces) - 1);
+		$random_province_name = $this->getProvinceName($random_province_id);
+		
+		$new_army = $this->createArmy($random_province_name, $owner_player_id, null, true);
+		if(count($new_army["tiles"]) == 0)
+		{
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($new_army,true)));
+			$new_army_id = $new_army["army_id"];
+			$this->DeleteArmy($new_army_id);
+			self::notifyAllPlayers("debug", "", array('debugmessage' => "Warning: no more tiles in player deck to spawn"));
+		}
+		else
+		{
+			//var army_info = {army_id: notif.args.army_id, player_id: notif.args.player_id, province_id: notif.args.province_id, tiles: notif.args.tiles};
+			self::notifyAllPlayers('playerCreateArmy', '${player_name} has spawned test army', 
+				array(
+					'player_name' => $this->getPlayerNameById($owner_player_id),
+					//'army_id' => $new_army["army_id"],
+					//'player_id' => $owner_player_id,
+					//'province_id' => $random_province_name,
+					//'tiles' => $new_army["tiles"],
+					'pending_battles_update' => $this->GetPendingBattleProvincesAll(),
+					'army_info' => $new_army
+					//'from_div_id' => "bag"
+				));
+		}
+	}
+	
+	function getRegroupsSum()
+	{
+		$players = self::getCollectionFromDb("SELECT player_id id, player_regroups regroups FROM player ");
+		$total_regroups = 0;
+		foreach($players as $player_id => $player)
+		{
+			$total_regroups += $player["regroups"];
+		}
+		return $total_regroups;
+	}
+	
+	function getRegroupsMax()
+	{
+		//the maximum total number of regroups allowed in a game
+		$num_players = $this->getPlayersNumber();
+		$max_regroups = 3;
+		if($num_players >= 3)
+		{
+			$max_regroups = 2;
+		}
+		return $max_regroups * $num_players;
+	}
+	
+	function getMaxRegroups()
+	{
+		//3+ players can regroup twice
+		if($this->getPlayersNumber() >= 3)
+		{
+			return 2;
+		}
+		//1-2 players can regroup 3 times
+		return 3;
+	}
+
 }

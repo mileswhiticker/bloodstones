@@ -2,6 +2,267 @@
 
 trait battle
 {
+	function spawnBattle()
+	{
+		self::checkAction('action_spawnBattle'); 
+		
+		$prov_name = $this->getProvinceName(1);
+		
+		$owner_player_id = self::getActivePlayerId();
+		
+		//for testing
+		self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($this->GetPendingCaptureArmies($owner_player_id), true)));
+		return;
+		
+		$new_army = $this->createArmy($prov_name, $owner_player_id, null, true);
+		
+		self::notifyAllPlayers('playerCreateArmy', '${player_name} has spawned test army #1 for battle', 
+			array(
+				'player_name' => $this->getPlayerNameById($owner_player_id),
+				//'army_id' => $new_army["army_id"],
+				//'player_id' => $owner_player_id,
+				//'province_id' => $prov_name,
+				//'tiles' => $new_army["tiles"],
+				'pending_battles_update' => $this->GetPendingBattleProvincesAll(),
+				'army_info' => $new_army
+				//'from_div_id' => "bag"
+			));
+			
+		$owner_player_id = self::getPlayerAfter($owner_player_id);
+		$new_army = $this->createArmy($prov_name, $owner_player_id, null, true);
+		
+		self::notifyAllPlayers('playerCreateArmy', '${player_name} has spawned test army #2 for battle', 
+			array(
+				'player_name' => $this->getPlayerNameById($owner_player_id),
+				//'army_id' => $new_army["army_id"],
+				//'player_id' => $owner_player_id,
+				//'province_id' => $prov_name,
+				//'tiles' => $new_army["tiles"],
+				'pending_battles_update' => $this->GetPendingBattleProvincesAll(),
+				'army_info' => $new_army
+				//'from_div_id' => "bag"
+			));
+		/*
+		try
+		{
+			$pending_battle_provinces = $this->GetPendingBattleProvincesAll();
+			self::notifyAllPlayers("debug", "", array('debugmessage' => 'server::findBattle() success'));
+			self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($pending_battle_provinces,true)));
+		}
+		catch (Exception $e)
+		{
+			self::notifyAllPlayers("debug", "", array('debugmessage' => 'server::findBattle() fail'));
+		}
+		*/
+	}
+	
+	function trySwapTile($swap_tile_id)
+	{
+		//check if this action is allowed by the active player
+		self::checkAction('action_swapTile'); 
+		
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::trySwapTile($swap_tile_id)"));
+		
+		//some useful info
+		$attacking_player_id = $this->getGameStateValue("attacking_player_id");
+		$defending_player_id = $this->getGameStateValue("defending_player_id");
+		$current_player_id = $this->getCurrentPlayerId();
+		$other_player_id = $attacking_player_id;
+		if($other_player_id == $current_player_id)
+		{
+			$other_player_id = $defending_player_id;
+		}
+		
+		//a value of -1 means this player is trying to skip their swap
+		if($swap_tile_id >= 0)
+		{
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => "trySwapTile() check1"));
+			
+			//identify which player we are dealing with (attacker or defender)
+			$current_battle_deck = null;
+			if($current_player_id == $attacking_player_id)
+			{
+				$current_battle_deck = $this->attacker_dice_deck;
+			}
+			else if($current_player_id == $defending_player_id)
+			{
+				$current_battle_deck = $this->defender_dice_deck;
+			}
+			else
+			{
+				//this is a sanity check because it should be never reached, checkAction() will throw an exception first
+				throw new BgaUserException( self::_("server::trySwapTile() active player is neither attacker or defender") );
+			}
+			
+			//calculate the combat bonus for the swapping tile
+			$current_player_deck = $this->player_decks[$current_player_id];
+			$swap_tile_pips = $this->getTilePipsFromId($swap_tile_id, $current_player_deck);
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => "trySwapTile() swaptile has $swap_tile_pips pips"));
+			
+			//check there is a valid tile to replace
+			$battle_tiles = $current_battle_deck->getCardsInLocation("battle");
+			$weakest_tile = $this->getWeakestTile($battle_tiles);
+			
+			//is the lowest tile lower than our swap tile?
+			if($weakest_tile && $weakest_tile["pips"] < $swap_tile_pips)
+			{
+				//we've found our battle tile to replace
+				$current_battle_deck->moveCard($weakest_tile["tile_info"]["id"], "reject");
+				$current_player_deck->moveCard($swap_tile_id, "battle");
+				//self::notifyAllPlayers("debug", "", array('debugmessage' => "trySwapTile() check4"));
+				
+				$this->notifyPlayerHandChanged($attacking_player_id);
+			}
+			else
+			{
+				//this would be a tile waste so lets refund it and skip their turn
+				//self::notifyAllPlayers("debug", "", array('debugmessage' => "trySwapTile() check6"));
+				$refund_tile_info = $current_player_deck->getCard($swap_tile_id);
+				self::notifyPlayer($current_player_id, 'tileRefund', '', array(
+					"refunded_tiles" => [$refund_tile_info],
+					"location_from" => "paystack"
+				));
+			}
+		}
+		
+		$this->playerFinishSwap($current_player_id, $other_player_id);
+	}
+	
+	function playerFinishSwap($current_player_id, $other_player_id)
+	{
+		//each player only gets 1 opportunity to swap a tile
+		//todo: corsair special rules force them to swap second (note they also spy on enemy tiles)
+		$attacking_player_id = $this->getGameStateValue("attacking_player_id");
+		$defending_player_id = $this->getGameStateValue("defending_player_id");
+		$finish_battle = false;
+		if($current_player_id == $attacking_player_id)
+		{
+			$this->incGameStateValue("attacker_battle_swaps", 1);
+		}
+		else
+		{
+			$this->incGameStateValue("defender_battle_swaps", 1);
+		}
+		
+		$this->gamestate->nextState('nextBattleTile');
+	}
+	
+	function findBattle()
+	{
+		$pending_battle_provinces = $this->GetPendingBattleProvincesAll();
+		self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($pending_battle_provinces,true)));
+	}
+	
+	function tryStartBattle($battling_province_name)
+	{
+		//check if this action is allowed by the active player
+		self::checkAction('action_startBattle');
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::tryStartBattle($battling_province_name)"));
+		
+		//safety check to make sure a battle is possible here
+		$province_armies = $this->GetArmiesInProvinceFromProvName($battling_province_name);
+		$active_player_present = false;
+		$other_player_present = false;
+		$active_player_id = $this->getActivePlayerId();
+		foreach($province_armies as $army_id => $army)
+		{
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($army,true)));
+			if($army["player_id"] == $active_player_id)
+			{
+				$active_player_present = true;
+			}
+			else //if($army["player_id"] != $active_player_id)
+			{
+				//we dont need to know the exact defender, just any enemy army will do
+				$other_player_present = true;
+			}
+			
+			if($active_player_present && $other_player_present)
+			{
+				break;
+			}
+		}
+		
+		if(!$active_player_present)
+		{
+			//throw new BgaSystemException("Only the active player is allowed to start battles.");
+			self::notifyAllPlayers("debug", "", array('debugmessage' => "ERROR: Only the active player is allowed to start battles."));
+			return;
+		}
+		
+		if(!$other_player_present)
+		{
+			//throw new BgaSystemException("There are no enemy players to fight in $battling_province_name");
+			self::notifyAllPlayers("debug", "", array('debugmessage' => "ERROR: There are no enemy players to fight in $battling_province_name"));
+			return;
+		}
+		
+		//self::getCollectionFromDb("SELECT player_id id, player_score score, player_no no, player_color color FROM player");
+		
+		//determine who is the attacker and defender for this battle
+		//we considered whether there are edge cases in the rules where the attacker wont be the active player (eg through withdrawal)
+		//however there is a ruling that the attacker can only ever be the active player
+		$attacking_player_id = $active_player_id;
+		$this->setGameStateValue("attacking_player_id", $attacking_player_id);
+		$defending_player_id = $this->getDefenderId($battling_province_name, $attacking_player_id);
+		$this->setGameStateValue("defending_player_id", $defending_player_id);
+		
+		//save the battling prov id, this is needed later
+		$battling_province_id = $this->getProvinceIdFromName($battling_province_name);
+		$this->setGameStateValue("battling_province_id", $battling_province_id);
+		
+		$province_type_name = $this->GetProvinceTypeName($battling_province_id);
+		$stat_name = null;
+		switch($province_type_name)
+		{
+			case "Plains":
+			{
+				$stat_name = "battles_plains";
+				break;
+			}
+			case "Forest":
+			{
+				$stat_name = "battles_forest";
+				break;
+			}
+			case "Hills":
+			{
+				$stat_name = "battles_hills";
+				break;
+			}
+			case "Mountains":
+			{
+				$stat_name = "battles_mountains";
+				break;
+			}
+			case "Desert":
+			{
+				$stat_name = "battles_desert";
+				break;
+			}
+			case "Sea":
+			{
+				$stat_name = "battles_sea";
+				break;
+			}
+		}
+		if($stat_name)
+		{
+			$this->incStat(1, $stat_name);
+		}
+		
+		self::notifyAllPlayers("showMessage", clienttranslate('${player_name1} has attacked ${player_name2}!'), array(
+			'type' => "info",
+			'player_name1' => $this->getPlayerNameById($attacking_player_id),
+			'player_name2' => $this->getPlayerNameById($defending_player_id),
+			));
+		
+		//next, give the defender the option to withdraw
+		$this->gamestate->nextState('setupWithdraw');
+		
+		//transitioning state will call st_setupWithdraw() so follow the game logic there
+	}
+	
 	function GetPendingBattleProvincesAll($target_player_id = -1)
 	{
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::GetPendingBattleProvincesAll($target_player_id)"));

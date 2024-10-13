@@ -739,7 +739,44 @@ define(
 					var cur_zone = this.all_army_zones[i];
 					cur_zone.updateDisplayNewDimensions(this.army_tile_scale * this.zone_item_width_base, this.army_tile_scale * this.zone_item_height_base);
 				}
-			}
+			},
+			
+			UIActiveTitle : function(div_id)
+			{
+				dojo.removeClass(div_id, "blst_button");
+				dojo.removeClass(div_id, "blst_button_disabled");
+				dojo.removeClass(div_id, "inactive_phase");
+			},
+			
+			UIInactiveTitle : function(div_id)
+			{
+				dojo.removeClass(div_id, "blst_button");
+				dojo.removeClass(div_id, "blst_button_disabled");
+				dojo.addClass(div_id, "inactive_phase");
+			},
+			
+			UIActiveButton : function(div_id)
+			{
+				dojo.addClass(div_id, "blst_button");
+				dojo.removeClass(div_id, "blst_button_disabled");
+				dojo.removeClass(div_id, "inactive_phase");
+			},
+			
+			UIInactiveButton_smallPhases : function()
+			{
+				//console.log("page::UIInactiveButton_smallPhases()");
+				this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_CAPTURE));
+				this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_BUILD));
+				this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_MOVE));
+				this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_BATTLE));
+			},
+			
+			UIInactiveButton : function(div_id)
+			{
+				dojo.addClass(div_id, "blst_button");
+				dojo.addClass(div_id, "blst_button_disabled");
+				dojo.addClass(div_id, "inactive_phase");
+			},
 			
 		});
 		

@@ -158,6 +158,7 @@ define([
 	g_gamethemeurl + '/modules/province_ui.js',
 	g_gamethemeurl + '/modules/province_ui_setup.js',
 	g_gamethemeurl + '/modules/province_ui_events.js',
+	g_gamethemeurl + '/modules/province_ui_overlay.js',
 	
 	g_gamethemeurl + '/modules/village.js',
 	g_gamethemeurl + '/modules/village_ui.js',
@@ -232,6 +233,7 @@ function (dojo, declare, lang, fx, on, domAttr) {
 		_province_ui,
 		_province_ui_setup,
 		_province_ui_events,
+		_province_ui_overlay,
 		
 		_village,
 		_village_ui,
@@ -310,6 +312,14 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			this.STATE_FREEBUILD = 9;
 			this.STATE_MAX = 8;
 			
+			this.OVERLAY_NONE = 0;
+			this.OVERLAY_SELECT = 1;
+			this.OVERLAY_CAPTURE = 2;
+			this.OVERLAY_BUILD = 3;
+			this.OVERLAY_MOVE = 4;
+			this.OVERLAY_BATTLE = 5;
+			this.OVERLAY_VILLAGE = 6;
+			
 			//length of a row on the sprite sheet as measured in number of tiles
 			this.SPRITESHEET_ROW_TILES = 14;
 			this.SPRITESHEET_ROWS = 8;
@@ -359,6 +369,9 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			this.canvas_render_function = null;
 			this.previous_canvas_render_function = null;
 			this.canvas_anim_cancel_frame = null;
+			
+			//todo: transfer existing overlay code from build/mode/battle to here
+			this.current_overlay_mode = 0;
 			
 			
 			/* Player */

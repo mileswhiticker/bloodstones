@@ -57,112 +57,17 @@ define(
 						title_div = dojo.place("<h1>" + _("Enemy Army") + "</h1>", selected_army_div);
 					}
 					dojo.addClass(title_div, "ui_stack_title");
-					//dojo.addClass(title_div, "selected_stack_element");
 					
-					//createAsArmySelection: function(page, host_div_id, parent_army)
 					selected_army_display_stack = new modules.TileStack();
 					selected_army_display_stack.createAsArmySelection(this, "selected_army", new_selected_army);
 					window.gameui.selected_army_display_stack = selected_army_display_stack;
 					
-					//console.log(window.gameui.selected_army);
-					
-					//old army selection display
-					/*
-					//update the ui to show more info about this selected army stack
-					var selected_army_div = dojo.byId("selected_army");
-					
-					//remove the old title 
-					dojo.query(".selected_stack_element").forEach(dojo.destroy);
-					
-					//title
-					var title_div;
-					if(new_selected_army.player_id == this.getCurrentPlayer())
+					//highlight the province of the selected army
+					if(this.isCurrentPlayerMainStateDefault() || this.isSpectator || !this.isCurrentPlayerActive())
 					{
-						title_div = dojo.place("<h1>Your Army</h1>", selected_army_div);
+						const start_province_info = this.provinces_by_name[new_selected_army.prov_name];
+						this.SetProvinceOverlay(start_province_info, PROV_START);
 					}
-					else
-					{
-						title_div = dojo.place("<h1>Enemy Army</h1>", selected_army_div);
-					}
-					
-					dojo.addClass(title_div, "ui_stack_title");
-					dojo.addClass(title_div, "selected_stack_element");
-					
-					//we need to set absolute and calculated positions here in order to do the stack split animation effect 
-					//the "Selected army" title is 34px
-					//add in 10px top padding
-					var current_height_offset = 44;
-					
-					//name of the tile
-					var tile_title_height = 19;
-					
-					//image of the tile
-					var tile_image_height = 72;
-					
-					//add a ui element for each tile in the army stack
-					for(var tile_id in new_selected_army.tiles)
-					{
-						//grab the info for this tile
-						var tile = new_selected_army.tiles[tile_id];
-						//console.log(tile);
-						var tile_strings = this.all_tile_strings[tile.type_arg];
-						
-						//create it and some initial styling
-						var tile_div = dojo.place("<div></div>", selected_army_div);
-						tile_div.id = this.GetSelectedTileIdString(tile_id);
-						dojo.addClass(tile_div, "ui_stack_tile");
-						dojo.addClass(tile_div, "selected_stack_element");
-						dojo.style(tile_div,"top", current_height_offset + "px");
-						
-						//for debugging
-						//tile_div.style.border = "solid";
-						//tile_div.style.borderColor = "green";
-						
-						//name and type of tile
-						dojo.place("<b>" + tile_strings.name + "</b>", tile_div);
-						
-						//tile image
-						var host_image_div = dojo.place("<div style=\"height: 72px\"></div>", tile_div);
-						
-						var image_div = dojo.place("<div class=\"ui_stack_tile_image\"></div>", host_image_div);
-						image_div.id = this.GetSelectedTileImageIdString(tile_id);
-						dojo.connect(image_div, "click", dojo.hitch(this, this.onClickStackTileUI));
-						
-						//for debugging
-						//image_div.style.border = "solid";
-						//image_div.style.borderColor = "blue";
-						
-						//grab the image from the stock item
-						var stock_item_div = $(new_selected_army.getItemDivId(tile_id));
-						//console.log(stock_item_div);
-						var stock_item = new_selected_army.getItemById(tile_id);
-						//console.log(stock_item);
-						var type = new_selected_army.item_type[stock_item.type];
-						//console.log(type);
-						
-						var borderwidth = 12;
-						dojo.style(image_div, 'background-image', 'url(' + type.image + ')');
-						dojo.style(image_div, 'background-size', new_selected_army.backgroundSize);
-						dojo.style(image_div, "background-position", stock_item_div.style.backgroundPosition);
-						//dojo.style(image_div, 'padding', '10px');
-						
-						//create a selection overlay div
-						//var selected_div = dojo.place("<div class=\"ui_stack_tile_selected\"></div>", image_div);
-						//selected_div.id = "selected_tile_" + tile_id;
-						//tile.selected = 1;	//automatically reselect all tiles in the stack
-						//dojo.style(selected_div, 'opacity', tile.selected);
-						
-						//tile desc
-						var tile_desc = dojo.place("<div>" + tile_strings.desc + "</div>", tile_div);
-						//tile_desc.style.width = "190px";
-						
-						//move down the page
-						var new_offset = dojo.position(tile_div).h;
-						//console.log(tile_strings.name + " tile height:" + new_offset);
-						current_height_offset += new_offset + 10;	//10px bottom margin
-						//console.log("success");
-					}
-					*/
 				}
 				else
 				{
@@ -240,6 +145,12 @@ define(
 					
 					//add a hint telling the player they can select an army there
 					this.CreateArmySelectPanelTitle();
+					
+					//unhighlight the province of the selected army
+					if(this.isCurrentPlayerMainStateDefault() || this.isSpectator || !this.isCurrentPlayerActive())
+					{
+						this.ClearProvinceOverlayMode();
+					}
 				}
 				else
 				{

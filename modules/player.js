@@ -60,6 +60,11 @@ define(
 				return this.isCurrentPlayerActiveState("playerMain")
 			},
 			
+			isCurrentPlayerMainStateDefault : function()
+			{
+				return (this.isCurrentPlayerActive() && (this.current_phase_id == gameui.STATE_MAIN_DEFAULT || this.current_phase_id == null));
+			},
+			
 			isCurrentPlayerResetMode : function()
 			{
 				return (this.isCurrentPlayerActive() && this.current_phase_id == gameui.STATE_MAIN_RESET);

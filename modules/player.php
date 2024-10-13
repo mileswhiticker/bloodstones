@@ -855,6 +855,46 @@ trait player_utils
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($args,true)));
 	}
 	
+	function playerCycleHand()
+	{
+		//grab the appropriate tile deck
+		$active_player_id = self::getActivePlayerId();
+		$active_player_deck = $this->player_decks[$active_player_id];
+		
+		//get the hand cards
+		$active_hand_tiles = $active_player_deck->getCardsInLocation('hand');
+		$tile_ids = [];
+		foreach($active_hand_tiles as $tile_id => $tile_info)
+		{
+			array_push($tile_ids, $tile_id);
+		}
+		
+		//move them to discard
+		$active_player_deck->moveCards($tile_ids, 'discard');
+		
+		//get a new set
+		$active_player_deck->pickCardsForLocation(6, 'bag', 'hand');
+		$active_hand_tiles_new = $active_player_deck->getCardsInLocation('hand');
+		
+		//some useful info
+		$tiles_in_bag = $active_player_deck->getCardsInLocation('bag');
+		$tiles_in_discard = $active_player_deck->getCardsInLocation('discard');
+		
+		//info for the players
+		self::notifyAllPlayers("debug", "", array('debugmessage' => 
+			"server::CycleHand() tiles discarded: " 
+			. sizeof($active_hand_tiles) 
+			. " | tiles drawn:" 
+			. sizeof($active_hand_tiles_new)
+			. " | tiles in discard: "
+			. sizeof($tiles_in_discard)
+			. " | tiles in bag: "
+			. sizeof($tiles_in_bag)
+			));
+		self::notifyAllPlayers("cycleHand", "", array('new_hand' => $active_hand_tiles_new, 'target_player_id' => $active_player_id, 'num_hand_tiles' => 6));
+		$this->notifyPlayerHandChanged($active_player_id);
+	}
+	
 	function debugCreateUndead()
 	{
 		//now we will create a new undead tile!

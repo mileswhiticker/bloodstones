@@ -736,11 +736,11 @@ trait player_utils
 			}
 		}
 		$num_killed = count($dead_tiles);
+		$player_name = $this->getPlayerNameById($current_player_id);
 		if($num_killed > 0)
 		{
 			$this->incStat($num_killed, "terrain_losses", $current_player_id);
 			
-			$player_name = $this->getPlayerNameById($current_player_id);
 			$units_string = implode(", ", $dead_tiles_names);
 			if(count($surviving_tile_names) > 0)
 			{
@@ -752,9 +752,10 @@ trait player_utils
 				self::notifyAllPlayers("desert_tiles", clienttranslate('${player_name} has lost ${units_string} to the desert sands.'), array('player_id' => $current_player_id, 'player_name' => $player_name, 'units_string' => $units_string, 'dead_tiles' => $dead_tiles));
 			}
 		}
-		else
+		else if(count($surviving_tile_names) > 0)
 		{
-				self::notifyAllPlayers("desert_tiles", "", array('dead_tiles' => []));
+				$survivors_string = implode(", ", $surviving_tile_names);
+				self::notifyAllPlayers("desert_tiles", clienttranslate('${survivors_string} in the army of ${player_name} have survived the desert heat.'), array('player_id' => $current_player_id, 'player_name' => $player_name, 'survivors_string' => $survivors_string, 'dead_tiles' => $dead_tiles));
 		}
 	}
 	

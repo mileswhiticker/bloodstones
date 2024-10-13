@@ -142,7 +142,7 @@ define([
 	//ui
 	g_gamethemeurl + '/modules/ui.js',
 	g_gamethemeurl + '/modules/ui_main.js',
-	g_gamethemeurl + '/modules/ui_phase.js',
+	g_gamethemeurl + '/modules/ui_state.js',
 	g_gamethemeurl + '/modules/ui_bottompanel.js',
 	g_gamethemeurl + '/modules/ui_payment.js',
 	g_gamethemeurl + '/modules/ui_army.js',
@@ -216,7 +216,7 @@ function (dojo, declare, lang, fx, on, domAttr) {
 		
 		_ui,
 		_ui_main,
-		_ui_phase,
+		_ui_state,
 		_ui_bottompanel,
 		_ui_payment,
 		_ui_army,

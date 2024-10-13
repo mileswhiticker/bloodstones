@@ -459,6 +459,29 @@ define(
 				}
 			},
 			
+			HandTileDragStart : function(event)
+			{
+				//console.log("page::HandTileDragStart()");
+				//dojo.addClass(this, 'tile_dragging');		//cant use css classes here because TileStack overrides the opacity on the div
+				dojo.style(this, "opacity", 0.2);
+				//the div id here is in the format "player_hand_item_XY"
+				//event.dataTransfer.setData("text/plain", this.id);
+				window.gameui.dragging_data_id = this.id;
+			},
+			
+			HandTileDragEnd : function(event)
+			{
+				//console.log("page::HandTileDragEnd() " + this.id);
+				//dojo.removeClass(this, 'tile_dragging');
+				dojo.style(this, "opacity", 1);
+				window.gameui.dragging_data_id = null;
+			},
+			
+			HandTileDrop : function(event)
+			{
+				//console.log("HandTileDrop");
+			},
+			
 			GetPlayercardDivId : function(player_id)
 			{
 				return "playercard_" + player_id;
@@ -528,6 +551,49 @@ define(
 				return "player_score_" + player_id;
 			},
 			
+			GetVillagesCapturedContainerId : function(player_id)
+			{
+				return "villages_captured_" + player_id;
+			},
+			
+			GetVillagesCapturedTextNodeId : function(player_id)
+			{
+				return "villages_captured_text_" + player_id;
+			},
+			
+			AddVillagesCaptured : function(player_id, num_new_villages)
+			{
+				//console.log("page::AddVillagesCaptured(" + player_id + "," + num_new_villages + ")");
+				var player = this.gamedatas.players[player_id];
+				console.log(player);
+				player.villages_captured = Number(player.villages_captured);
+				player.villages_captured += num_new_villages;
+				var player_captured_villages = dojo.byId(this.GetVillagesCapturedTextNodeId(player_id));
+				player_captured_villages.innerHTML = player.villages_captured;
+			},
+			
+			GetCitadelsCapturedContainerId : function(player_id)
+			{
+				return "citadels_captured_" + player_id;
+			},
+			
+			GetCitadelsCapturedTextNodeId : function(player_id)
+			{
+				return "citadels_captured_text_" + player_id;
+			},
+			
+			GetVillagesAvailablePlayerboardTextDivId : function(player_id)
+			{
+				//note: this is for playerboard (right panel) version
+				return "villages_remaining_" + player_id;
+			},
+			
+			GetVillagesAvailablePlayercardTextDivId : function(player_id)
+			{
+				//note: this is for playercard (left panel) version
+				return "villages_remaining_" + player_id;
+			},
+			
 			UpdatePlayerScoreUI : function(player_id, new_score)
 			{
 				var player_score_div = dojo.byId(this.GetPlayercardScoreDivId(player_id));
@@ -594,72 +660,6 @@ define(
 					...new_tile_infos
 				};
 				this.gamedatas.hand = new_hand;
-			},
-			
-			HandTileDragStart : function(event)
-			{
-				//console.log("page::HandTileDragStart()");
-				//dojo.addClass(this, 'tile_dragging');		//cant use css classes here because TileStack overrides the opacity on the div
-				dojo.style(this, "opacity", 0.2);
-				//the div id here is in the format "player_hand_item_XY"
-				//event.dataTransfer.setData("text/plain", this.id);
-				window.gameui.dragging_data_id = this.id;
-			},
-			
-			HandTileDragEnd : function(event)
-			{
-				//console.log("page::HandTileDragEnd() " + this.id);
-				//dojo.removeClass(this, 'tile_dragging');
-				dojo.style(this, "opacity", 1);
-				window.gameui.dragging_data_id = null;
-			},
-			
-			HandTileDrop : function(event)
-			{
-				//console.log("HandTileDrop");
-			},
-			
-			GetVillagesCapturedContainerId : function(player_id)
-			{
-				return "villages_captured_" + player_id;
-			},
-			
-			GetVillagesCapturedTextNodeId : function(player_id)
-			{
-				return "villages_captured_text_" + player_id;
-			},
-			
-			AddVillagesCaptured : function(player_id, num_new_villages)
-			{
-				//console.log("page::AddVillagesCaptured(" + player_id + "," + num_new_villages + ")");
-				var player = this.gamedatas.players[player_id];
-				console.log(player);
-				player.villages_captured = Number(player.villages_captured);
-				player.villages_captured += num_new_villages;
-				var player_captured_villages = dojo.byId(this.GetVillagesCapturedTextNodeId(player_id));
-				player_captured_villages.innerHTML = player.villages_captured;
-			},
-			
-			GetCitadelsCapturedContainerId : function(player_id)
-			{
-				return "citadels_captured_" + player_id;
-			},
-			
-			GetCitadelsCapturedTextNodeId : function(player_id)
-			{
-				return "citadels_captured_text_" + player_id;
-			},
-			
-			GetVillagesAvailablePlayerboardTextDivId : function(player_id)
-			{
-				//note: this is for playerboard (right panel) version
-				return "villages_remaining_" + player_id;
-			},
-			
-			GetVillagesAvailablePlayercardTextDivId : function(player_id)
-			{
-				//note: this is for playercard (left panel) version
-				return "villages_remaining_" + player_id;
 			},
 			
 			AddCitadelsCaptured : function(player_id, captured_faction)

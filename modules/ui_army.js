@@ -83,8 +83,7 @@ define(
 					//highlight the province of the selected army
 					if(this.isCurrentPlayerMainStateDefault() || this.isSpectator || !this.isCurrentPlayerActive())
 					{
-						const start_province_info = this.provinces_by_name[new_selected_army.prov_name];
-						this.SetProvinceOverlay(start_province_info, PROV_START);
+						this.SetProvinceOverlayMode(this.OVERLAY_SELECT);
 					}
 				}
 				else

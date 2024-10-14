@@ -18,18 +18,22 @@ define(
 			this.OVERLAY_BATTLE = 5;
 			this.OVERLAY_VILLAGE = 6;
 			*/
+			
 			SetProvinceOverlayMode : function(overlay_mode)
 			{
 				this.current_overlay_mode = overlay_mode;
 				
 				//todo: move the province ui overlay states here from these other files
+				//this file is a mess im just going to get this working for now
 				switch(overlay_mode)
 				{
 					case this.OVERLAY_SELECT:
 					{
+						this.ClearProvinceOverlayMode();
 						if(this.selected_army != null)
 						{
-							//this.selected_army
+							const start_province_info = this.provinces_by_name[this.selected_army.prov_name];
+							this.SetProvinceOverlay(start_province_info, PROV_START);
 						}
 						break;
 					}
@@ -59,6 +63,24 @@ define(
 						this.ClearProvinceOverlayMode();
 						break;						
 					}
+				}
+			},
+			
+			UpdateCurrentOverlayMode : function()
+			{
+				if(this.isCurrentPlayerMainStateDefault() || this.isSpectator || !this.isCurrentPlayerActive())
+				{
+					this.SetProvinceOverlayMode(this.OVERLAY_SELECT);
+				}
+				else
+				{
+					//only one of these will actually trigger, because they check the current state or mode
+					this.RefreshMoveModeUI();
+					this.RefreshBuildModeUI();
+					this.RefreshPendingBattleCircles();
+					this.RefreshRetreatOverlay();
+					this.RefreshCitadelOverlay();
+					this.UIRefreshBuildVillages();
 				}
 			},
 			

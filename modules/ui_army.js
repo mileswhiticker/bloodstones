@@ -50,14 +50,32 @@ define(
 					var selected_army_div = dojo.byId("selected_army");
 					if(new_selected_army.player_id == gameui.getCurrentPlayer())
 					{
-						title_div = dojo.place("<h1>" + _("Your Army") + "</h1>", selected_army_div);
+						title_div = dojo.place("<h1 class=\"ui_stack_title\">" + _("Your Army") + "</h1>", selected_army_div);
 					}
 					else
 					{
-						title_div = dojo.place("<h1>" + _("Enemy Army") + "</h1>", selected_army_div);
+						title_div = dojo.place("<h1 class=\"ui_stack_title\">" + _("Enemy Army") + "</h1>", selected_army_div);
 					}
-					dojo.addClass(title_div, "ui_stack_title");
 					
+					//province info for this army
+					var prov_id = this.GetProvinceIdFromName(new_selected_army.prov_name);
+					var province_text = title_div = dojo.place("<div class=\"ui_selected_text\">" + this.GetProvinceNameUIString(prov_id) + "</div>", selected_army_div);
+					
+					//calculated battle strength if attacked here
+					var translated = dojo.string.substitute( _("If attacked here, these ${num} tiles will have a +${strength} bonus in combat"), {
+						num: new_selected_army.items.length,
+						strength: new_selected_army.GetArmyDefensiveBonus()
+						} );
+					var strength_text = title_div = dojo.place("<div class=\"ui_selected_text\">" + translated + "</div>", selected_army_div);
+					
+					//useful hint for the player
+					if(new_selected_army.player_id == gameui.getCurrentPlayer())
+					{
+						var hint_text = _("All units below will move. Click on units here to deselect them and leave them in place.");
+						var hint_div = dojo.place("<div class=\"ui_selected_text\">" + hint_text + "</div>", selected_army_div);
+					}
+					
+					//now show the tiles in this army
 					selected_army_display_stack = new modules.TileStack();
 					selected_army_display_stack.createAsArmySelection(this, "selected_army", new_selected_army);
 					window.gameui.selected_army_display_stack = selected_army_display_stack;
@@ -137,7 +155,7 @@ define(
 					window.gameui.selected_army = null;
 					
 					//clean up the ui
-					//dojo.query(".selected_stack_element").forEach(dojo.destroy);
+					dojo.query(".ui_selected_text").forEach(dojo.destroy);
 					
 					dojo.destroy("army_selection_stack");
 					//this.DestroyArmyByStack(window.gameui.selected_army_display_stack);

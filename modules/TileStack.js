@@ -532,7 +532,7 @@ define(
 				{
 					node_tilebonus = dojo.place("<div id=\"" + node_id + "\"class=\"battle_display_tilebonus\"></div>", div_container);
 					//what is the combat bonus for this fight?
-					var tilebonus_amount = window.gameui.getTileCombatBonus(Number(item.type), this.player_id, is_attacker, item.id);
+					var tilebonus_amount = window.gameui.getTileCombatBonus(Number(item.type), this.player_id, is_attacker);
 					//console.log("tilebonus_amount: " + tilebonus_amount);
 					if(tilebonus_amount != 0)
 					{
@@ -1650,6 +1650,29 @@ define(
 					}
 					return false;
 				}
+			},
+			
+			GetArmyDefensiveBonus : function()
+			{
+				//console.log("page::GetArmyDefensiveBonus()");
+				//console.log(this);
+				if(this.stack_type != STACK_ARMY)
+				{
+					console.log("WARNING! Tile:GetArmyDefensiveBonus() called on wrong stack_type:" + this.stack_type);
+					console.log(this);
+					return -1;
+				}
+				
+				var total_stack_bonus = 0;
+				for(var index in this.items)
+				{
+					var item = this.items[index];
+					//console.log(item);
+					var tilebonus_amount = window.gameui.getTileCombatBonus(Number(item.type), this.player_id, false, this.prov_name);
+					total_stack_bonus += tilebonus_amount;
+				}
+				
+				return total_stack_bonus;
 			},
 			
 			// Unselect item with specified id (raw method)

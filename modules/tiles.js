@@ -157,7 +157,7 @@ define(
 				return true;
 			},
 			
-			getTileCombatBonus : function(tile_type, player_id, is_attacking)
+			getTileCombatBonus : function(tile_type, player_id, is_attacking, province_name = null)
 			{
 				//console.log("page::getTileCombatBonus(" + tile_type + "," + player_id  + "," + is_attacking + ")");
 				//calculating the tile bonus is complicated with a number of different rules
@@ -166,7 +166,11 @@ define(
 				//some more helpful info
 				var base_type = this.getBaseTileType(tile_type);
 				//console.log("base_type:" + base_type);
-				var cur_province = this.provinces_by_name[this.preview_battle_province_name];
+				if(!province_name)
+				{
+					province_name = this.preview_battle_province_name;
+				}
+				var cur_province = this.provinces_by_name[province_name];
 				
 				if(base_type >= this.TILE_UNIT_MIN && base_type <= this.TILE_UNIT_MAX)
 				{
@@ -448,6 +452,11 @@ define(
 								{
 									tile_name = "Goblin";
 									tile_desc : "+1 in combat when attacking. May remain in deserts.";
+								}
+								else
+								{
+									tile_name = all_tile_strings_generic[basetypeid].name;
+									tile_desc = all_tile_strings_generic[basetypeid].desc;
 								}
 								break;
 							}

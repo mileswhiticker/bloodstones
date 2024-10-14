@@ -83,6 +83,8 @@ define(
 				this.duration = 500;	//default 1000, used for tile stacking and unstacking animation
 				this.extraClassesContainer = "";
 				this.ui_attacker_layout = false;
+				this.hide_all_except_top = false;
+				this.display_stack_size = false;
 				
 				this.custom_item_render_callback = null;
 				this.custom_container_height_function = null;
@@ -196,6 +198,8 @@ define(
 				//default functionality for ebg.stock is only to stack vertically or horizontally
 				//this.vertical_overlap = 20;
 				this.horizontal_overlap = 10;
+				this.hide_all_except_top = true;
+				this.display_stack_size = true;
 				this.items_per_line = 20;
 				this.item_margin = 0;
 				this.item_width = 99;
@@ -569,6 +573,11 @@ define(
 				//so far it hasn't been an issue up until now
 				//combining player id and tile id will create a unique identifier
 				return "battle_display_tilebonus_" + this.player_id + "_" + item.id;
+			},
+			
+			getStackSizeDivId : function()
+			{
+				return this.id_string + "_stacksize";
 			},
 			
 			destroy_self: function()
@@ -1040,7 +1049,12 @@ define(
 				var item_visible_width = this.item_width;
 				var item_visible_width_lastitemlost = 0;
 				var itemIndex = 'auto';
-				if( this.horizontal_overlap != 0 )
+				if(this.hide_all_except_top)
+				{
+					itemIndex = 1;
+					item_visible_width = 0;
+				}
+				else if( this.horizontal_overlap != 0 )
 				{
 					item_visible_width = Math.round( this.item_width*this.horizontal_overlap/100 );
 					item_visible_width_lastitemlost = this.item_width - item_visible_width;
@@ -1068,13 +1082,15 @@ define(
 				var lastLine = 0;
 				var control_new_width = 0;
 				var n=0;
-			
+				
 				for( var i in this.items )
 				{
 					var item = this.items[ i ];
 					var item_id = this.getItemDivId( item.id );
 					if( itemIndex != 'auto' )
-					{   itemIndex++;    }
+					{
+						itemIndex++;
+					}
 				  //  console.log( "item: "+item_id );
 
 					if( typeof item.loc == 'undefined' )
@@ -1285,6 +1301,25 @@ define(
 					}
 					dojo.style( this.control_name, 'width', control_new_width+'px' );
 				}
+				
+				if(this.display_stack_size)
+				{
+					var stack_size_div_id = this.getStackSizeDivId();
+					var stack_size_div = $( stack_size_div_id );
+					if(this.items.length > 1)
+					{
+						if(!stack_size_div)
+						{
+							stack_size_div = dojo.place("<div id=\"" + stack_size_div_id + "\" class=\"army_stack_size_display\"></div>",this.container_div.id,"first");
+						}
+						dojo.style(stack_size_div, 'zIndex', this.items.length + 2);
+						stack_size_div.innerHTML = "x" + this.items.length;
+					}
+					else if(stack_size_div)
+					{
+						dojo.destroy(stack_size_div_id);
+					}
+				}
 			},
 			
 			BattleDisplayApplyHeight : function(control_height)
@@ -1485,7 +1520,7 @@ define(
 						if(this.selected_div)
 						{
 							var select_box_width = this.item_width + this.apparenceBorderWidth*2;
-							if(this.items.length >= 1)
+							if(this.items.length >= 1 && !this.display_stack_size)
 							{
 								select_box_width += this.horizontal_overlap * (this.items.length - 1);
 								select_box_width += this.vertical_overlap * (this.items.length - 1);

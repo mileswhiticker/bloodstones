@@ -854,6 +854,19 @@
 	width: 165px;
 }
 
+.army_stack_size_display
+{
+	background-color: white;
+	opacity: 0.6;
+	border-radius: 15px;
+	position: absolute;
+	bottom: 0px;
+	font-size: large;
+	width: 24px;
+	font-weight: bold;
+	padding: 2px;
+}
+
 /*.blst_captured_citadels_container
 {
 	position: absolute;

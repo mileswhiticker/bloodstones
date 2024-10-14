@@ -694,7 +694,7 @@ define(
 			
 			GetProvinceNameUIString : function(prov_id)
 			{
-				return "Area " + prov_id + "(" + this.GetProvinceType(prov_id) + ")";
+				return "Area " + prov_id + " (" + this.GetProvinceType(prov_id) + ")";
 			}
 		});
 			

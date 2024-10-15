@@ -719,7 +719,7 @@ define(
 				villages_available_playerboard.innerText = villages_available;
 				
 				//left panel (only exists on current player client)
-				var villages_available_playercard = dojo.byId(this.GetVillagesAvailablePlayercardTextDivId(owner_player_id));
+				var villages_available_playercard = dojo.byId(this.GetVillagesAvailablePlayercardTextDivId(player_id));
 				if(villages_available_playercard)
 				{
 					villages_available_playercard.innerHTML = villages_available;

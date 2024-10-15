@@ -205,11 +205,7 @@ define(
 				this.item_width = 99;
 				this.item_height = 50;
 				this.container_div.style.width = "99px";
-				dojo.addClass(this.id_string, "map_army_transformable");
-				if(!window.gameui.display_map_stacks)
-				{
-					dojo.addClass(this.id_string,"display_none");
-				}
+				this.applyMapTransformable();
 				//this.container_div.style.height = "50px";		//this is automatically overriden
 				
 				this.setSelectionMode(3);
@@ -260,14 +256,10 @@ define(
 				this.item_width = 50;
 				this.item_height = 50;
 				this.container_div.style.width = "50px";
-				dojo.addClass(this.id_string, "map_army_transformable");
-				if(!window.gameui.display_map_stacks)
-				{
-					dojo.addClass(this.id_string,"display_none");
-				}
 				//this.container_div.style.height = "50px";		//this is automatically overriden
 				this.backgroundSize = "100% 100%";
 				this.setSelectionMode(3);
+				this.applyMapTransformable();
 				/*
 				this.apparenceBorderWidth = window.gameui.army_selection_border_width;		//note: the default stock handling expects this to be string value eg "5px" but i think ive overwridden it everywhere here
 				dojo.style(this.container_div, 'margin', this.apparenceBorderWidth + "px");
@@ -291,6 +283,16 @@ define(
 				
 				//this method will "slide" it out across the board to the starting provine
 				window.gameui.MoveArmy(this, village_info.province_name,  true);
+			},
+			
+			applyMapTransformable : function()
+			{
+				dojo.addClass(this.id_string, "map_army_transformable");
+				if(!window.gameui.display_map_stacks)
+				{
+					dojo.addClass(this.id_string,"display_none");
+				}
+				dojo.style(this.id_string,"transform", "scale(" + window.gameui.army_tile_scale + ")");
 			},
 			
 			addVillage(new_faction_id)

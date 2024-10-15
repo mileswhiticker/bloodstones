@@ -263,7 +263,13 @@ define(
 							{
 								enemy_army = this.army_display_attacker;
 							}
-							console.log(enemy_army);
+							//console.log(enemy_army);
+							
+							//without an enemy castle, this siege engine is useless in combat
+							if(enemy_army == null)
+							{
+								return 0;
+							}
 							
 							//loop over enemy units to find a citadel or castle
 							for(var tile_id_string in enemy_army.tiles)

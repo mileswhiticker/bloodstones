@@ -314,6 +314,8 @@ define(
 				
 				//in case of replay mode
 				this.RemoveMoveModeUI();
+				
+				this.UpdateCurrentOverlayMode();
 			},
 			
 			notif_playerMoveFail : function(notif)

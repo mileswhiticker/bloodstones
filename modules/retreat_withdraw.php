@@ -321,8 +321,9 @@ trait retreat_withdraw
 		$retreat_player_id = $this->getLastBattleLoser();
 		if($retreat_player_id == 0)
 		{
-			//sanity check
-			self::notifyAllPlayers("debug", "", array('debugmessage' => "WARNING! server::HandleRetreatWithdraw($retreat_prov_name) but getLastBattleLoser() returned 0"));
+			//this is expected behaviour... players can withdraw before a battle starts so there would be no loser
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => "WARNING! server::HandleRetreatWithdraw($retreat_prov_name) but getLastBattleLoser() returned 0"));
+			
 			$retreat_player_id = $this->getGameStateValue("defending_player_id");
 		}
 		$retreat_faction_id = $this->GetPlayerFaction($retreat_player_id);

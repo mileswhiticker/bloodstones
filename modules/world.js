@@ -248,6 +248,7 @@ define(
 			MoveCameraWorld(world_x, world_y)
 			{
 				//note: when setting the background-position values, the anchor for coords is bottom right, so +x goes left and +y goes up
+				//`console.log("page::MoveCameraWorld(" + world_x + "," + world_y + ")");
 				this.camera_coords_world.x = world_x;
 				this.camera_coords_world.y = world_y
 				

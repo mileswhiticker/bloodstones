@@ -29,13 +29,9 @@ define(
 					this.enterSmallPhase(gameui.STATE_MAIN_MOVE);
 					this.AddMoveModeUI();
 					this.EnablePaymentBucket(gameui.STATE_MAIN_MOVE);
+					this.SetProvinceOverlayMode(this.OVERLAY_MOVE);
 					//this.ResetActionInfo(this.ACTION_MOVE);	//todo: im not sure what this function was meant to be or do, movemode needs a bunch of work to clean it up
 				}
-				/*else if(this.isCurrentPlayerMoveMode())
-				{
-					//refresh the display
-					this.RefreshMoveModeUI();
-				}*/
 			},
 			
 			EndMoveMode : function(approved)
@@ -113,6 +109,7 @@ define(
 				}
 				
 				//back to the main phase
+				this.SetProvinceOverlayMode(this.OVERLAY_SELECT);
 				if(this.isCurrentPlayerMoveMode())
 				{
 					//remove the move mode UI overlays

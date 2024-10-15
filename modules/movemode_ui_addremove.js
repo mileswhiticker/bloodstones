@@ -233,13 +233,17 @@ define(
 			
 			RemoveMoveModeUI : function()
 			{
-				this.ClearCanvas();
-				
-				//clean up the ui
-				dojo.query(".province_move_cost").forEach(dojo.destroy);
-				
-				//todo: cancel any queued movement
-				//this.enterPhase(gameui.STATE_MAIN_DEFAULT);
+				//console.log("page::RemoveMoveModeUI()");
+				if(this.isCurrentPlayerMoveMode())
+				{
+					this.ClearCanvas();
+					
+					//clean up the ui
+					dojo.query(".province_move_cost").forEach(dojo.destroy);
+					
+					//todo: cancel any queued movement
+					//this.enterPhase(gameui.STATE_MAIN_DEFAULT);
+				}
 			},
 			
 			RefreshMoveModeUI : function()

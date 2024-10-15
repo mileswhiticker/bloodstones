@@ -9,82 +9,110 @@ define(
 		var instance = declare("_province_ui_overlay", null, {
 			//put your functions here
 			
-			/*
-			this.OVERLAY_NONE = 0;
-			this.OVERLAY_SELECT = 1;
-			this.OVERLAY_CAPTURE = 2;
-			this.OVERLAY_BUILD = 3;
-			this.OVERLAY_MOVE = 4;
-			this.OVERLAY_BATTLE = 5;
-			this.OVERLAY_VILLAGE = 6;
-			*/
-			
 			SetProvinceOverlayMode : function(overlay_mode)
 			{
+				//console.log("page::SetProvinceOverlayMode(" + overlay_mode + ")");
 				this.current_overlay_mode = overlay_mode;
 				
 				//todo: move the province ui overlay states here from these other files
 				//this file is a mess im just going to get this working for now
-				switch(overlay_mode)
+			},
+			
+			UpdateCurrentOverlayMode : function()
+			{
+				//console.log("page::UpdateCurrentOverlayMode() this.current_overlay_mode:" + this.current_overlay_mode);
+				switch(this.current_overlay_mode)
 				{
 					case this.OVERLAY_SELECT:
 					{
-						this.ClearProvinceOverlayMode();
+						this.ClearCanvas();
 						if(this.selected_army != null)
 						{
 							const start_province_info = this.provinces_by_name[this.selected_army.prov_name];
-							this.SetProvinceOverlay(start_province_info, PROV_START);
+							this.SetProvinceOverlay(start_province_info, PROV_SELECT);
 						}
+						break;
+					}
+					case this.OVERLAY_CITADEL:
+					{
+						this.RefreshCitadelOverlay();
+						break;
+					}
+					case this.OVERLAY_UNDEAD:
+					{
+						this.RefreshMoveModeUI();
+						break;
+					}
+					case this.OVERLAY_WITHDRAWRETREAT:
+					{
+						this.RefreshRetreatOverlay();
 						break;
 					}
 					case this.OVERLAY_CAPTURE:
 					{
+						this.RefreshCaptureUI();
 						break;
 					}
 					case this.OVERLAY_BUILD:
 					{
+						this.RefreshBuildModeUI();
 						break;
 					}
 					case this.OVERLAY_MOVE:
 					{
+						this.RefreshMoveModeUI();
+						break;
+					}
+					case this.OVERLAY_BATTLE_PREVIEW:
+					{
+						this.ClearCanvas();
+						if(this.selected_army != null)
+						{
+							const start_province_info = this.provinces_by_name[this.selected_army.prov_name];
+							this.SetProvinceOverlay(start_province_info, PROV_SELECT);
+						}
+						
+						this.RefreshPendingBattleCircles();
+						
 						break;
 					}
 					case this.OVERLAY_BATTLE:
 					{
+						this.ClearCanvas();
+						if(this.selected_army != null && this.selected_army.prov_name != this.battling_province_name)
+						{
+							const start_province_info = this.provinces_by_name[this.selected_army.prov_name];
+							this.SetProvinceOverlay(start_province_info, PROV_SELECT);
+						}
+						
+						if(this.battling_province_name != null)
+						{
+							const start_province_info = this.provinces_by_name[this.battling_province_name];
+							this.SetProvinceOverlay(start_province_info, PROV_BATTLE);
+						}
+						
 						break;
 					}
 					case this.OVERLAY_VILLAGE:
 					{
+						this.UIRefreshBuildVillages();
+						break;
+					}
+					case this.OVERLAY_NONE:
+					{
+						this.UIRefreshBuildVillages();
 						break;
 					}
 					default:
 					{
-						console.log("WARNING! page::SetProvinceOverlayMode(" + overlay_mode + ") unknown overlay mode");
-						this.ClearProvinceOverlayMode();
+						console.log("WARNING! page::UpdateCurrentOverlayMode(" + this.current_overlay_mode + ") unknown overlay mode");
+						this.ResetProvinceOverlayMode();
 						break;						
 					}
 				}
 			},
 			
-			UpdateCurrentOverlayMode : function()
-			{
-				if(this.isCurrentPlayerMainStateDefault() || this.isSpectator || !this.isCurrentPlayerActive())
-				{
-					this.SetProvinceOverlayMode(this.OVERLAY_SELECT);
-				}
-				else
-				{
-					//only one of these will actually trigger, because they check the current state or mode
-					this.RefreshMoveModeUI();
-					this.RefreshBuildModeUI();
-					this.RefreshPendingBattleCircles();
-					this.RefreshRetreatOverlay();
-					this.RefreshCitadelOverlay();
-					this.UIRefreshBuildVillages();
-				}
-			},
-			
-			ClearProvinceOverlayMode : function()
+			ResetProvinceOverlayMode : function()
 			{
 				this.current_overlay_mode = this.OVERLAY_NONE;
 				this.ClearCanvas();

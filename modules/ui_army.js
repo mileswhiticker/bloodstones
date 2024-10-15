@@ -81,10 +81,7 @@ define(
 					window.gameui.selected_army_display_stack = selected_army_display_stack;
 					
 					//highlight the province of the selected army
-					if(this.isCurrentPlayerMainStateDefault() || this.isSpectator || !this.isCurrentPlayerActive())
-					{
-						this.SetProvinceOverlayMode(this.OVERLAY_SELECT);
-					}
+					this.UpdateCurrentOverlayMode();
 				}
 				else
 				{
@@ -162,12 +159,7 @@ define(
 					
 					//add a hint telling the player they can select an army there
 					this.CreateArmySelectPanelTitle();
-					
-					//unhighlight the province of the selected army
-					if(this.isCurrentPlayerMainStateDefault() || this.isSpectator || !this.isCurrentPlayerActive())
-					{
-						this.ClearProvinceOverlayMode();
-					}
+					this.UpdateCurrentOverlayMode();
 				}
 				else
 				{

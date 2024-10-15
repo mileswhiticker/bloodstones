@@ -81,7 +81,10 @@ define(
 			
 			RemoveBuildModeUI : function()
 			{
-				this.ClearCanvas();
+				if(this.isCurrentPlayerBuildMode() || this.isCurrentPlayerFreeBuildMode())
+				{
+					this.ClearCanvas();
+				}
 			},
 			
 			RefreshBuildModeUI : function()
@@ -94,7 +97,7 @@ define(
 				}
 				else
 				{
-					//console.log("WARNING: trying to refresh build mode UI but not currently in build mode");
+					console.log("WARNING: trying to refresh build mode UI but not currently in build mode");
 				}
 			},
 		});

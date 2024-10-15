@@ -62,6 +62,12 @@ define(
 					this.SetProvinceOverlayColour(cur_province_info, overlayColor, fillColor);
 				}
 			},
+			
+			RefreshCaptureUI : function()
+			{
+				this.ClearCanvas();
+				this.UICanvasRenderCaptureOverlay();
+			},
 		});
 		
 		return instance;

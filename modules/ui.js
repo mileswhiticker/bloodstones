@@ -175,6 +175,11 @@ define(
 							this.possible_citadel_provinces = args.args.possible_citadel_provinces;
 							this.UIStateCitadelPlacement(args);
 							this.BeginCitadelState();
+							this.SetProvinceOverlayMode(this.OVERLAY_CITADEL);
+						}
+						else
+						{
+							this.SetProvinceOverlayMode(this.OVERLAY_SELECT);
 						}
 						break;
 					}
@@ -191,7 +196,16 @@ define(
 								
 								//5 free build points
 								this.AddActionPaidAmount(current_player_info.freebuildpoints);
+								this.SetProvinceOverlayMode(this.OVERLAY_BUILD);
 							}
+							else
+							{
+								this.SetProvinceOverlayMode(this.OVERLAY_SELECT);
+							}
+						}
+						else
+						{
+							this.SetProvinceOverlayMode(this.OVERLAY_SELECT);
 						}
 						break;
 					}
@@ -211,7 +225,16 @@ define(
 							{
 								this.AddFreeBuildUI();
 								this.AddActionPaidAmount(current_player_info.freebuildpoints);
+								this.SetProvinceOverlayMode(this.OVERLAY_BUILD);
 							}
+							else
+							{
+								this.SetProvinceOverlayMode(this.OVERLAY_SELECT);
+							}
+						}
+						else
+						{
+							this.SetProvinceOverlayMode(this.OVERLAY_SELECT);
 						}
 						break;
 					}
@@ -229,6 +252,11 @@ define(
 							//console.log(args.args.possible_capture_infos);
 							this.UIStatePlayerCapture(args);
 							this.BeginCaptureState();
+							this.SetProvinceOverlayMode(this.OVERLAY_CAPTURE);
+						}
+						else
+						{
+							this.SetProvinceOverlayMode(this.OVERLAY_SELECT);
 						}
 						break;
 					}
@@ -238,6 +266,11 @@ define(
 						{
 							this.UIStatePlayerUndead(args);
 							this.BeginUndeadState();
+							this.SetProvinceOverlayMode(this.OVERLAY_UNDEAD);
+						}
+						else
+						{
+							this.SetProvinceOverlayMode(this.OVERLAY_SELECT);
 						}
 						break;
 					}
@@ -249,13 +282,27 @@ define(
 							this.possible_capture_infos = args.args.possible_capture_infos;
 							
 							this.buildable_provinces = args.args.buildable_provinces;
-							this.UIStatePlayerMain(gameui.STATE_MAIN_DEFAULT);
+							this.UIStatePlayerMain(this.STATE_MAIN_DEFAULT);
+						}
+						else
+						{
+							this.SetProvinceOverlayMode(this.OVERLAY_SELECT);
 						}
 						break;
 					}
 					case 'chooseWithdraw':
 					{
+						this.retreat_prov_options = args.args.retreat_prov_options;
 						this.UIStateChooseWithdraw(args);
+						if(this.isCurrentPlayerActive())
+						{
+							this.SetProvinceOverlayMode(this.OVERLAY_WITHDRAWRETREAT);
+						}
+						else
+						{
+							this.SetProvinceOverlayMode(this.OVERLAY_BATTLE);
+							this.UpdateCurrentOverlayMode();
+						}
 						break;
 					}
 					case 'setupBattle':
@@ -267,19 +314,30 @@ define(
 					case 'battleTile':
 					{
 						//update the battle tiles
+						this.SetProvinceOverlayMode(this.OVERLAY_BATTLE);
 						this.UIStateBattleTile(args);
 						break;
 					}
 					case 'battleEnd':
 					{
 						//update the titles
+						this.SetProvinceOverlayMode(this.OVERLAY_BATTLE);
 						this.UIStateBattleEnd(args);
 						break;
 					}
 					
 					case 'retreat':
 					{
+						this.retreat_prov_options = args.args.retreat_prov_options;
 						this.UIStateBattleRetreat(args);
+						if(this.isCurrentPlayerActive())
+						{
+							this.SetProvinceOverlayMode(this.OVERLAY_WITHDRAWRETREAT);
+						}
+						else
+						{
+							this.SetProvinceOverlayMode(this.OVERLAY_SELECT);
+						}
 						break;
 					}
 					case 'battleCleanup':
@@ -294,6 +352,11 @@ define(
 							this.buildable_province_names = args.args.possible_village_provinces;
 							this.UIStatePlayerVillages(args);
 							this.BeginVillageState();
+							this.SetProvinceOverlayMode(this.OVERLAY_VILLAGE);
+						}
+						else
+						{
+							this.SetProvinceOverlayMode(this.OVERLAY_SELECT);
 						}
 						break;
 					}
@@ -588,9 +651,9 @@ define(
 				return 9999;
 			},
 			
-			GameLayerDialog : function()
+			GameLayerTopPanel : function()
 			{
-				return this.GameLayerDialogBase() + 1;
+				return this.GameLayerBattlewindow() + 1;
 			},
 			
 			GameLayerPaywindow : function()

@@ -131,6 +131,7 @@ define(
 				{
 					case gameui.STATE_MAIN_DEFAULT:
 					{
+						this.SetProvinceOverlayMode(this.OVERLAY_SELECT);
 						if(this.gamedatas.village_captures_available > 0)
 						{
 							this.UIActiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_CAPTURE));
@@ -146,6 +147,7 @@ define(
 					}
 					case gameui.STATE_MAIN_CAPTURE:
 					{
+						this.SetProvinceOverlayMode(this.OVERLAY_CAPTURE);
 						this.UIActiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_CAPTURE));
 						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_BUILD));
 						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_MOVE));
@@ -154,6 +156,7 @@ define(
 					}
 					case gameui.STATE_MAIN_BUILD:
 					{
+						this.SetProvinceOverlayMode(this.OVERLAY_BUILD);
 						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_CAPTURE));
 						this.UIActiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_BUILD));
 						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_MOVE));
@@ -162,6 +165,7 @@ define(
 					}
 					case gameui.STATE_MAIN_MOVE:
 					{
+						this.SetProvinceOverlayMode(this.OVERLAY_MOVE);
 						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_CAPTURE));
 						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_BUILD));
 						this.UIActiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_MOVE));
@@ -170,6 +174,7 @@ define(
 					}
 					case gameui.STATE_MAIN_BATTLE:
 					{
+						this.SetProvinceOverlayMode(this.OVERLAY_BATTLE);
 						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_CAPTURE));
 						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_BUILD));
 						this.UIInactiveButton(this.GetSmallPhaseButtonDivId(gameui.STATE_MAIN_MOVE));

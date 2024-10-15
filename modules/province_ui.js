@@ -27,6 +27,10 @@ const PROV_QUEUED = 14;
 const PROV_QUEUED_TRANS = 15;
 const PROV_PLANNED = 16;
 const PROV_PLANNED_TRANS = 17;
+const PROV_BATTLE = 30;
+const PROV_BATTLE_TRANS = 31;
+const PROV_SELECT = 32;
+const PROV_SELECT_TRANS = 33;
 
 //flags to indicate buildable status, these are linked to a specific colour code
 const PROV_BUILDABLE_NONE = 0;
@@ -47,8 +51,8 @@ const PROV_BUILDABLE_SEA_HOVER_TRANS = 27;
 const PROV_BUILDABLE_LAND_EXP_HOVER = 28;
 const PROV_BUILDABLE_LAND_EXP_HOVER_TRANS = 29;
 
-const PROV_INVALID = 30;
-const PROV_INVALID_TRANS = 31;
+const PROV_INVALID = 34;
+const PROV_INVALID_TRANS = 35;
 
 
 
@@ -268,10 +272,34 @@ define(
 						overlayColour = Colour(255,100,200,0.4);//"rgba(255, 100, 200, 0.4)";
 						break;
 					}
+					case PROV_BATTLE:
+					{
+						//orange
+						overlayColour = Colour(255,165,0,1);
+						break;
+					}
+					case PROV_BATTLE_TRANS:
+					{
+						//orange
+						overlayColour = Colour(255,165,0,0.4);
+						break;
+					}
+					case PROV_SELECT:
+					{
+						//cyan
+						overlayColour = Colour(0,255,255,1);
+						break;
+					}
+					case PROV_SELECT_TRANS:
+					{
+						//cyan
+						overlayColour = Colour(0,255,255,0.4);
+						break;
+					}
 					default:
 					{
 						console.log("WARNING: page::GetProvColour() passed in unknown overlay_type: " + overlay_type);
-						break;
+						return this.GetProvinceOverlayColour(PROV_INVALID);
 					}
 				}
 				return overlayColour;

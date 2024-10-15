@@ -23,6 +23,11 @@ define(
 				return (this.isCurrentPlayerActive() && this.gamedatas.gamestate.name == statename);
 			},
 			
+			isCurrentPlayerNonActiveState : function(statename)
+			{
+				return (!this.isCurrentPlayerActive() && this.gamedatas.gamestate.name == statename);
+			},
+			
 			isCurrentPlayerCitadelState : function()
 			{
 				var result = this.isCurrentPlayerActiveState("citadelPlacement");

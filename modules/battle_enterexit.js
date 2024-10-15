@@ -31,6 +31,7 @@ define(
 					//update the ui
 					this.enterSmallPhase(gameui.STATE_MAIN_BATTLE);
 					this.CreatePendingBattleCircles();
+					this.SetProvinceOverlayMode(this.OVERLAY_BATTLE_PREVIEW);
 				}
 			},
 			
@@ -41,6 +42,7 @@ define(
 				{
 					this.DestroyPendingBattleCircles();
 					this.enterSmallPhase(gameui.STATE_MAIN_DEFAULT);
+					this.SetProvinceOverlayMode(this.OVERLAY_SELECT);
 				}
 				else
 				{

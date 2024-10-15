@@ -319,6 +319,10 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			this.OVERLAY_MOVE = 4;
 			this.OVERLAY_BATTLE = 5;
 			this.OVERLAY_VILLAGE = 6;
+			this.OVERLAY_CITADEL = 7;
+			this.OVERLAY_UNDEAD = 8;
+			this.OVERLAY_WITHDRAWRETREAT = 9;
+			this.OVERLAY_BATTLE_PREVIEW = 10;
 			
 			//length of a row on the sprite sheet as measured in number of tiles
 			this.SPRITESHEET_ROW_TILES = 14;
@@ -487,7 +491,7 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			this.reject_tilestack_attacker = null;
 			this.reject_tilestack_defender = null;
 			
-			this.battling_province_name = "NA";
+			this.battling_province_name = null;
 			this.attacking_player_id = 0;
 			this.defending_player_id = 0;
 			this.num_attacker_tiles = 0;

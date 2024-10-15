@@ -37,6 +37,7 @@ define(
 					//this.prev_frame_timestamp = this.date.getTime();
 					this.build_mode_cancel_anim = window.requestAnimationFrame(this.buildmodeAnimFrame);
 					//this.ResetActionInfo(gameui.STATE_MAIN_BUILD);
+					this.SetProvinceOverlayMode(this.OVERLAY_BUILD);
 				}
 				else
 				{
@@ -66,6 +67,7 @@ define(
 				}
 				
 				//console.log("page::ExitBuildMode(" + approved + ")");
+				this.SetProvinceOverlayMode(this.OVERLAY_SELECT);
 				if(this.isCurrentPlayerBuildMode())
 				{
 					this.RemoveBuildModeUI();

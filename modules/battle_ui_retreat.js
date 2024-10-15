@@ -27,11 +27,13 @@ define(
 			CreateRetreatOverlay : function()
 			{
 				//console.log("page::CreateRetreatOverlay()");
-				//console.log(retreat_prov_options);
+				//console.log(this.retreat_prov_options);
 				//console.log(this.battling_province_name);
 				//console.log(this.provinces_by_name)
 				const start_province_info = this.provinces_by_name[this.battling_province_name];
 				//console.log(start_province_info);
+				
+				this.SetProvinceOverlay(start_province_info, PROV_BATTLE);
 				
 				//find the loser army that is here, they should have been automerged together
 				//console.log(this.all_armies);
@@ -84,7 +86,8 @@ define(
 			
 			RefreshRetreatOverlay : function()
 			{
-				if(this.isCurrentPlayerRetreatState())
+				//console.log("page::RefreshRetreatOverlay()");
+				if(this.isCurrentPlayerRetreatState() || this.isCurrentPlayerWithdrawState())
 				{
 					this.DestroyRetreatOverlay();
 					this.CreateRetreatOverlay();

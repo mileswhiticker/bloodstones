@@ -124,6 +124,7 @@ define(
 				{
 					//just an observer... could be another player, live spectator or spectator watching replay
 				}
+				this.UpdateCurrentOverlayMode();
 			},
 			
 			UIStateBattleEnd : function(args)

@@ -229,7 +229,7 @@ $machinestates = array(
 		"descriptionmyturn" => clienttranslate('${you} can build villages now.'),
 		"type" => "activeplayer",
 		"args" => "args_playerVillages",
-		"possibleactions" => array("action_playerBuildVillages","action_skip","action_tryPayAction","action_earlyEndTurn"),
+		"possibleactions" => array("action_playerBuildVillages","action_skip","action_tryPayAction","action_earlyEndTurn","action_playerDebug"),
 		"transitions" => array("nextPlayer" => STATE_NEXTPLAYER)
     ),
     
@@ -247,7 +247,7 @@ $machinestates = array(
 		"type" => "activeplayer",
 		"args" => "args_chooseWithdraw",
 		"action" => "st_chooseWithdraw",
-		"possibleactions" => array("action_withdraw","action_rejectWithdraw",'action_skip'),
+		"possibleactions" => array("action_withdraw","action_rejectWithdraw",'action_skip',"action_playerDebug"),
 		"transitions" => array("setupBattle" => STATE_BATTLE_SETUP, "battleCleanup" => STATE_BATTLE_CLEANUP)
     ), 
     
@@ -271,7 +271,7 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} must decide whether to swap a battle tile.'),
         "type" => "activeplayer",
 		"args" => "args_battleTile",
-        "possibleactions" => ["action_swapTile",'action_skip'],
+        "possibleactions" => ["action_swapTile",'action_skip',"action_playerDebug"],
         "transitions" => ['nextBattleTile' => STATE_BATTLE_NEXT]
       ],
     
@@ -288,7 +288,7 @@ $machinestates = array(
 		"descriptionmyturn" => clienttranslate('${you} have lost the battle!'),
 		"type" => "activeplayer",
 		"args" => "args_battleEnd",
-		"possibleactions" => array("action_sacrificeUnit",'action_skip'),
+		"possibleactions" => array("action_sacrificeUnit",'action_skip',"action_playerDebug"),
         "transitions" => array("retreat" => STATE_BATTLE_RETREAT, "battleCleanup" => STATE_BATTLE_CLEANUP)
     ),
     
@@ -298,7 +298,7 @@ $machinestates = array(
 		"descriptionmyturn" => clienttranslate('Choose a province to retreat to.'),
 		"type" => "activeplayer",
 		"args" => "args_retreat",
-		"possibleactions" => array("action_retreat",'action_skip'),
+		"possibleactions" => array("action_retreat",'action_skip',"action_playerDebug"),
         "transitions" => array("battleCleanup" => STATE_BATTLE_CLEANUP)
     ),
     

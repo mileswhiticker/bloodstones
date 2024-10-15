@@ -111,14 +111,15 @@ trait province
 		$battle_prov_name = $this->getProvinceName($prov_id);
 		
 		//get the retreating armies in this province so we can get a list of tiles
-		$retreating_armies = $this->GetArmiesInProvinceFromProvName("battle_prov_name");
+		$retreating_armies = $this->GetPlayerArmiesInProvinceFromProvName($retreat_player_id, $battle_prov_name);
 		$retreating_tiles_deck = $this->player_decks[$retreat_player_id];
 		$retreating_tiles = [];
 		
 		//loop over the retreating armies and get their tiles
-		foreach($retreating_armies as $retreating_army)
+		foreach($retreating_armies as $retreating_army_id => $retreating_army)
 		{
-			array_merge($retreating_tiles, $retreating_tiles_deck->getCardsInLocation("army", $retreating_army["army_id"]));
+			$tiles_found = $retreating_tiles_deck->getCardsInLocation("army", $retreating_army_id);
+			$retreating_tiles = array_merge($retreating_tiles, $tiles_found);
 		}
 		
 		/*

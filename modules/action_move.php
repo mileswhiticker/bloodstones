@@ -88,8 +88,12 @@ trait action_move
 						var split_step = {step_type: ACTION_SPLIT, prov_name: source_army.province_id, prov_id: split_prov_id, tile_id: cur_tile_id, temp_army_id_num: temp_army.id_num};
 						*/
 						
-						$new_army = self::tryArmyStackTransfer($source_army_id, null, array($action_step["tile_id"]), self::SELECT_ARMY_NONE, $action_step_prov_name, $action_step["temp_army_id_num"]);
-						$army_id_assigned = $new_army["id_num"];
+						$new_army = self::tryArmyStackTransfer($source_army_id, null, array($action_step["tile_id"]), self::SELECT_ARMY_NONE, 
+						$action_step_prov_name, $action_step["temp_army_id_num"]);
+						
+						//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($new_army, true)));
+						
+						$army_id_assigned = $new_army["army_id"];
 						$army_id_temp = $action_step["temp_army_id_num"];
 						$temp_id_map[$army_id_temp] = $army_id_assigned;
 						

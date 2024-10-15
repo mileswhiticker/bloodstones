@@ -11,9 +11,10 @@
 define(
 	[
 		"dojo",
-		"dojo/_base/declare"
+		"dojo/_base/declare",
+		"dojo/query"
 	],
-	function (dojo, declare){
+	function (dojo, declare, query){
 		
 		var instance = declare("_ui_toppanel", null, {
 			//put your functions here
@@ -40,6 +41,10 @@ define(
 				const button_cycle_hand = dojo.place("<div id=\"button_cycle_hand\"></div>","toppanel");
 				dojo.addClass(button_cycle_hand, "blst_button topbutton");
 				dojo.connect(button_cycle_hand, "click", dojo.hitch(this, this.playerCycleHand));
+				
+				const button_toggle_show_mapstacks = dojo.place("<div id=\"button_toggle_show_mapstacks\"></div>","toppanel");
+				dojo.addClass(button_toggle_show_mapstacks, "blst_button topbutton");
+				dojo.connect(button_toggle_show_mapstacks, "click", dojo.hitch(this, this.toggle_show_mapstacks));
 				
 				const slidecontainer = dojo.place("<div id=\"slidecontainer\" class=\"blst_button slidecontainer\"></div>","toppanel");
 				const slider = dojo.place("<input type=\"range\" min=\"1\" max=\"100\" value=\"50\" class=\"slider\" id=\"army_scale_slider\">","slidecontainer");
@@ -280,6 +285,31 @@ define(
 							// (most of the time: nothing)
 						}
 					);
+				}
+			},
+			
+			toggle_show_mapstacks : function(event)
+			{
+				console.log("page::toggle_show_mapstacks()");
+				
+				window.gameui.display_map_stacks = !window.gameui.display_map_stacks;
+				if(window.gameui.display_map_stacks)
+				{
+					console.log("showing .map_army_transformable elements");
+					var nl = dojo.query(".map_army_transformable");
+					nl.forEach(function(node, index, arr)
+					{
+						dojo.removeClass(node,"display_none");
+					});
+				}
+				else
+				{
+					console.log("hiding .map_army_transformable elements");
+					var nl = dojo.query(".map_army_transformable");
+					nl.forEach(function(node, index, arr)
+					{
+						dojo.addClass(node,"display_none");
+					});
 				}
 			},
 			

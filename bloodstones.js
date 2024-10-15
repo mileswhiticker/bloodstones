@@ -372,6 +372,7 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			
 			//todo: transfer existing overlay code from build/mode/battle to here
 			this.current_overlay_mode = 0;
+			this.display_map_stacks = true;
 			
 			
 			/* Player */

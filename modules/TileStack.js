@@ -206,6 +206,10 @@ define(
 				this.item_height = 50;
 				this.container_div.style.width = "99px";
 				dojo.addClass(this.id_string, "map_army_transformable");
+				if(!window.gameui.display_map_stacks)
+				{
+					dojo.addClass(this.id_string,"display_none");
+				}
 				//this.container_div.style.height = "50px";		//this is automatically overriden
 				
 				this.setSelectionMode(3);
@@ -257,6 +261,10 @@ define(
 				this.item_height = 50;
 				this.container_div.style.width = "50px";
 				dojo.addClass(this.id_string, "map_army_transformable");
+				if(!window.gameui.display_map_stacks)
+				{
+					dojo.addClass(this.id_string,"display_none");
+				}
 				//this.container_div.style.height = "50px";		//this is automatically overriden
 				this.backgroundSize = "100% 100%";
 				this.setSelectionMode(3);
@@ -305,7 +313,6 @@ define(
 				this.item_width = 115;
 				this.item_height = 57;
 				this.selectable = 0;
-				dojo.style(this.container_div, 'zIndex', window.gameui.GameLayerDialog());
 				//dojo.style(this.container_div, 'width', "115px");
 			},
 			

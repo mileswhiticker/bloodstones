@@ -386,6 +386,11 @@
 	background-image: url('img/cards_button.png');
 }
 
+#button_toggle_show_mapstacks
+{
+	background-image: url('img/spawn_army.jpg');
+}
+
 #button_zoomin
 {
 	background-image: url('img/plus.jpg');

@@ -459,6 +459,7 @@ define(
 						this.selectable = 2;
 						this.selectionApparance = 'striped';
 						this.custom_item_render_callback = this.renderTileSelectedArmy;
+						this.spawn_fadein = false;
 						break;
 					}
 					case STACK_PAYMENT:
@@ -493,6 +494,12 @@ define(
 				
 				//copy tiles from army stack
 				this.copyAcrossParentTiles(parent_army);
+				
+				if(window.gameui.isCurrentPlayerMoveMode() && window.gameui.getActivePlayerId() == this.player_id)
+				{
+					//select all tiles
+					this.selectAll();
+				}
 			},
 			
 			createAsPaystack: function(page, host_div_id, player_id)

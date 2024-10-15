@@ -112,8 +112,20 @@ define(
 			
 			GetArmySelectedTileId : function(tile_image_id)
 			{
+				//console.log("page::GetArmySelectedTileId(" + tile_image_id + ")");
+				
 				//format: "army_selection_stack_item_XX" where XX is the tile id set by the Deck in php
-				return tile_image_id.slice(26);
+				var tile_id = tile_image_id.slice(26);
+				
+				//if the tile is selected, then it will have "_selected" concatenated to the end of its node id string
+				//check for this now
+				if(tile_id.length > 9)
+				{
+					//remove the last 9 characters
+					var keep_length = tile_id.length - 9;
+					tile_id = tile_id.slice(0,keep_length);
+				}
+				return tile_id;
 			},
 			
 			RefreshSelectArmyStack : function(target_army)

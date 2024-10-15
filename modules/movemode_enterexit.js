@@ -31,6 +31,12 @@ define(
 					this.EnablePaymentBucket(gameui.STATE_MAIN_MOVE);
 					this.SetProvinceOverlayMode(this.OVERLAY_MOVE);
 					//this.ResetActionInfo(this.ACTION_MOVE);	//todo: im not sure what this function was meant to be or do, movemode needs a bunch of work to clean it up
+					
+					//have we already selected a movable army?
+					if(this.selected_army != null && this.selected_army.player_id == this.player_id)
+					{
+						this.selected_army_display_stack.selectAll();
+					}
 				}
 			},
 			

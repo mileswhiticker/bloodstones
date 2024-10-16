@@ -780,6 +780,11 @@ define(
 				return true;
 			},
 			
+			IsTempStack : function()
+			{
+				return window.gameui.isTempArmy(this);
+			},
+			
 			//no longer used, left in for debugging etc
 			SpawnTestUnitsInStack : function(faction_id)
 			{
@@ -887,6 +892,10 @@ define(
 					for(var index in this.items)
 					{
 						var item = this.items[index];
+						if(!this.isSelected(item.id))
+						{
+							continue;
+						}
 						if(!window.gameui.IsTileTypeShip(item.type) && !window.gameui.IsTileTypeDragon(item.type))
 						{
 							return false;
@@ -912,6 +921,10 @@ define(
 					for(var index in this.items)
 					{
 						var item = this.items[index];
+						if(!this.isSelected(item.id))
+						{
+							continue;
+						}
 						if(window.gameui.IsTileTypeShip(item.type))
 						{
 							return true;
@@ -928,6 +941,10 @@ define(
 					for(var index in this.items)
 					{
 						var item = this.items[index];
+						if(!this.isSelected(item.id))
+						{
+							continue;
+						}
 						if(!window.gameui.IsTileTypeUndead(item.type))
 						{
 							return true;
@@ -944,6 +961,10 @@ define(
 					for(var index in this.items)
 					{
 						var item = this.items[index];
+						if(!this.isSelected(item.id))
+						{
+							continue;
+						}
 						if(window.gameui.IsTileTypeUndead(item.type))
 						{
 							return true;
@@ -985,6 +1006,10 @@ define(
 					for(var index in this.items)
 					{
 						var item = this.items[index];
+						if(!this.isSelected(item.id))
+						{
+							continue;
+						}
 						if(window.gameui.IsTileTypeLeader(item.type))
 						{
 							num_leaders++;
@@ -1045,6 +1070,21 @@ define(
 				{
 					this.spawn_fadein = false;
 				}
+			},
+			
+			IsCitadelPresent : function()
+			{
+				//console.log("Tilestack::IsCitadelPresent() id_string:" + this.id_string);
+				for(var i in this.tiles)
+				{
+					var tile_info = this.tiles[i];
+					console.log(tile_info);
+					if(window.gameui.IsTileTypeCitadel(tile_info.type_arg))
+					{
+						return true;
+					}
+				}
+				return false;
 			},
 			
 			updateDisplay: function( from )
@@ -1668,6 +1708,20 @@ define(
 				}
 			},
 			
+			IsLastItemSelected : function()
+			{
+				var num_selected = 0;
+				for (var i in this.item_selected)
+				{
+					if(this.item_selected[i])
+					{
+						num_selected += 1;
+					}
+				}
+				
+				return (num_selected == 1);
+			},
+			
 			GetArmyDefensiveBonus : function()
 			{
 				//console.log("page::GetArmyDefensiveBonus()");
@@ -1714,7 +1768,7 @@ define(
 			unselectAll: function()
 			{
 				this.inherited(arguments);
-				this.unselectStack();
+				//this.unselectStack();
 			},
 			
 		});

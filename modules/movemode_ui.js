@@ -159,11 +159,15 @@ define(
 							//does this army have queued moves?
 							if(!this.selected_army.IsMoving())
 							{
+								//do nothing for now
+								/*
+								//dont merge in 
 								//merge the selected units into the target army
 								var selected_tile_ids = this.selected_army.getSelectedTileIds();
 								this.ServerArmyMerge(this.selected_army, clicked_army, selected_tile_ids);
 								
 								this.RefreshMoveModeUI();
+								*/
 							}
 							else
 							{

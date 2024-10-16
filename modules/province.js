@@ -101,14 +101,13 @@ define(
 				//calculate how many tiles can get a free leader move
 				var leader_bonus_left = moving_army.GetNumLeaders();
 				
-				var subset_selected = moving_army.IsAnyItemSelected();
 				for(var k in moving_army.tiles)
 				{
 					var tile_info = moving_army.tiles[k];
 					//console.log(tile_info);
 					
 					//are we calculating moves for all items or just some of them?
-					if(subset_selected && !tile_info.selected)
+					if(!moving_army.isSelected(tile_info.id))
 					{
 						//console.log("not selected!");
 						continue;
@@ -571,6 +570,58 @@ define(
 					}
 				}
 				return found_armies;
+			},
+			
+			GetMainPlayerArmyInProvinceOrNull : function(province_name, player_id)
+			{
+				//console.log("page::GetMainPlayerArmyInProvinceOrNull(" + province_name + "," + player_id + ")");
+				var all_armies = this.GetFriendlyArmiesInProvince(province_name, player_id);
+				
+				//return the first army we find that isnt temp and doesnt have a citadel
+				for(var i in all_armies)
+				{
+					var army_stack = all_armies[i];
+					
+					//we dont want temp stacks
+					if(army_stack.IsTempStack())
+					{
+						continue;
+					}
+					
+					//check for the first non-citadel tile
+					for(var i in this.tiles)
+					{
+						var tile_info = this.tiles[i];
+						if(!window.gameui.IsTileTypeCitadel(tile_info.type_arg))
+						{
+							return army_stack;
+						}
+					}
+					
+					//check if there is any citadel in the army
+					/*if(army_stack.IsCitadelPresent())
+					{
+						console.log("citadel present");
+						continue;
+					}*/
+					
+					return army_stack;
+				}
+				
+				return null;
+			},
+			
+			GetTempSplitArmyInProvinceOrNull : function(army_id_string, province_name, player_id)
+			{
+				var army_action_steps = this.queued_action_steps[source_army.id_string];
+				if(!army_action_steps || army_action_steps == null)
+				{
+					return null;
+				}
+				for(var i in army_action_steps)
+				{
+					var split_step = army_action_steps[i];
+				}
 			},
 			
 			GetFriendlyArmiesInProvince : function(province_name, player_id, check_first = false)

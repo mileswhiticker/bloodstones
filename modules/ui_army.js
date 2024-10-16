@@ -30,8 +30,25 @@ define(
 				}
 				else if(new_selected_army != null)
 				{
+					//special handling for this one
+					if(new_selected_army == this.temp_move_army_leave_behind)
+					{
+						var main_player_army = this.GetMainPlayerArmyInProvinceOrNull(new_selected_army.prov_name, new_selected_army.player_id);
+						if(main_player_army)
+						{
+							this.SelectArmyStack(main_player_army);
+						}
+						else
+						{
+							//sanity check
+							console.log("ERROR! Clicked on temp_move_army_leave_behind but no main player army found for page::SelectArmyStack(" + new_selected_army.id_string + ") in province " + new_selected_army.prov_name);
+						}
+						return;
+					}
+					
 					//select it in the code, have it handle its own ui updates
 					window.gameui.selected_army = new_selected_army;
+					window.gameui.selected_army.selectAll();
 					window.gameui.selected_army.selectStack();
 					
 					//is there already a selected army?
@@ -79,6 +96,13 @@ define(
 					selected_army_display_stack = new modules.TileStack();
 					selected_army_display_stack.createAsArmySelection(this, "selected_army", new_selected_army);
 					window.gameui.selected_army_display_stack = selected_army_display_stack;
+					
+					//is there a temp move stack in this province? include its tiles here too
+					if(this.temp_move_army_leave_behind)
+					{
+						this.temp_move_army_leave_behind.unselectAll();
+						selected_army_display_stack.copyAcrossParentTiles(this.temp_move_army_leave_behind);
+					}
 					
 					//highlight the province of the selected army
 					this.UpdateCurrentOverlayMode();
@@ -158,6 +182,27 @@ define(
 				var old_selected_army = window.gameui.selected_army;
 				if(old_selected_army != null)
 				{
+					//is there a temp move army in this province? merge them back in
+					if(this.temp_move_army_leave_behind)
+					{
+						if(this.temp_move_army_leave_behind.prov_name == old_selected_army.prov_name)
+						{
+							this.TransferArmyTiles(this.temp_move_army_leave_behind.id_num, this.selected_army.id_num, [], this.SELECT_ARMY_NONE);
+							//this.selected_army.selectItem(cur_tile_id);
+							
+							if(this.temp_move_army_leave_behind.IsStackEmpty())
+							{
+								//console.log("destroying temp army");
+								this.DestroyArmy(this.temp_move_army_leave_behind.id_num);
+								this.temp_move_army_leave_behind = null;
+							}
+						}
+						else
+						{
+							console.log("ERROR: temp_move_army_leave_behind exists in province " + this.temp_move_army_leave_behind.prov_name + " but is not in the same province as the army we are trying to unselect: ");
+						}
+					}
+					
 					//unselect it in code, have it handle its own ui updates
 					window.gameui.selected_army.unselectStack();
 					window.gameui.selected_army = null;
@@ -470,7 +515,8 @@ define(
 				{
 					//console.log("army is empty... selecting new army");
 					//select the new army we are merging into
-					this.ForceRefreshSelectArmyStack(target_army);
+					
+					//this.ForceRefreshSelectArmyStack(target_army);
 					
 					//console.log("destroying source army");
 					this.DestroyArmy(source_army_id);
@@ -479,7 +525,7 @@ define(
 				{
 					//console.log("army is not empty... refreshing previously selected army");
 					//was this army selected? special extra handling
-					this.ForceRefreshSelectArmyStack(source_army);
+					//this.ForceRefreshSelectArmyStack(source_army);
 				}
 				
 				//toggle stack selection to refresh the ui

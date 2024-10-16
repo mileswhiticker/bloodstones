@@ -27,7 +27,7 @@ define(
 					this.queued_province_moves_by_army = [];
 					this.queued_action_steps = {};
 					this.enterSmallPhase(gameui.STATE_MAIN_MOVE);
-					this.AddMoveModeUI();
+					this.RefreshMoveModeUI();
 					this.EnablePaymentBucket(gameui.STATE_MAIN_MOVE);
 					this.SetProvinceOverlayMode(this.OVERLAY_MOVE);
 					//this.ResetActionInfo(this.ACTION_MOVE);	//todo: im not sure what this function was meant to be or do, movemode needs a bunch of work to clean it up
@@ -118,6 +118,8 @@ define(
 				this.SetProvinceOverlayMode(this.OVERLAY_SELECT);
 				if(this.isCurrentPlayerMoveMode())
 				{
+					this.UnselectArmyStack();
+					
 					//remove the move mode UI overlays
 					//this.unlockArmyTileSelection();
 					this.RemoveMoveModeUI();
@@ -128,7 +130,6 @@ define(
 					this.queued_province_moves_by_army = [];
 					
 					this.queued_action_steps = {};
-					this.UnselectArmyStack();
 					
 					if(approved)
 					{

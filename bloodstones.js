@@ -449,6 +449,10 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			this.province_link_width = 3;
 			
 			
+			/* Move mode */
+			this.temp_move_army_leave_behind = null;
+			
+			
 			/* Build mode */
 			
 			this.build_mode_cancel_anim = null;
@@ -683,6 +687,11 @@ function (dojo, declare, lang, fx, on, domAttr) {
 		isTempArmyId : function(army_id_num)
 		{
 			return army_id_num < 0;
+		},
+		
+		isTempArmy : function(army_stack)
+		{
+			return this.isTempArmyId(army_stack.id_num);
 		},
 		
 		isValidFactionId : function(faction_id)

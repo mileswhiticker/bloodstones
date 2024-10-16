@@ -243,6 +243,12 @@ define(
 					
 					//todo: cancel any queued movement
 					//this.enterPhase(gameui.STATE_MAIN_DEFAULT);
+					
+					//console.log("success");
+				}
+				else
+				{
+					//console.log("WARNING! page::RemoveMoveModeUI() but current player is not in move mode");
 				}
 			},
 			

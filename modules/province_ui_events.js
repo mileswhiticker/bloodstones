@@ -221,10 +221,7 @@ define(
 				
 				var prov_name = window.gameui.GetProvNameFromAreaElement(event.target.id);
 				var target_prov_id = window.gameui.GetProvinceIdFromName(prov_name);
-				if(this.pulsing_province_id != null)
-				{
-					window.gameui.DisableProvinceBuildHover(prov_name);
-				}
+				window.gameui.DisableProvinceBuildHover(prov_name);
 				
 				//console.log("page::onDropProvince() target_prov_id:" + target_prov_id);
 				

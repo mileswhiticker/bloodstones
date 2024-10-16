@@ -124,6 +124,19 @@ define(
 				army_build_stack.RemoveTileFromStack(tile_id, this.GetPlayercardDivId(this.getCurrentPlayer()));
 				this.current_player_hand.SpawnTileInStack(tile_info);
 				
+				//unqueue it from the list
+				var build_action_prov = this.queued_builds[army_build_stack.prov_name];
+				var new_list = [];
+				for(var i in build_action_prov.tiles)
+				{
+					var check_id = build_action_prov.tiles[i];
+					if(check_id != tile_id)
+					{
+						new_list.push(check_id);
+					}
+				}
+				build_action_prov.tiles = new_list;
+				
 				//if there are no tiles left here, clean up the build army stack
 				//the stack length should be 0, but there is a 1ms delay before the removal is processed so we instead check for 1
 				//console.log(army_build_stack.items);
@@ -139,6 +152,7 @@ define(
 					//untrack this province queued build
 					delete this.queued_builds[army_build_stack.prov_name];
 					delete this.queued_build_armies_by_province[army_build_stack.prov_name];
+					delete build_action_prov;
 					
 					//clean up the army
 					this.DestroyArmy(army_build_stack.id_num);

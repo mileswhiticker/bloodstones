@@ -639,7 +639,7 @@ class bloodstones extends Table
 		//add score from built villages
 		$num_villages_built = count($this->getPlayerVillagesBuiltInfos($active_player_id));
 		$this->dbIncScore($active_player_id, $num_villages_built);
-		$this->incStat($num_villages_built, "villages built", $active_player_id);
+		$this->incStat($num_villages_built, "villages_built", $active_player_id);
 		
 		//check for game end here
 		if($this->isGameFinished())

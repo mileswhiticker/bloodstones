@@ -5,7 +5,7 @@ trait citadel
 	public function AssignRandomPlayerCitadels()
 	{
 		//for debugging: assign random player factions, create their citadels, then start the game
-		self::notifyAllPlayers("debug", "", array('debugmessage' => "server::AssignRandomPlayerCitadels()"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::AssignRandomPlayerCitadels()"));
 		$players = self::getCollectionFromDb("SELECT player_id FROM player ");
 		$cur_faction_id = 1;//rand(0,5);
 		foreach($players as $player_id => $player)
@@ -26,7 +26,7 @@ trait citadel
 			$cur_faction_id++;
 		}
 		
-		self::notifyAllPlayers("debug", "", array('debugmessage' => "AssignRandomPlayerCitadels() completed successfully"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "AssignRandomPlayerCitadels() completed successfully"));
 	}
 	
 	public function tryPlaceCitadel($prov_name)
@@ -50,7 +50,7 @@ trait citadel
 	
 	public function PlaceCitadel($player_id, $prov_name)
 	{
-		self::notifyAllPlayers("debug", "", array('debugmessage' => "server::PlaceCitadel($player_id, $prov_name)"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::PlaceCitadel($player_id, $prov_name)"));
 		
 		//update the database
 		$prov_id = $this->getProvinceIdFromName($prov_name);

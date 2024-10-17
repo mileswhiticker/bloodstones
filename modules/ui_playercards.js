@@ -27,8 +27,11 @@ define(
 				this.callback_HandTileDrop = this.HandTileDrop;
 				
 				//only setup the current player's UI on the left now, the other info has moved to the right panel player boards
-				var current_player_id = this.getCurrentPlayer();
-				this.SetupPlayercard(current_player_id);
+				if(!this.isSpectator)
+				{
+					var current_player_id = this.getCurrentPlayer();
+					this.SetupPlayercard(current_player_id);
+				}
 			},
 			
 			SetupPlayerboards : function()
@@ -222,7 +225,7 @@ define(
 				dojo.style(player_tile, "left", current_left_offset + "px");
 			},
 			
-			SetupPlayercard : function(player_id,)
+			SetupPlayercard : function(player_id)
 			{
 				//this playercard goes on the far left panel
 				var player = this.gamedatas.players[player_id];

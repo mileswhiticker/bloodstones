@@ -323,7 +323,8 @@
 
 .map_army_transformable
 {
-	transform: scale(0.75);
+	/*this gets overriden so im better off just setting the default scale in code*/
+	/*transform: scale(0.45);*/
 }
 
 .slidecontainer

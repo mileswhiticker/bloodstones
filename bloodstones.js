@@ -416,7 +416,7 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			this.zone_item_height_base = 50;
 			this.svg_scale_factor = 0.32;
 			this.display_as_buildable = 3;
-			this.army_tile_scale = 1;
+			this.army_tile_scale = 0.45;
 			this.army_tile_scale_min = 0.2;
 			this.army_tile_scale_max = 2;
 			this.all_army_zones = [];

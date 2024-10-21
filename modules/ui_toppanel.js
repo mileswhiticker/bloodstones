@@ -78,10 +78,10 @@ define(
 			
 			onInputArmyScaleSlider : function()
 			{
-				//console.log("page::onInputArmyScaleSlider() gameui.army_tile_scale: " + gameui.army_tile_scale);
 				var slider = dojo.byId("army_scale_slider");
 				var percent = Number(slider.value) / 100;
 				var army_tile_scale_range = this.army_tile_scale_max - this.army_tile_scale_min;
+				//console.log("page::onInputArmyScaleSlider() gameui.army_tile_scale:" + gameui.army_tile_scale + ", slider:" + slider + ", percent:" + percent + ", army_tile_scale_range:" + army_tile_scale_range);
 				gameui.setArmyUIScale(percent * army_tile_scale_range);
 			},
 			

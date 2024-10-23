@@ -187,7 +187,7 @@ define(
 								//draw a line between the provinces
 								var prev_move_step = army_action_steps[k - 1];
 								var prev_province_info = this.GetProvinceById(prev_move_step.prov_id);
-								if(action_step.sea_transit_chain.length > 0)
+								if(action_step.sea_transit_chain.length > 1)
 								{
 									//console.log("drawing sea chain");
 									//loop over sea provinces and create a chain of links

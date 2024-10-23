@@ -24,7 +24,7 @@ define(
 			AddProvinceMoveLink : function(start_province_info, dest_province_info, overlay_type)
 			{
 				//console.log("page::AddProvinceMoveLink(" + start_province_info.name + ", " + dest_province_info.name + ", " + overlay_type + ")");
-				for(var move_link_index = 0; move_link_index < start_province_info.linked_prov_ids; move_link_index++)
+				for(var move_link_index = 0; move_link_index < start_province_info.linked_prov_ids.length; move_link_index++)
 				{
 					//which province is this?
 					var check_prov_id = start_province_info.linked_prov_ids[move_link_index];

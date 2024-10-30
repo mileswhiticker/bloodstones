@@ -57,15 +57,16 @@ trait citadel
 		$this->DbQuery("UPDATE player SET player_citadel_prov='$prov_id' WHERE player_id='$player_id'");
 		
 		$citadel_tile_info = $this->GetPlayerCitadelTile($player_id);
-		$citadel_tile_id = $citadel_tile_info["id"];
-		$citadel_army_info = $this->createArmy($prov_name, $player_id, [$citadel_tile_id]);
 		
 		//notify all the players
-		self::notifyAllPlayers('newCitadel', clienttranslate('${player_name} has placed their citadel.'), 
+		self::notifyAllPlayers('newCitadel', clienttranslate('${player_name} has placed their citadel in ${province_ui_name}.'), 
 			array(
 				'player_name' => $this->getPlayerNameById($player_id),
 				'player_id' => $player_id,
-				'built_citadel_army' => $citadel_army_info
+				//'built_citadel_army' => $citadel_army_info
+				'citadel_prov_id' => $prov_id,
+				'citadel_tile_info' => $citadel_tile_info,
+				'province_ui_name' => $this->GetProvinceNameUIString($prov_id)
 			));
 	}
 	

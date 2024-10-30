@@ -24,6 +24,7 @@ define(
 			GetProvinceMoveInfo : function(moving_army, province_info)
 			{
 				//console.log("page::GetProvinceMoveInfo(" + moving_army.id_string + "," + province_info.name + ")");
+				//console.log(moving_army);
 				//loop over all units in the army and get the total cost for this province
 				//dont worry about dangerous provinces or impassable provinces for now
 				//note: no custom movement cost calculations yet
@@ -171,10 +172,10 @@ define(
 					}
 					default:
 					{
-						console.log("ERROR: unknown move cost (" + highest_move_cost + ") when calculating move overlay");
-						console.log(move_info);
-						console.log(moving_army);
-						console.log(province_info);
+						console.log("ERROR: unknown move cost (" + highest_move_cost + ") when calculating move overlay for (" + moving_army.id_string + "->" + province_info.name + ")");
+						//console.log(move_info);
+						//console.log(moving_army);
+						//console.log(province_info);
 						break;
 					}
 				}
@@ -521,10 +522,13 @@ define(
 			AreProvincesLinked : function(province_start_info, province_end_info)
 			{
 				//console.log("page::AreProvincesLinked(" + province_start_info.name + "," + province_end_info.name + ")");
-				//console.log(province_start_info.movement_link_paths);
-				for(var linked_prov_name in province_start_info.movement_link_paths)
+				//console.log(province_start_info);
+				//console.log(province_end_info);
+				for(var index in province_start_info.linked_prov_ids)
 				{
-					if(linked_prov_name == province_end_info.name)
+					var linked_prov_id = province_start_info.linked_prov_ids[index];
+					//console.log("checking: " + linked_prov_id);
+					if(linked_prov_id == province_end_info.id)
 					{
 						//console.log("page::AreProvincesLinked(" + province_start_info.name + "," + province_end_info.name + ") success");
 						return true;
@@ -572,30 +576,119 @@ define(
 				return found_armies;
 			},
 			
-			GetMainPlayerArmyInProvinceOrNull : function(province_name, player_id)
+			GetFirstEnemyArmyInProvinceOrNull : function(province_name, player_id)
 			{
-				//console.log("page::GetMainPlayerArmyInProvinceOrNull(" + province_name + "," + player_id + ")");
-				var all_armies = this.GetFriendlyArmiesInProvince(province_name, player_id);
-				
-				//return the first army we find that isnt temp and doesnt have a citadel
+				var all_armies = this.GetEnemyArmiesInProvince(province_name, player_id);
 				for(var i in all_armies)
 				{
 					var army_stack = all_armies[i];
+					var found_citadel = false;
+					for(var i in army_stack.tiles)
+					{
+						var tile_info = army_stack.tiles[i];
+						//console.log("tile_info:");
+						//console.log(tile_info);
+						if(this.IsTileTypeCitadel(tile_info.type_arg))
+						{
+							//console.log("skipping citadel");
+							found_citadel = true;
+							break;
+						}
+					}
+					
+					if(!found_citadel)
+					{
+						return army_stack;
+					}
+				}
+				
+				return null;
+			},
+			
+			GetMainPlayerArmyInProvinceOrCreate : function(province_name, player_id)
+			{
+				var main_army = this.GetMainPlayerArmyInProvinceOrNull(province_name, player_id);
+				if(!main_army)
+				{
+					//console.log("page::GetMainPlayerArmyInProvinceOrCreate(" + province_name + "," + player_id + ") creating new");
+				
+					//the main player army in a province will have the same numberic id as the province (there is now only 1 main army per province)
+					//var new_army_id = this.getTempArmyId();
+					var new_army_id = this.GetProvinceIdFromName(province_name);
+					var temp_army_info = {army_id: new_army_id, player_id: player_id, prov_name: province_name, tiles: []};
+					main_army = this.CreateArmy(temp_army_info);
+				}
+				else
+				{
+					//console.log("page::GetMainPlayerArmyInProvinceOrCreate(" + province_name + "," + player_id + ") returning old");
+				}
+				return main_army;
+			},
+			
+			GetMainPlayerArmyInProvinceOrNull : function(province_name, player_id)
+			{
+				//console.log("page::GetMainPlayerArmyInProvinceOrNull(" + province_name + ", " + player_id + ")" );
+				//console.log(this.all_armies);
+				//console.log(this.armies_by_id_string);
+					
+				//new method
+				var prov_id = this.GetProvinceIdFromName(province_name);
+				var army_id_string = this.GetArmyIdString(prov_id);
+				if(this.armies_by_id_string[army_id_string] != undefined)
+				{
+					//console.log("returning " + army_id_string);
+					return this.armies_by_id_string[army_id_string];
+				}
+				//console.log("returning null");
+				return null;
+				
+				//old method
+				//console.log("page::GetMainPlayerArmyInProvinceOrNull(" + province_name + "," + player_id + ")");
+				var found_armies = this.GetFriendlyArmiesInProvince(province_name, player_id);
+				
+				//return the first army we find that isnt temp and doesnt have a citadel
+				//console.log("found_armies:");
+				//console.log(found_armies);
+				for(var i in found_armies)
+				{
+					var army_stack = found_armies[i];
+					//console.log("checking army_stack:");
+					//console.log(army_stack);
 					
 					//we dont want temp stacks
+					//im phasing out armies so temp stacks might start randomly popping up now
 					if(army_stack.IsTempStack())
+					{
+						//console.log("check1")
+						//continue;
+					}
+					
+					//check for citadel type stack
+					if(army_stack.stack_type != STACK_ARMY)
 					{
 						continue;
 					}
 					
 					//check for the first non-citadel tile
-					for(var i in this.tiles)
+					//console.log("tiles:");
+					//console.log(army_stack.tiles);
+					var found_citadel = false;
+					for(var i in army_stack.tiles)
 					{
-						var tile_info = this.tiles[i];
-						if(!window.gameui.IsTileTypeCitadel(tile_info.type_arg))
+						var tile_info = army_stack.tiles[i];
+						//console.log("tile_info:");
+						//console.log(tile_info);
+						if(this.IsTileTypeCitadel(tile_info.type_arg))
 						{
-							return army_stack;
+							//console.log("skipping citadel");
+							found_citadel = true;
+							break;
 						}
+					}
+					
+					if(!found_citadel)
+					{
+						return army_stack;
 					}
 					
 					//check if there is any citadel in the army
@@ -605,10 +698,27 @@ define(
 						continue;
 					}*/
 					
-					return army_stack;
+					//console.log("check3")
+					//return army_stack;
 				}
 				
+				//console.log("check4")
 				return null;
+			},
+			
+			GetReservePlayerArmyOrCreate : function()
+			{
+				if(!this.selected_province_reserve_army)
+				{
+					console.log("page::GetReservePlayerArmyOrCreate() creating new reserve army");
+					var temp_army_info = {army_id: this.getTempArmyId(), player_id: this.player_id, prov_name: this.GetSelectedProvinceName(), tiles: []};
+					this.selected_province_reserve_army = this.CreateArmy(temp_army_info, null);
+				}
+				else
+				{
+					console.log("page::GetReservePlayerArmyOrCreate() returning old reserve army");
+				}
+				return this.selected_province_reserve_army;
 			},
 			
 			GetTempSplitArmyInProvinceOrNull : function(army_id_string, province_name, player_id)
@@ -624,25 +734,60 @@ define(
 				}
 			},
 			
+			GetEnemyArmiesInProvince : function(province_name, player_id)
+			{
+				var found_armies = [];
+				for(var i in this.all_armies)
+				{
+					var army_stack = this.all_armies[i];
+					//console.log(army_stack);
+					if(army_stack.prov_name == province_name)
+					{
+						//console.log("right province name");
+						if(army_stack.player_id != player_id)
+						{
+							//console.log("right player id, adding");
+							found_armies.push(army_stack);
+						}
+					}
+				}
+				return found_armies;
+			},
+			
 			GetFriendlyArmiesInProvince : function(province_name, player_id, check_first = false)
 			{
+				console.log("page::GetFriendlyArmiesInProvince(" + province_name + "," + player_id + "," + check_first + ")");
+				console.log(this.all_armies);
+				
 				//todo: there is a more optimised way to do this but this works for now
 				var found_armies = [];
 				for(var i in this.all_armies)
 				{
 					var army_stack = this.all_armies[i];
+					//console.log(army_stack);
 					if(army_stack.prov_name == province_name)
 					{
+						//console.log("right province name");
 						if(army_stack.player_id == player_id)
 						{
+							//console.log("right player id, adding");
 							found_armies.push(army_stack);
 							if(check_first)
 							{
 								return found_armies;
 							}
 						}
+						else
+						{
+							//console.log("wrong player id: " + army_stack.player_id + "|" + player_id);
+						}
+					}
+					else
+					{
+						//console.log("wrong province name: " + army_stack.prov_name + "|" + province_name);
 					}
 				}
+				//console.log(found_armies);
 				return found_armies;
 			},
 			

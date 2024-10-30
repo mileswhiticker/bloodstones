@@ -23,19 +23,30 @@ define(
 				//if(window.gameui.selected_army != null)
 				if(this.isCurrentPlayerMainState())
 				{
+					var old_selected_province_name = this.GetSelectedProvinceName();
+					if(old_selected_province_name)
+					{
+						this.UnselectProvince();
+					}
+					
 					this.queued_province_moves = [];
 					this.queued_province_moves_by_army = [];
 					this.queued_action_steps = {};
 					this.enterSmallPhase(gameui.STATE_MAIN_MOVE);
-					this.RefreshMoveModeUI();
+					this.SetMovemodeMapInteraction();
+					//this.RefreshMoveModeUI();
 					this.EnablePaymentBucket(gameui.STATE_MAIN_MOVE);
-					this.SetProvinceOverlayMode(this.OVERLAY_MOVE);
 					//this.ResetActionInfo(this.ACTION_MOVE);	//todo: im not sure what this function was meant to be or do, movemode needs a bunch of work to clean it up
 					
 					//have we already selected a movable army?
-					if(this.selected_army != null && this.selected_army.player_id == this.player_id)
+					/*if(this.selected_army != null && this.selected_army.player_id == this.player_id)
 					{
 						this.selected_army_display_stack.selectAll();
+					}*/
+					//this.RefreshProvinceSelection();
+					if(old_selected_province_name)
+					{
+						this.SelectProvince(old_selected_province_name);
 					}
 				}
 			},
@@ -45,12 +56,12 @@ define(
 				//console.log("page::EndMoveMode(" + approved + ")");
 				
 				//reset the transparency
-				for(var i in this.ghosted_armies)
+				/*for(var i in this.ghosted_armies)
 				{
 					var ghosted_army = this.ghosted_armies[i];
 					ghosted_army.SetMoving(false);
 				}
-				this.ghosted_armies = [];
+				this.ghosted_armies = [];*/
 				
 				//if the player queued no actions, then this hack should nicely handle cleanup for us
 				if(this.GetActionCostAmount() == 0)
@@ -69,7 +80,6 @@ define(
 				else
 				{
 					//console.log("move cancelled");
-					//reset the planned move
 					this.RefundPaystackTiles();
 					this.DestroyPayWindow();
 					
@@ -78,6 +88,8 @@ define(
 					this.queued_splitting_armies.push(army_split_step);
 					*/
 					//console.log(this.queued_splitting_armies);
+					/*
+					//previous system 18/10/24
 					for(var i in this.queued_splitting_armies)
 					{
 						var cur_split_action = this.queued_splitting_armies[i];
@@ -86,43 +98,54 @@ define(
 						this.TransferArmyTiles(cur_split_action.temp_army_id_num, cur_split_action.source_army_id_num, [cur_split_action.tile_id], this.SELECT_ARMY_TARGET);
 					}
 					this.queued_splitting_armies = [];
+					*/
 					
+					//todo: this is messy as hell. it should probably just loop through all the actions and undo them one by one
+					/*
 					for(var army_id_string in this.queued_action_steps)
 					{
-						var army_id_num = this.GetArmyIdNumFromString(army_id_string);
+						//disable this for now
+						break;
 						
-						//temp armies will be nulled as they are merged back into the parent
-						//we will have to skip this one here
-						if(this.isTempArmyId(army_id_num))
-						{
-							continue;
-						}
+						console.log("cancelling queued action steps for: " + army_id_string);
 						
-						//console.log("cancelling action steps for: " + army_id_string);
-						var army_action_steps = this.queued_action_steps[army_id_string];
-						//console.log(army_action_steps);
-						/*for(var index in army_action_steps)
-						{
-							var action_step = army_action_steps[index];
-						}*/
 						var moving_army = this.armies_by_id_string[army_id_string];
 						
+						var army_action_steps = this.queued_action_steps[army_id_string];
+						//console.log(army_action_steps);
+						for(var index in army_action_steps)
+						{
+							var action_step = army_action_steps[index];
+							if(action_step.step_type == this.ACTION_SPLIT)
+							{
+								//merge these split tiles back in
+								console.log("undoing split step in province " + action_step.prov_name);
+								this.TransferArmyTiles(action_step.temp_army_id_num, moving_army.id_num, action_step.tile_ids, this.SELECT_ARMY_NONE);
+								
+								//now destroy the queued split army for this province
+								//var army_id_num = this.GetArmyIdNumFromString(army_id_string);
+								//var army = this.GetArmyById(army_id_num);
+								//delete this.queued_split_armies_by_province[army.prov_name];
+								//console.log(this.queued_split_armies_by_province);
+							}
+						}
 						//console.log("moving_army.starting_province_location: " + moving_army.starting_province_location);
 						//this move is clientside ui only
 						this.MoveArmy(moving_army, moving_army.starting_province_location);
 						moving_army.EndQueuedMove();
 					}
+					*/
 				}
 				
 				//back to the main phase
-				this.SetProvinceOverlayMode(this.OVERLAY_SELECT);
 				if(this.isCurrentPlayerMoveMode())
 				{
-					this.UnselectArmyStack();
+					//this.UnselectArmyStack();
 					
 					//remove the move mode UI overlays
 					//this.unlockArmyTileSelection();
 					this.RemoveMoveModeUI();
+					this.SetDefaultMapInteraction();
 					
 					//clean up these as they arent needed any more
 					this.queued_moving_armies = [];
@@ -130,6 +153,7 @@ define(
 					this.queued_province_moves_by_army = [];
 					
 					this.queued_action_steps = {};
+					this.queued_tile_moves = [];
 					
 					if(approved)
 					{
@@ -139,11 +163,19 @@ define(
 					{
 						this.enterSmallPhase(gameui.STATE_MAIN_DEFAULT);
 					}
+					
+					this.MergeReserveArmyBackIntoMain();
+					this.MergeReserveDisplayBackIntoMain();
 				}
 				else
 				{
 					console.log("WARNING: page::EndMoveMode() but not in move phase");
 				}
+				
+				//reset the planned move
+				this.UndoAllTileMoves();
+				
+				this.UnselectProvince();
 			},
 			
 		});

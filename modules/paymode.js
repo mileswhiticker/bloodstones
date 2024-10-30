@@ -35,7 +35,7 @@ define(
 						}
 						case this.ACTION_MOVE:
 						{
-							action_info_JSON = JSON.stringify(this.queued_action_steps);
+							action_info_JSON = JSON.stringify(this.queued_tile_moves_by_tile);
 							break;
 						}
 						case this.ACTION_BUILD:

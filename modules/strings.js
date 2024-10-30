@@ -122,6 +122,37 @@ define(
 				
 			},
 			
+			GetProvinceSelectionPlayerTitleString : function(action_mode)
+			{
+				switch(action_mode)
+				{
+					case gameui.STATE_MAIN_MOVE:
+					{
+						return _("Moving Units");
+					}
+					default:
+					{
+						return _("Your units");
+					}
+				}
+				
+			},
+			
+			GetProvinceSelectionEnemyTitleString : function(action_mode)
+			{
+				return _("Enemy units");
+			},
+			
+			GetProvinceSelectionEmptyTitleString : function(action_mode)
+			{
+				return _("No units");
+			},
+			
+			GetProvinceSelectionReserveTitleString : function(action_mode)
+			{
+				return _("Other Units");
+			},
+			
 			GetUnselectedArmyHintString : function()
 			{
 				return _("For more details, select one or more tiles in your hand, or any army on the board.");

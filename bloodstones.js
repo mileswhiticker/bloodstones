@@ -155,6 +155,8 @@ define([
 	
 	g_gamethemeurl + '/modules/province.js',
 	g_gamethemeurl + '/modules/province_defs.js',
+	g_gamethemeurl + '/modules/province_select.js',
+	g_gamethemeurl + '/modules/province_select_ui.js',
 	g_gamethemeurl + '/modules/province_ui.js',
 	g_gamethemeurl + '/modules/province_ui_setup.js',
 	g_gamethemeurl + '/modules/province_ui_events.js',
@@ -230,6 +232,8 @@ function (dojo, declare, lang, fx, on, domAttr) {
 		
 		_province,
 		_province_defs,
+		_province_select,
+		_province_select_ui,
 		_province_ui,
 		_province_ui_setup,
 		_province_ui_events,
@@ -310,7 +314,9 @@ function (dojo, declare, lang, fx, on, domAttr) {
 
 			this.STATE_BUILDVILLAGE = 8;
 			this.STATE_FREEBUILD = 9;
-			this.STATE_MAX = 8;
+			this.STATE_PLAYER_INACTIVE = 10;
+			this.STATE_PLAYER_ACTIVE = 11;
+			this.STATE_MAX = 11;
 			
 			this.OVERLAY_NONE = 0;
 			this.OVERLAY_SELECT = 1;
@@ -323,6 +329,11 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			this.OVERLAY_UNDEAD = 8;
 			this.OVERLAY_WITHDRAWRETREAT = 9;
 			this.OVERLAY_BATTLE_PREVIEW = 10;
+			
+			this.SELECT_ARMY_NONE = 0;
+			this.SELECT_ARMY_SOURCE = 1;
+			this.SELECT_ARMY_TARGET = 2;
+			this.SELECT_TARGET_TILES = 3;
 			
 			//length of a row on the sprite sheet as measured in number of tiles
 			this.SPRITESHEET_ROW_TILES = 14;
@@ -377,6 +388,9 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			//todo: transfer existing overlay code from build/mode/battle to here
 			this.current_overlay_mode = 0;
 			this.display_map_stacks = true;
+			this.selected_province_name = null;
+			this.on_select_map_overlay_callback = null;
+			this.on_unselect_map_overlay_callback = null;
 			
 			
 			/* Player */
@@ -450,7 +464,15 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			
 			
 			/* Move mode */
-			this.temp_move_army_leave_behind = null;
+			//this.temp_move_army_leave_behind = null;
+			//this.queued_split_armies_by_province = {};
+			this.queued_tile_moves_all = [];
+			this.queued_tile_moves_by_tile = {};
+			
+			this.selected_province_main_army = null;
+			this.selected_province_reserve_army = null;
+			this.selected_army_display_stack = null;
+			this.other_units_display_stack = null;
 			
 			
 			/* Build mode */

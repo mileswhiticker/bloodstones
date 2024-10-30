@@ -483,11 +483,11 @@ define(
 				var paywindow = dojo.byId("paywindow");
 				if(paywindow)
 				{
-					dojo.removeClass("paywindow","paywindow_slidein");
+					/*dojo.removeClass("paywindow","paywindow_slidein");
 					dojo.removeClass("paywindow","paywindow_minimise");
 					dojo.removeClass("paywindow","paywindow_unminimise");
-					dojo.addClass("paywindow","paywindow_slideout");
-					//dojo.destroy(dojo.byId("paywindow"));
+					dojo.addClass("paywindow","paywindow_slideout");*/
+					dojo.destroy(paywindow);
 				}
 				this.payment_mode = gameui.STATE_INVALID;
 			},

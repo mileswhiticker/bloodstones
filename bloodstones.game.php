@@ -223,10 +223,10 @@ class bloodstones extends Table
 		//general meta info about the game
 		$result["player_turn_phase"] = self::getGameStateValue("player_turn_phase");
 		
-        // Get public information about players
-        // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
-        $sql_players = "SELECT player_id id, player_score score, player_factionid factionid, player_regroups regroups, player_citadel_prov citadel_prov, captured_citadels, player_freebuildpoints freebuildpoints FROM player ";
-        $result['players'] = self::getCollectionFromDb($sql_players);
+		// Get public information about players
+		// Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
+		$sql_players = "SELECT player_id id, player_score score, player_factionid factionid, player_regroups regroups, player_citadel_prov citadel_prov_id, captured_citadels, player_freebuildpoints freebuildpoints FROM player ";
+		$result['players'] = self::getCollectionFromDb($sql_players);
 		
 		//calculate some useful info about the player hands here
 		foreach($result['players'] as $player_id => &$player)
@@ -242,6 +242,17 @@ class bloodstones extends Table
 					$player["tiles_hand"] = $player_deck->countCardInLocation("hand");
 					$player["tiles_bag"] = $player_deck->countCardInLocation("bag");
 					$player["tiles_discard"] = $player_deck->countCardInLocation("discard");
+				}
+				
+				//detailed citadel info
+				$player["citadel_prov_id"] = (int)$player["citadel_prov_id"];
+				if($player["citadel_prov_id"] >= 0)
+				{
+					$player["citadel_tile_info"] = $this->GetPlayerCitadelTile($player_id);
+				}
+				else
+				{
+					$player["citadel_tile_info"] = null;
 				}
 			}
 			

@@ -28,7 +28,14 @@ define(
 						this.ClearCanvas();
 						if(this.selected_army != null)
 						{
+							//old code but ill leave it in and unused just in case
+							console.log("WARNING! UpdateCurrentOverlayMode() the mode is OVERLAY_SELECT and this.selected_army != null");
 							const start_province_info = this.provinces_by_name[this.selected_army.prov_name];
+							this.SetProvinceOverlay(start_province_info, PROV_SELECT);
+						}
+						else if(this.selected_province_name != null)
+						{
+							const start_province_info = this.provinces_by_name[this.selected_province_name];
 							this.SetProvinceOverlay(start_province_info, PROV_SELECT);
 						}
 						break;

@@ -41,7 +41,7 @@ define(
 					}
 					else if(window.gameui.isCurrentPlayerMoveMode())
 					{
-						window.gameui.TryQueueProvinceMove(province_name);
+						window.gameui.HandleMovemodeProvinceClicked(province_name);
 					}
 					else if(window.gameui.isCurrentPlayerCitadelState())
 					{
@@ -83,13 +83,13 @@ define(
 					else
 					{
 						//just unselect the current army, if there is one selected
-						window.gameui.UnselectArmyStack();
+						window.gameui.HandleDefaultProvinceClicked(province_name);
 					}
 				}
 				else
 				{
 					//just unselect the current army, if there is one selected
-					window.gameui.UnselectArmyStack();
+					window.gameui.HandleDefaultProvinceClicked(province_name);
 				}
 			},
 			

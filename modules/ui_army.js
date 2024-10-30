@@ -22,7 +22,10 @@ define(
 			
 			SelectArmyStack : function(new_selected_army)
 			{
-				//console.log("page::SelectArmyStack(" + new_selected_army.id_string + ")");
+				console.log("WARNING! page::SelectArmyStack(" + new_selected_army.id_string + ") this function is deprecated");
+				console.log(new_selected_army);
+				return;
+				
 				//console.log(new_selected_army);
 				if(window.gameui.selected_army != null)
 				{
@@ -76,14 +79,14 @@ define(
 					
 					//province info for this army
 					var prov_id = this.GetProvinceIdFromName(new_selected_army.prov_name);
-					var province_text = title_div = dojo.place("<div class=\"ui_selected_text\">" + this.GetProvinceNameUIString(prov_id) + "</div>", selected_army_div);
+					var province_text = dojo.place("<div class=\"ui_selected_text\">" + this.GetProvinceNameUIString(prov_id) + "</div>", selected_army_div);
 					
 					//calculated battle strength if attacked here
 					var translated = dojo.string.substitute( _("If attacked here, these ${num} tiles will have a +${strength} bonus in combat"), {
 						num: new_selected_army.items.length,
 						strength: new_selected_army.GetArmyDefensiveBonus()
 						} );
-					var strength_text = title_div = dojo.place("<div class=\"ui_selected_text\">" + translated + "</div>", selected_army_div);
+					var strength_text = dojo.place("<div class=\"ui_selected_text\">" + translated + "</div>", selected_army_div);
 					
 					//useful hint for the player
 					if(new_selected_army.player_id == gameui.getCurrentPlayer())
@@ -113,20 +116,25 @@ define(
 				}
 			},
 			
-			GetArmySelectionStackId : function()
+			GetArmySelectionStackDivId : function()
 			{
 				return "army_selection_stack";
+			},
+			
+			GetOtherUnitsStackDivId : function()
+			{
+				return "province_other_units";
 			},
 			
 			/*GetSelectedTileIdString : function(tile_id)
 			{
 				//this is unused but im leaving it here just in case
-				return this.GetArmySelectionStackId() + "_item_" + tile_id;
+				return this.GetArmySelectionStackDivId() + "_item_" + tile_id;
 			},*/
 			
 			GetSelectedTileImageIdString : function(tile_id)
 			{
-				return this.GetArmySelectionStackId() + "_item_" + tile_id;
+				return this.GetArmySelectionStackDivId() + "_item_" + tile_id;
 			},
 			
 			/*GetTileIdFromImage : function(tile_image_id)
@@ -137,9 +145,31 @@ define(
 			GetArmySelectedTileId : function(tile_image_id)
 			{
 				//console.log("page::GetArmySelectedTileId(" + tile_image_id + ")");
+				var div_id = this.GetArmySelectionStackDivId();
 				
 				//format: "army_selection_stack_item_XX" where XX is the tile id set by the Deck in php
-				var tile_id = tile_image_id.slice(26);
+				var cutoff_length = div_id.length + 6;
+				var tile_id = tile_image_id.slice(cutoff_length);
+				
+				//if the tile is selected, then it will have "_selected" concatenated to the end of its node id string
+				//check for this now
+				if(tile_id.length > 9)
+				{
+					//remove the last 9 characters
+					var keep_length = tile_id.length - 9;
+					tile_id = tile_id.slice(0,keep_length);
+				}
+				return tile_id;
+			},
+			
+			GetOtherUnitsTileId : function(tile_image_id)
+			{
+				//console.log("page::GetOtherUnitsTileId(" + tile_image_id + ")");
+				var div_id = this.GetOtherUnitsStackDivId();
+				
+				//format: "army_selection_stack_item_XX" where XX is the tile id set by the Deck in php
+				var cutoff_length = div_id.length + 6;
+				var tile_id = tile_image_id.slice(cutoff_length);
 				
 				//if the tile is selected, then it will have "_selected" concatenated to the end of its node id string
 				//check for this now
@@ -210,7 +240,7 @@ define(
 					//clean up the ui
 					dojo.query(".ui_selected_text").forEach(dojo.destroy);
 					
-					dojo.destroy("army_selection_stack");
+					dojo.destroy(this.GetArmySelectionStackDivId());
 					//this.DestroyArmyByStack(window.gameui.selected_army_display_stack);
 					window.gameui.selected_army_display_stack = null;
 					
@@ -228,6 +258,8 @@ define(
 			
 			CreateArmySelectPanelTitle : function()
 			{
+				return;
+				console.log("page::CreateArmySelectPanelTitle()");
 				dojo.query(".ui_stack_title").forEach(dojo.destroy);
 				dojo.place("<p class=\"ui_stack_title selected_stack_element\">" + this.GetUnselectedArmyHintString() + "</p>", "selected_army");
 			},
@@ -258,6 +290,7 @@ define(
 				//console.log("page::GetArmyById(" + id_num + ")");
 				if(id_num == null)
 				{
+					console.log("WARNING: GetArmyById() but id_num is null");
 					return undefined;
 				}
 				if(id_num == undefined)
@@ -270,7 +303,7 @@ define(
 				if(army == undefined)
 				{
 					//this is sometimes intended behaviour to not find an existing army
-					//console.log("WARNING: GetArmyById() could not find army with id_num: " + id_num);
+					console.log("WARNING: GetArmyById() could not find army with id_num: " + id_num);
 				}
 				return army;
 			},
@@ -295,36 +328,49 @@ define(
 				return newArmy;
 			},
 			
-			DestroyArmy : function(source_army_id)
+			DestroyArmyByIdNum : function(army_id_num)
+			{
+				if(army_id_num == undefined)
+				{
+					return;
+				}
+				//console.log("page::DestroyArmyByIdNum(" + army_id_num + ")");
+				return this.DestroyArmy(army_id_num);
+			},
+			
+			DestroyArmy : function(army_id_num)
 			{
 					//clean it up
-					//console.log("beginning cleanup of " + source_army_id_string + " ..." );
-					var source_army = this.GetArmyById(source_army_id);
+					//console.log("page::DestroyArmy(" + army_id_num + ")");
+					var source_army = this.GetArmyById(army_id_num);
 					if(source_army == undefined)
 					{
 						//create an empty army stack with everything except no tiles
-						console.log("ERROR: could not find source army to split: \"" + source_army_id + "\"");
+						console.log("ERROR: could not find source army to destroy: \"" + army_id_num + "\"");
 						return;
 					}
 					if(this.selected_army == source_army)
 					{
 						this.UnselectArmyStack();
 					}
-					var source_army_id_string = this.GetArmyIdString(source_army_id);
+					var source_army_id_string = this.GetArmyIdString(army_id_num);
 					
 					//loop over provinces and find the old province zone
 					var cur_province = this.provinces_by_name[source_army.prov_name];
 					cur_province.zone.removeFromZone(source_army_id_string, false);
 					
-					//console.log("check1:");
-					//console.log(this.armies_by_id_string);
-					delete this.armies_by_id_string.source_army_id_string;
-					//console.log(this.armies_by_id_string);
+					//untrack this
+					delete this.armies_by_id_string[source_army_id_string];
 					
-					//console.log("check2:");
-					//console.log(this.all_armies);
-					delete this.all_armies[source_army_id];
-					//console.log(this.all_armies);
+					//untrack this
+					for(var i=0; i<this.all_armies.length; i++)
+					{
+						var check_army = this.all_armies[i];
+						if(check_army.id_num == army_id_num)
+						{
+							this.all_armies.splice(i,1);
+						}
+					}
 					
 					//todo: clean up any extra circular references inside TileStack.js for proper garbage collection
 					//
@@ -426,25 +472,16 @@ define(
 				//console.log(moving_army.container_div.parentNode);
 			},
 			
-			TransferArmyTiles : function(source_army_id, target_army_id, tile_ids, selection_flag)
+			TransferArmyTiles : function(source_army_id, target_army_id, tile_ids, selection_flag = this.SELECT_ARMY_NONE, do_ui_update = true)
 			{
-				if(tile_ids == null)
-				{
-					tile_ids = [];
-				}
-				//console.log("page::TransferArmyTiles(" + source_army_id + "," + target_army_id + "," + tile_ids.toString() + "," + selection_flag + ")");
-				//console.log("tile_ids:");
-				//console.log(tile_ids);
-				
 				//grab this useful info about the source army stack
 				var source_army = this.GetArmyById(source_army_id);
 				if(source_army == undefined)
 				{
 					//create an empty army stack with everything except no tiles
 					console.log("ERROR: could not find source army to split: \"" + source_army_id + "\"");
+					return;
 				}
-				//console.log("source_army:");
-				//console.log(source_army);
 				
 				//the target should already exist
 				var target_army = this.GetArmyById(target_army_id);
@@ -452,7 +489,28 @@ define(
 				{
 					//create an empty army stack with everything except no tiles
 					console.log("ERROR: could not find or create target army to split: \"" + target_army_id + "\"");
+					return;
 				}
+				
+				return this.TransferArmyTilesByStack(source_army, target_army, tile_ids, selection_flag, do_ui_update);
+			},
+			
+			TransferArmyTilesByStack : function(source_army, target_army, tile_ids, selection_flag = this.SELECT_ARMY_NONE, do_ui_update = true)
+			{
+				if(tile_ids == null)
+				{
+					tile_ids = [];
+				}
+				if(source_army.id_string != "province_other_units")
+				{
+					//console.log("page::TransferArmyTilesByStack(" + source_army.id_string + "," + target_army.id_string + ",[" + tile_ids.toString() + "]," + selection_flag + "," + do_ui_update + ")");
+				}
+				//console.log("tile_ids:");
+				//console.log(tile_ids);
+				
+				//console.log("source_army:");
+				//console.log(source_army);
+				
 				//console.log("target_army:");
 				//console.log(target_army);
 				
@@ -461,6 +519,7 @@ define(
 				var split_tile_infos;
 				if(tile_ids.length > 0)
 				{
+					//todo: this should be a helper function in TileStack instead of here like this
 					split_tile_infos = [];
 					//console.log("identifying tiles to split...");
 					for(var check_tile_id in source_army.tiles)
@@ -478,9 +537,13 @@ define(
 							if(check_tile_id == split_tile_id)
 							{
 								//remember it for later
-								//console.log("found match");
-								//console.log("check3");
+								//console.log("found match:");
+								//console.log(source_army);
+								//console.log("before: " + checktile.div_id);
+								checktile.div_id = source_army.getItemDivId(check_tile_id);
+								//console.log("after: " + checktile.div_id);
 								split_tile_infos.push(checktile);
+								//console.log(checktile);
 								break;
 							}
 						}
@@ -489,68 +552,60 @@ define(
 				else
 				{
 					//console.log("all tiles are transferring across");
-					split_tile_infos = source_army.getTileInfos();
+					split_tile_infos = source_army.getTileInfos(true);
 				}
 				//console.log("split_tile_infos:");
 				//console.log(split_tile_infos);
 				
 				//add items to new army
-				var source_army_id_string = this.GetArmyIdString(source_army_id);
-				target_army.SpawnTilesInStack(split_tile_infos, source_army_id_string);
+				var select_target_tiles = (selection_flag == this.SELECT_TARGET_TILES);
+				target_army.SpawnTilesInStack(split_tile_infos, "from item div", select_target_tiles);
 				
 				//console.log("removing items... ");
 				
-				//now move the tiles over to the new army
-				var target_army_id_string = this.GetArmyIdString(target_army_id);
-				source_army.RemoveTilesFromStack(split_tile_infos/*, target_army_id_string*/);
+				//remove items from the old army
+				source_army.RemoveTilesFromStack(split_tile_infos/*, target_army.id_string*/);
 				//console.log("items remaining: " + source_army.items.length);
 				//console.log(source_army);
-				
-				//unselect the old army
-				//DONT do this, it breaks other code
-				//var old_selected_army = this.UnselectArmyStack();
 				
 				//if the old army is completely empty?
 				if(source_army.IsStackEmpty())
 				{
-					//console.log("army is empty... selecting new army");
-					//select the new army we are merging into
+					//console.log(source_army.id_string + " is empty... destroying");
 					
-					//this.ForceRefreshSelectArmyStack(target_army);
-					
-					//console.log("destroying source army");
-					this.DestroyArmy(source_army_id);
+					switch(source_army.stack_type)
+					{
+						case STACK_ARMY:
+						{
+							//if this stack has a valid id num, lets destroy it
+							if(source_army.id_num != undefined)
+							{
+								//console.log("source army is empty after transfer, destroying...");
+								this.DestroyArmyByIdNum(source_army.id_num);
+							}
+							else
+							{
+								console.log("WARNING! page::TransferArmyTilesByStack(" + source_army.id_string + ", " + target_army.id_string + ", " + tile_ids.toString() + ", " + selection_flag + ") is STACK_ARMY but has undefined id_num");
+							}
+						}
+					}
 				}
-				else if(source_army == window.gameui.selected_army)
+				else
 				{
-					//console.log("army is not empty... refreshing previously selected army");
-					//was this army selected? special extra handling
-					//this.ForceRefreshSelectArmyStack(source_army);
+					//console.log(source_army.id_string + " is not empty");
+					//console.log(source_army);
 				}
 				
-				//toggle stack selection to refresh the ui
-				//this is a bit unweildy the way i was doing it... i'll do this a bit more cleanly above but i'll leave this here for now
-				switch(selection_flag)
+				if(do_ui_update)
 				{
-					case this.SELECT_ARMY_NONE:
+					if(this.isCurrentPlayerMoveMode())
 					{
-						break;
+						this.RefreshMoveModeUI();
 					}
-					case this.SELECT_ARMY_SOURCE:
+					else
 					{
-						this.SelectArmyStack(source_army);
-						break;
+						//console.log("WARNING! page::TransferArmyTilesByStack(" + source_army.id_string + ", " + target_army.id_string + ", " + tile_ids.toString() + ", " + selection_flag + ") trying to do ui update but unknown game state");
 					}
-					case this.SELECT_ARMY_TARGET:
-					{
-						this.SelectArmyStack(target_army);
-						break;
-					}
-				}
-				
-				if(this.isCurrentPlayerMoveMode())
-				{
-					this.RefreshMoveModeUI();
 				}
 			},
 			
@@ -574,7 +629,8 @@ define(
 				}
 				else if(this.isCurrentPlayerMoveMode())
 				{
-					window.gameui.HandleMovemodeArmyClicked(clicked_army);
+					//window.gameui.HandleMovemodeArmyClicked(clicked_army);
+					window.gameui.HandleMovemodeProvinceClicked(clicked_army.prov_name);
 				}
 				else if(this.isCurrentPlayerBattleMode())
 				{
@@ -595,6 +651,10 @@ define(
 				}
 				else
 				{
+					this.HandleDefaultProvinceClicked(clicked_army.prov_name);
+					return;
+					
+					//old army selection code
 					//do we already have an army selected?
 					if(window.gameui.selected_army == null)
 					{

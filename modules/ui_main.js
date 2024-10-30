@@ -108,9 +108,20 @@ define(
 				this.SetupProvinceUI(canvas);
 				this.SetupArmies(gamedatas);
 				this.SetupVillages(gamedatas);
-				//this.SetupCitadels(gamedatas);
+				this.SetupCitadels();
 				this.SetupLeftUI(gamedatas);
 				this.SetupPlayerboards();
+				this.SetUIProvinceSelectionEmpty();
+				
+				this.SetDefaultMapInteraction();
+			},
+			
+			SetDefaultMapInteraction : function()
+			{
+				//map click interactions
+				this.SetProvinceOverlayMode(this.OVERLAY_SELECT);
+				this.on_select_map_overlay_callback = this.OnProvinceSelectDefaultMapOverlay;
+				this.on_unselect_map_overlay_callback = this.OnProvinceUnselectDefaultMapOverlay;
 			},
 			
 			SetupProvinces : function()

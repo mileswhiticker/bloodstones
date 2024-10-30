@@ -11,7 +11,7 @@
 const STACK_UNDEFINED = 0;
 const STACK_ARMY = 1;
 const STACK_PLAYERHAND = 2;
-const STACK_ARMY_SELECTED = 11;
+const STACK_OTHERUNITS = 12;
 const STACK_CITADEL = 3;
 const STACK_VILLAGE = 4;
 const STACK_PAYMENT = 5;
@@ -21,6 +21,8 @@ const STACK_BATTLE_DISPLAY_DEFENDER = 7;
 const STACK_BATTLE_TILES = 8;
 const STACK_BATTLE_TILES_TEMP = 9;
 const STACK_BATTLE_TILES_REJECT = 10;
+const STACK_ARMY_SELECTED = 11;
+const STACK_ARMY_CITADEL = 11;
 
 define(
 	[
@@ -63,7 +65,7 @@ define(
 				this.stack_is_selected = false;
 				
 				this.debugging = 0;
-				this.id_num = -1;
+				this.id_num = undefined;
 				this.id_string = "ERROR_ID_UNSET";
 				this.selected_div = null;
 				this.selected_opacity = 0.6;
@@ -72,6 +74,7 @@ define(
 				this.tiles_selected = {};
 				this.spawn_fadein = true;
 				this.spawn_fadeout = true;
+				this.max_weight = 0;	//used for forced reordering with select/unselect in the army select panel
 				
 				this.player_id = -1;
 				this.province_id = -1;
@@ -88,6 +91,7 @@ define(
 				
 				this.custom_item_render_callback = null;
 				this.custom_container_height_function = null;
+				this.custom_item_item_remove_callback = null;
 			},
 			
 			create: function(page, host_div_id/*,container_div, item_width, item_height*/)
@@ -127,7 +131,7 @@ define(
 						{
 							var tile_type = cur_faction_id * this.image_items_per_row + row_index;
 							//console.log("DEBUG tile_type:" + tile_type);
-							this.addItemType(tile_type, tile_type, g_gamethemeurl + 'img/spritesheet.png', tile_type);
+							this.addItemType(tile_type, 0, g_gamethemeurl + 'img/spritesheet.png', tile_type);
 						}
 						
 						//create citadels for first five factions: different handling because they are different dimensions
@@ -171,9 +175,17 @@ define(
 				//console.log(this);
 			},
 			
+			createAsArmyCitadel: function(page, host_div_id, army_info, from_div_id)
+			{
+				var retval = this.createAsArmy(page, host_div_id, army_info, from_div_id);
+				this.stack_type = STACK_ARMY_CITADEL;
+				return retval;
+			},
+			
 			createAsArmy: function(page, host_div_id, army_info, from_div_id)
 			{
 				//console.log("TileStack::createAsArmy(page," + host_div_id + ",army_info," + from_div_id + ")");
+				//console.log(army_info);
 				//container_div
 				
 				//this doesnt need to be passed in as argument
@@ -434,7 +446,12 @@ define(
 					}
 					case STACK_ARMY_SELECTED:
 					{
-						container_div_id = page.GetArmySelectionStackId();
+						container_div_id = page.GetArmySelectionStackDivId();
+						break;
+					}
+					case STACK_OTHERUNITS:
+					{
+						container_div_id = page.GetOtherUnitsStackDivId();
 						break;
 					}
 				}
@@ -459,7 +476,17 @@ define(
 						this.selectable = 2;
 						this.selectionApparance = 'striped';
 						this.custom_item_render_callback = this.renderTileSelectedArmy;
+						this.custom_item_item_remove_callback = this.onItemRemoveSelectedArmy;
 						this.spawn_fadein = false;
+						this.spawn_fadeout = false;
+						break;
+					}
+					case STACK_OTHERUNITS:
+					{
+						this.items_per_line = 2;
+						this.selectable = 2;
+						this.spawn_fadein = false;
+						this.spawn_fadeout = false;
 						break;
 					}
 					case STACK_PAYMENT:
@@ -490,7 +517,7 @@ define(
 				//shuffle down slightly so we dont overlap the army title text
 				//this is a hack but oh well
 				//console.log(this.container_div);
-				this.container_div.top = "75px";
+				//this.container_div.top = "75px";
 				
 				//copy tiles from army stack
 				this.copyAcrossParentTiles(parent_army);
@@ -500,6 +527,11 @@ define(
 					//select all tiles
 					this.selectAll();
 				}
+			},
+			
+			createAsOtherUnits : function(page, host_div_id, player_id)
+			{
+				this.createAsUITilestack(page, host_div_id, player_id, STACK_OTHERUNITS);
 			},
 			
 			createAsPaystack: function(page, host_div_id, player_id)
@@ -668,10 +700,17 @@ define(
 			
 			SpawnTileInStack : function(tile_info, source_div_id = undefined, selected = true)
 			{
-				//console.log("army::SpawnTileInStack(" + tile_info.id + ")");
+				if(source_div_id == "from item div")
+				{
+					//console.log("army::SpawnTileInStack(" + tile_info.id + ", \"from item div\", " + selected + ")");
+					//console.log(tile_info);
+					//console.log(this.control_name);
+					//console.log(this.container_div);
+					source_div_id = tile_info.div_id;
+				}
 				this.addToStockWithId(tile_info.type_arg, tile_info.id, source_div_id);
 				this.tiles[tile_info.id.toString()] = tile_info;
-				tile_info.selected = selected;
+				//tile_info.selected = selected;
 				
 				//this doesnt work... tile_node is null because it's a delayed creation. have to allow current query to resolve first
 				//could rewrite stock further but i dont think it's worth it
@@ -750,6 +789,11 @@ define(
 				//console.log("tilestack::RemoveTileFromStack(" + tile_info_id + "," + target_div_id + ")");
 				this.removeFromStockById(tile_info_id, target_div_id);
 				delete this.tiles[tile_info_id.toString()];
+				
+				if(this.custom_item_item_remove_callback != null)
+				{
+					this.custom_item_item_remove_callback(tile_info_id);
+				}
 			},
 			
 			RemoveAllTilesFromStack : function(target_div_id = undefined)
@@ -778,6 +822,11 @@ define(
 				
 				//we didnt find any tile_infos so we must be empty
 				return true;
+			},
+			
+			GetNumItems : function()
+			{
+				return this.items.length;
 			},
 			
 			IsTempStack : function()
@@ -836,6 +885,13 @@ define(
 			getSelectedTileIds : function()
 			{
 				var selected_tile_ids = [];
+				var selected_items = this.getSelectedItems();
+				for(var i in selected_items)
+				{
+					var item = selected_items[i];
+					selected_tile_ids.push(item.id);
+				}
+				/*
 				for(var i in this.tiles)
 				{
 					var tile = this.tiles[i];
@@ -844,12 +900,20 @@ define(
 						selected_tile_ids.push(tile.id);
 					}
 				}
+				*/
 				return selected_tile_ids;
 			},
 			
 			getUnselectedTileIds : function()
 			{
-				var selected_tile_ids = [];
+				var unselected_tile_ids = [];
+				var unselected_items = this.getUnselectedItems();
+				for(var i in selected_items)
+				{
+					var item = selected_items[i];
+					unselected_tile_ids.push(item.id);
+				}
+				/*
 				for(var i in this.tiles)
 				{
 					var tile = this.tiles[i];
@@ -858,15 +922,20 @@ define(
 						selected_tile_ids.push(tile.id);
 					}
 				}
-				return selected_tile_ids;
+				*/
+				return unselected_tile_ids;
 			},
 			
-			getTileInfos : function()
+			getTileInfos : function(include_div_id = false)
 			{
 				var tile_infos = [];
 				for(var i in this.tiles)
 				{
 					var tile = this.tiles[i];
+					if(include_div_id)
+					{
+						tile.div_id = this.getItemDivId(tile.id);
+					}
 					tile_infos.push(tile);
 				}
 				return tile_infos;
@@ -1021,7 +1090,7 @@ define(
 			
 			SetGhosted : function(is_ghosted)
 			{
-				//console.log("page::SetGhosted(" + is_ghosted + ")");
+				//console.log("page::SetGhosted(" + is_ghosted + ") " + this.id_string);
 				if(is_ghosted)
 				{
 					switch(this.stack_type)
@@ -1087,7 +1156,7 @@ define(
 				return false;
 			},
 			
-			updateDisplay: function( from )
+			updateDisplay : function( from )
 			{
 				//we are overriding a few specific settings here necessary for our stack types
 				//i wish i didnt have to override this whole function because there is only small tweaks i want to make
@@ -1139,9 +1208,13 @@ define(
 				var control_new_width = 0;
 				var n=0;
 				
+				//if(this.stack_type == STACK_ARMY_SELECTED)	console.log("updateDisplay()");
+				
 				for( var i in this.items )
 				{
 					var item = this.items[ i ];
+					//if(this.stack_type == STACK_ARMY_SELECTED)	console.log(item);
+					
 					var item_id = this.getItemDivId( item.id );
 					if( itemIndex != 'auto' )
 					{
@@ -1298,6 +1371,7 @@ define(
 						
 						if(typeof from != 'undefined' && from != null)
 						{
+							//console.log("from:" + from);
 							this.page.placeOnObject( item_div, from );
 
 							if( typeof item.loc == 'undefined' )
@@ -1321,6 +1395,10 @@ define(
 						{
 							dojo.style( item_div, "opacity", 0 );
 							dojo.fadeIn( {node:  item_div } ).play();
+						}
+						else
+						{
+							//console.log("from is undefined or null");
 						}
 					}
 					
@@ -1442,6 +1520,11 @@ define(
 					case STACK_ARMY_SELECTED:
 					{
 						this.page.onClickArmySelectedTile(event);
+						break;
+					}
+					case STACK_OTHERUNITS:
+					{
+						this.page.onClickOtherUnitsTile(event);
 						break;
 					}
 					case STACK_PLAYERHAND:
@@ -1628,8 +1711,19 @@ define(
 				}
 			},
 			
+			onItemRemoveSelectedArmy : function(item_id)
+			{
+				var desc_div_id = this.getItemDescId({id: item_id});
+				dojo.destroy(desc_div_id);
+				var title_div_id = this.getItemTitleId({id: item_id});
+				dojo.destroy(title_div_id);
+			},
+			
 			copyAcrossParentTiles : function(parent_army)
 			{
+				//console.log("page::copyAcrossParentTiles(" + parent_army.id_string + ") into " + this.id_string);
+				//console.log(parent_army);
+				//console.log(this);
 				this.SpawnTilesInStack(parent_army.tiles, null, false);
 			},
 			
@@ -1769,6 +1863,60 @@ define(
 			{
 				this.inherited(arguments);
 				//this.unselectStack();
+			},
+			
+			ItemToTop : function(item_id)
+			{
+				//console.log("Tilestack::ItemToTop(" + item_id + ")");
+				//console.log(this.items);
+				//todo: due to the custom render callback for army stack selection, this is not actually reordering the tiles on the client screen
+				var item = this.getItemById(item_id);
+				
+				this.max_weight += 1;
+				var new_weights = {};
+				new_weights[item.type] = this.max_weight;
+				this.changeItemsWeight(new_weights);
+				//console.log(this.items);
+			},
+			
+			ItemToBottom : function(item_id)
+			{
+				//console.log("Tilestack::ItemToBottom(" + item_id + ")");
+				//console.log(this.items);
+				//todo: due to the custom render callback for army stack selection, this is not actually reordering the tiles on the client screen
+				var item = this.getItemById(item_id);
+				
+				this.max_weight += 1;
+				var new_weights = {};
+				new_weights[item.type] = -this.max_weight;
+				this.changeItemsWeight(new_weights);
+				//console.log(this.items);
+			},
+			
+			changeItemsWeight: function( newWeights )
+			{
+				//console.log( 'changeItemsWeight' );
+				//console.log( newWeights );
+				for( var type in newWeights )
+				{
+					var newWeight = newWeights[ type ];
+					if( this.item_type[ type ] )
+					{
+						this.item_type[ type ].weight = newWeight;
+					}
+					else
+					{   console.error( 'unknow item type'+ type );  }
+				}
+				
+				this.sortItems();
+				this.updateDisplay();
+			},
+			
+			getItemDivId: function(id, do_debug = false)
+			{
+				var retval = this.control_name+'_item_'+id;
+				if(do_debug)	console.log("Tilestack::getItemDivId(" + id + ") " + retval);
+				return retval;
 			},
 			
 		});

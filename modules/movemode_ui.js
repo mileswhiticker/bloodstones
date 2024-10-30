@@ -24,6 +24,9 @@ define(
 			AddProvinceMoveLink : function(start_province_info, dest_province_info, overlay_type)
 			{
 				//console.log("page::AddProvinceMoveLink(" + start_province_info.name + ", " + dest_province_info.name + ", " + overlay_type + ")");
+				//console.log(start_province_info);
+				//console.log(dest_province_info);
+				
 				for(var move_link_index = 0; move_link_index < start_province_info.linked_prov_ids; move_link_index++)
 				{
 					//which province is this?
@@ -135,6 +138,8 @@ define(
 			
 			HandleMovemodeArmyClicked : function(clicked_army)
 			{
+				console.log("page::HandleMovemodeArmyClicked(" + clicked_army.id_string + ")");
+				//this function is no longer used
 				//is this our army?
 				if(clicked_army.player_id == this.getCurrentPlayer())
 				{
@@ -190,6 +195,44 @@ define(
 					}
 				}
 			},
+			
+			HandleMovemodeProvinceClicked : function(clicked_province_name)
+			{
+				//console.log("page::HandleMovemodeProvinceClicked(" + clicked_province_name + ")");
+				if(this.GetSelectedProvinceName() == clicked_province_name)
+				{
+					this.MergeReserveArmyBackIntoMain();
+					this.UnselectProvince();
+				}
+				else if(this.IsAnyProvinceSelected())
+				{
+					this.TryQueueProvinceMove(clicked_province_name);
+				}
+				else
+				{
+					this.SelectProvince(clicked_province_name);
+				}
+			},
+			
+			SetMovemodeMapInteraction : function()
+			{
+				this.SetProvinceOverlayMode(this.OVERLAY_MOVE);
+				this.on_select_map_overlay_callback = this.OnProvinceSelectMovemodeMapOverlay;
+				this.on_unselect_map_overlay_callback = this.OnProvinceUnselectMovemodeMapOverlay;
+			},
+			
+			OnProvinceSelectMovemodeMapOverlay : function(province_name)
+			{
+				//console.log("page::OnProvinceSelectMovemodeMapOverlay()");
+				this.UpdateCurrentOverlayMode();
+			},
+			
+			OnProvinceUnselectMovemodeMapOverlay : function(province_name)
+			{
+				//console.log("page::OnProvinceUnselectMovemodeMapOverlay()");
+				this.UpdateCurrentOverlayMode();
+			},
+			
 		});
 			
 		return instance;

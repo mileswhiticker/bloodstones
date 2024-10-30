@@ -354,11 +354,14 @@ define(
 				//console.log("page::notif_newCitadel()");
 				//console.log(notif);
 				
-				//notif.args.player_id
-				//this.CreateCitadel(notif.args.province_name, notif.args.player_id);
-				window.gameui.CreateArmy(notif.args.built_citadel_army);
+				//save this for later reference
+				var player = this.gamedatas.players[notif.args.player_id];
+				player.citadel_prov_id = parseInt(notif.args.citadel_prov_id);
+				player.citadel_tile_info = notif.args.citadel_tile_info;
 				
-				//console.log(this.all_armies);
+				//create the item on the map
+				var citadel_prov_name = this.GetProvinceNameFromId(player.citadel_prov_id);
+				this.CreateCitadelStack(citadel_prov_name, player.id, player.citadel_tile_info);
 				
 				//for replay mode
 				this.UIFinishPlaceCitadel();

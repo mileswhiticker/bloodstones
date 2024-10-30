@@ -20,11 +20,15 @@ define(
 			
 			SetupLeftUI : function()
 			{
+				//note: this file and function used to contain the functionality for army selection
+				//now that we've replaced army selection with province selection, i've moved that functionality into province_select.js and province_select_ui.js
+				//the initial function calls are now in ui_main.js and the various game states (or modes in main game state)
+				
 				//console.log("page::SetupLeftUI()");
 				this.SetupPlayercards();
 				
-				//add a hint telling the player they can select an army there
-				this.CreateArmySelectPanelTitle();
+				this.other_units_display_stack = new modules.TileStack();
+				this.other_units_display_stack.createAsOtherUnits(this, "leftpanel", this.player_id);
 			},
 			
 			CreatePlayerHand : function(hand_player_id)
@@ -46,11 +50,11 @@ define(
 				//console.log("page::onClickArmySelectedTile()");
 				//console.log(event);
 				
-				if(window.gameui.selected_army == null)
+				/*if(window.gameui.selected_army == null)
 				{
 					console.log("ERROR: Trying to select tile while selected_army is null");
 					return;
-				}
+				}*/
 				
 				var selected_div = $(event.target.id);
 				//var cur_tile_id = this.GetTileIdFromImage(event.target.id);
@@ -59,7 +63,21 @@ define(
 				//console.log(cur_tile_id);
 				//console.log(window.gameui.selected_army.tiles);
 				
-				window.gameui.HandleClickArmySelectedTile(cur_tile_id);
+				this.HandleClickArmySelectedTile(cur_tile_id);
+			},
+			
+			onClickOtherUnitsTile : function(event)
+			{
+				var cur_tile_id = this.GetOtherUnitsTileId(event.target.id);
+				this.HandleOtherUnitsSelectedTile(cur_tile_id);
+			},
+			
+			HandleOtherUnitsSelectedTile : function(cur_tile_id)
+			{
+				if(this.isCurrentPlayerMoveMode())
+				{
+					this.HandleClickArmyOtherTileMovemode(cur_tile_id);
+				}
 			},
 			
 			HandleClickArmySelectedTile : function(cur_tile_id)
@@ -68,108 +86,7 @@ define(
 				//todo: merge move mode and undead mode functionality here
 				if(this.isCurrentPlayerMoveMode())
 				{
-					//console.log("clicked on selected tile id:" + cur_tile_id);
-					
-					//toggle item selection
-					//console.log("isSelected:" + window.gameui.selected_army_display_stack.isSelected(cur_tile_id));
-					if(this.selected_army_display_stack.isSelected(cur_tile_id))
-					{
-						//we can't split off a tile if this is the last one
-						if(this.selected_army.IsLastItemSelected())
-						{
-							//console.log("last item");
-							return;
-						}
-						
-						//unselect it
-						this.selected_army.unselectItem(cur_tile_id);
-						this.selected_army_display_stack.unselectItem(cur_tile_id);
-						
-						//we will now "separate" this tile from the main army so it doesnt move
-						//console.log("transfering tiles to temp army");
-						
-						//check if this army has already moved
-						if(this.queued_moving_armies.includes(window.gameui.selected_army))
-						{
-							//visual helper animation from the player's hand to the army stack on the map
-							//this.SelectedArmySplitAnimation(cur_tile_id, window.gameui.selected_army.id_num);
-							
-							//we have already started moving, so record this split as a new action
-							var temp_army_info = {army_id: this.getTempArmyId(), player_id: window.gameui.selected_army.player_id, prov_name: window.gameui.selected_army.prov_name, tiles: []};
-							var temp_army = this.CreateArmy(temp_army_info, null);
-							//this.TransferArmyTiles(window.gameui.selected_army.id_num, temp_army.id_num, [cur_tile_id], this.SELECT_ARMY_SOURCE);
-							this.QueueArmySplit(window.gameui.selected_army, [cur_tile_id], temp_army);
-						}
-						else
-						{
-							//we havent started moving so execute this split immediately
-							//this.ServerArmySplit(window.gameui.selected_army, [cur_tile_id]);
-							
-							//visual helper animation from the player's hand to the army stack on the map
-							//this.SelectedArmySplitAnimation(cur_tile_id, window.gameui.selected_army.id_num);
-						}
-						
-						//the temp army for this province
-						if(!this.temp_move_army_leave_behind)
-						{
-							//console.log("creating new temp army");
-							//create temp army
-							var temp_army_info = {army_id: this.getTempArmyId(), player_id: this.selected_army.player_id, prov_name: this.selected_army.prov_name, tiles: []};
-							this.temp_move_army_leave_behind = this.CreateArmy(temp_army_info, null);
-						}
-						
-						//move this tile across
-						this.TransferArmyTiles(this.selected_army.id_num, this.temp_move_army_leave_behind.id_num, [cur_tile_id]);
-					}
-					else
-					{
-						//select it
-						this.selected_army_display_stack.selectItem(cur_tile_id);
-						
-						//we will now "merge" this tile back into the main army for moving
-						//console.log("transfering tiles back to main");
-						this.TransferArmyTiles(this.temp_move_army_leave_behind.id_num, this.selected_army.id_num, [cur_tile_id]);
-						this.selected_army.selectItem(cur_tile_id);
-						
-						if(this.temp_move_army_leave_behind.IsStackEmpty())
-						{
-							//console.log("destroying temp army");
-							this.DestroyArmy(this.temp_move_army_leave_behind.id_num);
-							this.temp_move_army_leave_behind = null;
-						}
-					}
-					
-					//console.log("isSelected:" + window.gameui.selected_army.isSelected(cur_tile_id));
-					//update move mode ui
-					this.RefreshMoveModeUI();
-					
-					/*
-					//old method 
-					//split off this tile into a new stack
-					this.ui_busy = true;
-					
-					//check if this army has already moved
-					if(this.queued_moving_armies.includes(window.gameui.selected_army))
-					{
-						//visual helper animation from the player's hand to the army stack on the map
-						this.SelectedArmySplitAnimation(cur_tile_id, window.gameui.selected_army.id_num);
-						
-						//we have already started moving, so record this split as a new action
-						var temp_army_info = {army_id: this.getTempArmyId(), player_id: window.gameui.selected_army.player_id, prov_name: window.gameui.selected_army.prov_name, tiles: []};
-						var temp_army = this.CreateArmy(temp_army_info, null);
-						this.TransferArmyTiles(window.gameui.selected_army.id_num, temp_army.id_num, [cur_tile_id], this.SELECT_ARMY_SOURCE);
-						this.QueueArmySplit(window.gameui.selected_army, [cur_tile_id], temp_army);
-					}
-					else
-					{
-						//we havent started moving so execute this split immediately
-						this.ServerArmySplit(window.gameui.selected_army, [cur_tile_id]);
-						
-						//visual helper animation from the player's hand to the army stack on the map
-						this.SelectedArmySplitAnimation(cur_tile_id, window.gameui.selected_army.id_num);
-					}
-					this.ui_busy = false;
-					*/
+					this.HandleClickArmySelectedTileMovemode(cur_tile_id);
 				}
 				else if(this.isCurrentPlayerUndeadState())
 				{
@@ -276,7 +193,8 @@ define(
 					//sanity check
 					console.log("ERROR: unlockArmyTileSelection() but selected_army == null");
 				}
-			}
+			},
+			
 		});
 		
 		return instance;

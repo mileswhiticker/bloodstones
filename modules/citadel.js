@@ -38,6 +38,37 @@ define(
 				}
 			},
 			
+			SetupCitadels : function()
+			{
+				//console.log("page::SetupCitadels()");
+				for(var player_id in this.gamedatas.players)
+				{
+					var player = this.gamedatas.players[player_id];
+					//console.log(player_id);
+					//console.log(player);
+					
+					//has a citadel province been assigned yet?
+					if(!player.citadel_tile_info)
+					{
+						//console.log("no citadel tile info");
+						continue;
+					}
+					var citadel_prov_name = this.GetProvinceNameFromId(player.citadel_prov_id);
+					this.CreateCitadelStack(citadel_prov_name, player_id, player.citadel_tile_info);
+				}
+			},
+			
+			CreateCitadelStack : function(citadel_prov_name, player_id, citadel_tile_info)
+			{
+				//console.log("page::CreateCitadelStack(" + citadel_prov_name + "," + player_id + ", [])");
+				//console.log(citadel_tile_info);
+				var player = this.gamedatas.players[player_id];
+				
+				var temp_army_info = {army_id: this.getTempArmyId(), player_id: player_id, prov_name: citadel_prov_name, tiles: [citadel_tile_info]};
+				player.citadel_stack = new modules.TileStack();
+				player.citadel_stack.createAsArmyCitadel(this, "centrepanel", temp_army_info);
+			},
+			
 			ServerPlaceCitadel : function(province_name)
 			{
 				//console.log("page::ServerPlaceCitadel()");

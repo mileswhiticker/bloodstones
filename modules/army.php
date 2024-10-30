@@ -2,28 +2,63 @@
 
 trait army
 {
-	function createArmy($starting_province_name, $player_id, $starting_unit_ids, $spawn_test_units = false)
+	
+	public function createArmy($spawn_province_name, $player_id, $starting_unit_ids, $spawn_test_units = false)
 	{
+		$new_army_id = $this->getProvinceIdFromName($spawn_province_name);
 		$units_string = "";
 		if($starting_unit_ids != null)
 		{
-			$units_string = implode(",",$starting_unit_ids);
+			$units_string = "[" . implode(",",$starting_unit_ids) . "]";
 		}
-		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::createArmy($starting_province_name,$player_id,$units_string)"));
-		$new_army_id = self::getGameStateValue("next_army_id");
-		$new_army_id_type = gettype($new_army_id);
-		//self::notifyAllPlayers("debug", "", array('debugmessage' => "new_army_id type: $new_army_id_type"));
-		$new_army_id = (int)$new_army_id;
+		$newarmy = $this->getUniqueValueFromDB("SELECT * FROM armies WHERE army_id='$new_army_id'");
+		if($newarmy)
+		{
+			self::notifyAllPlayers("debug", "", array('debugmessage' => "Warning! server::createArmy($spawn_province_name, $player_id, $units_string) army does not exist"));
+		}
+		else
+		{
+			self::notifyAllPlayers("debug", "", array('debugmessage' => "Warning! server::createArmy($spawn_province_name, $player_id, $units_string) army exists"));
+		}
 		
-		//todo: is this php army module needed?
-		//bga just uses associative arrays in js style which is simpler and easier
-		//$newarmy = new Army($new_army_id, $starting_province_name, $player_id);
+		return $this->MoveTilesToProvinceName($spawn_province_name, $player_id, $starting_unit_ids, $spawn_test_units);
+	}
+	
+	public function MoveTilesToProvinceName($starting_province_name, $player_id, $starting_unit_ids, $spawn_test_units = false)
+	{
+		//the process im using here has multiple redundant steps, but it's the easiest and safest way for me to change how tiles are handled
+		//this is part of my october 2024 rewrite to start phasing out army stacks and just store all tiles per province
 		
-		//create it as an associative array
-		//$newarmy = array("id_num"=>"$new_army_id","province_id"=>"$starting_province_name","player_id"=>"$player_id","tiles"=>array());
-		$newarmy = array("army_id"=>$new_army_id,"prov_name"=>"$starting_province_name","player_id"=>$player_id,"tiles"=>array());
+		$units_string = "";
+		if($starting_unit_ids != null)
+		{
+			$units_string = "[" . implode(",",$starting_unit_ids) . "]";
+		}
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::MoveTilesToProvinceName($starting_province_name,$player_id,$units_string)"));
+		
+		//old system: arbitrary number of army stacks anywhere we want 
+		//$new_army_id = (int)self::getGameStateValue("next_army_id");
+		
+		//new system: only one army per province
+		$new_army_id = $this->getProvinceIdFromName($starting_province_name);
+		
+		//getUniqueValueFromDB( string $sql )
+		$newarmy = $this->getUniqueValueFromDB("SELECT * FROM armies WHERE army_id='$new_army_id'");
+		$db_insert = false;
+		if($newarmy)
+		{
+			$newarmy["prov_name"] = $newarmy["province_id"];
+			$newarmy["tiles"] = [];
+		}
+		else
+		{
+			//create it as an associative array
+			$newarmy = array("army_id"=>$new_army_id, "prov_name"=>"$starting_province_name", "player_id"=>$player_id, "tiles"=>array());
+			$db_insert = true;
+		}
 		
 		//does this new army start with some pre-existing tiles?
+		$starting_tiles = [];
 		if(is_array($starting_unit_ids) && count($starting_unit_ids) > 0)
 		{
 			//grab the appropriate tile deck
@@ -35,7 +70,6 @@ trait army
 			try
 			{
 				$starting_tiles = $player_deck->getCards($starting_unit_ids);
-				$newarmy["tiles"] = $starting_tiles;
 			}
 			catch(Exception $e)
 			{
@@ -50,33 +84,43 @@ trait army
 			$army_size = 3;
 			
 			//grab the appropriate tile deck
-			//$player_deck = $this->faction_decks[$factionid];
 			$player_deck = $this->player_decks[$player_id];
 			
 			//for now just take random tiles from the bag
-			//todo: callback handling for the auto reshuffle
-			$army_tiles = $player_deck->pickCardsForLocation($army_size, 'bag', 'army', $new_army_id);
-			$newarmy["tiles"] = $army_tiles;
+			$starting_tiles = $player_deck->pickCardsForLocation($army_size, 'bag', 'army', $new_army_id);
 			
 			//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($player_deck,true)));
 			//self::notifyAllPlayers("debug", "", array('debugmessage' => $player_deck->table));
 		}
 		
+		//add the new tiles
+		if(count($newarmy["tiles"]) == 0)
+		{
+			$newarmy["tiles"] = $starting_tiles;
+		}
+		else
+		{
+			$newarmy["tiles"] = array_merge($newarmy["tiles"], $starting_tiles);
+		}
 		
 		//insert the newly created army into the database
-		$sql = "INSERT INTO armies (army_id, province_id, player_id) VALUES ";
-		$values[] = "(
-			$new_army_id,
-			'$starting_province_name',
-			$player_id
-			)";
-		
-		$sql .= implode(',', $values);
-		self::DbQuery( $sql );
+		if($db_insert)
+		{
+			$sql = "INSERT INTO armies (army_id, province_id, player_id) VALUES ";
+			$values[] = "(
+				$new_army_id,
+				'$starting_province_name',
+				$player_id
+				)";
+			
+			$sql .= implode(',', $values);
+			self::DbQuery( $sql );
+		}
 		
 		//iterate the army id counter
-		$new_army_id += 1;
-		self::setGameStateValue("next_army_id", $new_army_id);
+		//no longer needed since we dont have an arbitrary number of armies now: there is exactly 0-1 per province
+		//$new_army_id += 1;
+		//self::setGameStateValue("next_army_id", $new_army_id);
 		
 		return $newarmy;
 	}
@@ -262,10 +306,25 @@ trait army
 	function GetMainPlayerArmyInProvinceFromProvName($player_id, $province_name)
 	{
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::GetMainPlayerArmyInProvinceFromProvName($player_id, $province_name)"));
+		
+		/* new system */
+		
+		//there is exactly 1 army per province and it follows a predictable naming convention
+		$province_id = $this->getProvinceIdFromName($province_name);
+		$main_army = $this->GetArmy($province_id);
+		if(!$main_army)
+		{
+			$main_army = $this->createArmy($province_name, $player_id, []);
+		}
+		return $main_army;
+		
+		/* old system */
+		
+		//get all armies in the province owned by this player
 		$player_province_armies = $this->GetPlayerArmiesInProvinceFromProvName($player_id, $province_name);
 		
 		//return the first non-citadel army we find
-		//todo: skip undead armies also
+		//todo: what about undead armies
 		$citadel_army_id = $this->GetCitadelArmyId($player_id);
 		foreach($player_province_armies as $army_id => $army)
 		{
@@ -381,5 +440,10 @@ trait army
 		}
 		$units_string = implode(", ",$tile_name_strings);
 		return $units_string;
+	}
+	
+	function IsTempArmyId($test_army_id)
+	{
+		return $test_army_id < 0;
 	}
 }

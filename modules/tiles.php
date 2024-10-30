@@ -51,6 +51,18 @@ trait tiles
 		return $tile_cost[(int)$tile_type];
 	}
 	
+	public function getTileNameFromIdPlayer($tile_id, $player_id)
+	{
+		$player_deck = $this->player_decks[$player_id];
+		return $this->getTileNameFromIdDeck($tile_id, $player_deck);
+	}
+	
+	public function getTileNameFromIdDeck($tile_id, $player_deck)
+	{
+		$tile_info = $player_deck->getCard($tile_id);
+		return $this->getTileNameFromType($tile_info["type_arg"]);
+	}
+	
 	public function getTileNameFromType($tile_type)
 	{
 		//unique type handling

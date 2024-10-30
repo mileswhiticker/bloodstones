@@ -368,6 +368,7 @@ trait province
 	
 	function GetProvinceNameUIString($prov_id)
 	{
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::GetProvinceNameUIString($prov_id)"));
 		return "Area $prov_id (" . $this->GetProvinceTypeName($prov_id) . ")";
 	}
 }

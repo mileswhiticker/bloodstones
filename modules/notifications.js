@@ -80,6 +80,7 @@ define(
 				dojo.subscribe('playerUndeadMove', this, "notif_playerUndeadMove");
 				dojo.subscribe('playerScoreChanged', this, "notif_scoreChanged");
 				dojo.subscribe('chaosHordeMoveUpdate', this, "notif_chaosHordeMoveUpdate");
+				dojo.subscribe('playerTileMoves', this, "notif_playerTileMoves");
 				//dojo.subscribe('combineProvinceArmies', this, "notif_combineProvinceArmies");
 				
 				//dont display player notifications for our own moves
@@ -102,6 +103,50 @@ define(
 			},    
 			
 			*/
+			
+			notif_playerTileMoves : function(notif)
+			{
+				//console.log("page::notif_playerTileMoves()");
+				//console.log(notif.args);
+				if(notif.args.player_id == this.player_id)
+				{
+					//console.log("updating self client");
+					
+					//update any possible pending battles
+					this.gamedatas.pending_battles = notif.args.pending_battles_update;
+					
+					//update the ui
+					if(this.isCurrentPlayerResetMode())
+					{
+						this.enterSmallPhase(gameui.STATE_MAIN_DEFAULT);
+					}
+					this.DestroyPayWindow();
+					
+					//in case of replay mode
+					//this.RemoveMoveModeUI();	//todo: i think this is needed
+					
+					//i dont think this is needed
+					//this.UpdateCurrentOverlayMode();
+				}
+				else
+				{
+					//console.log("updating other client");
+					for(var tile_id in notif.args.tile_moves)
+					{
+						//console.log("tile_id:" + tile_id);
+						
+						var tile_move = notif.args.tile_moves[tile_id];
+						//console.log("tile_move:");
+						//console.log(tile_move);
+						
+						var end_army = this.GetMainPlayerArmyInProvinceOrCreate(tile_move.end_prov_name, notif.args.player_id);
+						var start_army = this.GetMainPlayerArmyInProvinceOrCreate(tile_move.start_prov_name, notif.args.player_id);
+						this.TransferArmyTilesByStack(start_army, end_army, [tile_move.tile_id], this.SELECT_ARMY_NONE, false);
+					}
+					
+					this.RefreshProvinceSelection();
+				}
+			},
 			
 			notif_chaosHordeMoveUpdate : function(notif)
 			{

@@ -7,12 +7,11 @@ trait action_move
 		$outcome_info = ["failure_reason" => self::ACTION_FAIL_UNKNOWN];
 		
 		$current_player_id = $this->getCurrentPlayerId();
-		$current_player_name = $this->getCurrentPlayerName();
 		
 		//note: this includes army splits as well as moves
 		//first, check if the player's move is legal
-		self::notifyAllPlayers("debug", "", array('debugmessage' => "server::HandleMoveAction()"));
-		self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($action_info, true)));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::HandleMoveAction()"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($action_info, true)));
 		if($this->getStateName() != "playerMain")
 		{
 			$outcome_info = ["failure_reason" => self::ACTION_FAIL_STATE];
@@ -23,39 +22,72 @@ trait action_move
 		//$outcome_info["failure_reason"] = self::ACTION_SUCCESS;
 		//return $outcome_info;
 		
+		//this is used to update the client
+		$tile_moves_client = [];
 		
-		$new_longest_move = 0;
-		$tile_moves = [];
+		//this is used to update the server database (via Deck)
+		$tile_moves_server = [];
+		
+		//this is used to construct the player log message
+		$player_deck = $this->player_decks[$current_player_id];
 		$tile_moves_strings = [];
-		$player_deck = $this->player_decks[$player_id];
+		
+		//for record stat keeping
+		$new_longest_move = 0;
+		
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($action_info, true)));
 		foreach($action_info as $tile_id => $tile_move_steps)
 		{
-			$end_province_name = null;
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($tile_move_steps, true)));
+			$end_prov_name = null;
+			$start_prov_name = null;
 			$cur_move_length = 0;
 			foreach($tile_move_steps as $index => $tile_move_step)
 			{
+				//self::notifyAllPlayers("debug", "", array('debugmessage' => "index:$index"));
+				//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($tile_move_step, true)));
+				
 				//todo: legality checks here
-				//assume it was a legal move for now
-				$end_province_name = $tile_move_step["end_province_name"];
+				//assume this tile moving between these two provinces was a legal move for now
+				$end_prov_name = $tile_move_step["end_prov_name"];
 				$cur_move_length += 1;
+				
+				//we only need to know the starting province for this tile, it's likely that there were several intermediate steps as well
+				if(!$start_prov_name)
+				{
+					$start_prov_name = $tile_move_step["start_prov_name"];
+				}
 			}
 			
 			//sanity check
-			if(!$end_province_name)
+			if(!$end_prov_name)
 			{
 				throw new BgaSystemException("Error! Move action could not determine final province for tile_id $tile_id");
 			}
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => "tile_id:$tile_id, end_prov_name:$end_prov_name"));
 			
-			//$destination_army = GetMainPlayerArmyInProvinceFromProvName($player_id, $province_name);
+			//$destination_army = GetMainPlayerArmyInProvinceFromProvName($current_player_id, $province_name);
 			
 			//this will be used to update the client and database
-			if(!in_array($end_province_name, $tile_moves))
+			if(!array_key_exists($end_prov_name, $tile_moves_strings))
 			{
-				$tile_moves[$end_province_name] = [];
-				$tile_moves_strings[$end_province_name] = [];
+				//self::notifyAllPlayers("debug", "", array('debugmessage' => "adding $end_prov_name to \$tile_moves_server"));
+				$tile_moves_server[$end_prov_name] = [];
+				$tile_moves_strings[$end_prov_name] = [];
+				$tile_moves_client[$tile_id] = [];
 			}
-			$tile_moves[$end_province_name][] = $tile_id;
-			$tile_moves_strings[$end_province_name][] = $this->getTileNameFromIdDeck($tile_id, $player_deck);
+			else
+			{
+				//self::notifyAllPlayers("debug", "", array('debugmessage' => "$end_prov_name is already in \$tile_moves_server"));
+			}
+			$tile_move = ['tile_id' => $tile_id, 'start_prov_name' => $start_prov_name, 'end_prov_name' => $end_prov_name];
+			$tile_moves_client[$tile_id] = $tile_move;
+			
+			$tile_moves_server[$end_prov_name][] = $tile_id;
+			$tile_moves_strings[$end_prov_name][] = $this->getTileNameFromIdDeck($tile_id, $player_deck);
+			
+			//$num = count($tile_moves_server[$end_prov_name]);
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => "\$tile_moves_server[$end_prov_name] now has $num tiles"));
 			
 			//for record stat keeping
 			if($cur_move_length > $new_longest_move)
@@ -63,7 +95,7 @@ trait action_move
 				$new_longest_move = $cur_move_length;
 			}
 		}
-		/*
+		
 		//update the record if we need to
 		$old_longest_move = $this->getStat("longest_move", $current_player_id);
 		if($new_longest_move > $old_longest_move)
@@ -72,33 +104,43 @@ trait action_move
 		}
 		
 		//update the database
-		foreach($tile_moves as $move_province_name => $moving_tile_ids)
+		foreach($tile_moves_server as $move_province_name => $moving_tile_ids)
 		{
-			$this->MoveTilesToProvinceName($move_province_name, $moving_tile_ids, $current_player_id);
+			$this->MoveTilesToProvinceName($move_province_name, $current_player_id, $moving_tile_ids);
+		}
+		
+		// process the tile payment
+		$pips_spent = $this->DiscardTilesFromHand($paid_tile_infos, $current_player_id);
+		$this->incStat($pips_spent, "pips_move", $current_player_id);
+		
+		//chaos horde may trigger a recalculation of capturable villages
+		if($this->IsCurrentPlayerChaosHorde())
+		{
+			$this->ChaosHordeMoveUpdate();
 		}
 		
 		//now construct the string telling the client what happened
 		$province_info_strings = [];
-		foreach($tile_moves_strings as $end_province_name => $tile_strings)
+		foreach($tile_moves_strings as $end_prov_name => $tile_strings)
 		{
-			$dest_province_num = $this->getProvinceIdFromName($dest_province_name);
+			$dest_province_num = $this->getProvinceIdFromName($end_prov_name);
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => "end_prov_name:$end_prov_name, dest_province_num:$dest_province_num"));
 			$province_ui_name = $this->GetProvinceNameUIString($dest_province_num);
-			$tile_names_string = implode(",", $tile_strings);
+			$tile_names_string = implode(", ", $tile_strings);
 			$province_info_strings[] = "$tile_names_string -> $province_ui_name.";
 		}
 		$province_info_string = implode(" ", $province_info_strings);
 		
-		//$tile_name_strings[] = $this->getTileNameFromType($tile_info["type_arg"]);
-		//$army_tiles_string = $this->GetUnitsInArmyString($source_army_id, $current_player_id);
-		$dest_province_num = $this->getProvinceIdFromName($dest_province_name);
-		$province_ui_name = $this->GetProvinceNameUIString($dest_province_num);
+		//update the clients
+		$current_player_name = $this->getCurrentPlayerName();
 		self::notifyAllPlayers('playerTileMoves', clienttranslate('${player_name} has moved tiles: ${province_info_string}'), array(
 			'player_id' => $current_player_id,
 			'player_name' => $current_player_name,
 			'province_info_string' => $province_info_string,
-			'tile_moves' => $tile_moves
+			'tile_moves' => $tile_moves_client,
+			'pending_battles_update' => $this->GetPendingBattleProvincesAll(),
 		));
-		*/
+		
 		//finished
 		$outcome_info["failure_reason"] = self::ACTION_SUCCESS;
 		return $outcome_info;

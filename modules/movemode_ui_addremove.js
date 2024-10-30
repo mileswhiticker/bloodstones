@@ -243,13 +243,13 @@ define(
 			
 			RemoveMoveModeUI : function()
 			{
-				//console.log("page::RemoveMoveModeUI()");
 				if(this.isCurrentPlayerMoveMode())
 				{
+					//console.log("page::RemoveMoveModeUI()");
 					this.ClearCanvas();
 					
 					//clean up the ui
-					dojo.query(".province_move_cost").forEach(dojo.destroy);
+					dojo.query(".province_move_cost").forEach(function(node){dojo.destroy(node)});
 					
 					//todo: cancel any queued movement
 					//this.enterPhase(gameui.STATE_MAIN_DEFAULT);
@@ -258,7 +258,7 @@ define(
 				}
 				else
 				{
-					//console.log("WARNING! page::RemoveMoveModeUI() but current player is not in move mode");
+					console.log("WARNING! page::RemoveMoveModeUI() but current player is not in move mode");
 				}
 			},
 			

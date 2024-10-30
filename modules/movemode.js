@@ -650,7 +650,7 @@ define(
 					//console.log("page::MergeReserveDisplayBackIntoMain() this.other_units_display_stack.items.length: " + this.other_units_display_stack.items.length);
 					//move all tiles back on the ui display
 					//todo: instead of all the units, need to selectively bring back the movable ones
-					this.TransferArmyTilesByStack(this.other_units_display_stack, this.selected_army_display_stack);
+					this.TransferArmyTilesByStack(this.other_units_display_stack, this.selected_army_display_stack, [], this.SELECT_ARMY_NONE, false);
 				}
 				else
 				{

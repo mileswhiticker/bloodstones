@@ -144,16 +144,21 @@ define(
 					
 					//remove the move mode UI overlays
 					//this.unlockArmyTileSelection();
-					this.RemoveMoveModeUI();
 					this.SetDefaultMapInteraction();
+					this.RemoveMoveModeUI();
 					
 					//clean up these as they arent needed any more
-					this.queued_moving_armies = [];
+					this.queued_tile_moves_by_tile = {};
+					this.queued_tile_moves_all = [];
+					/*this.queued_moving_armies = [];
 					this.queued_province_moves = [];
 					this.queued_province_moves_by_army = [];
 					
 					this.queued_action_steps = {};
-					this.queued_tile_moves = [];
+					this.queued_tile_moves = [];*/
+					
+					this.MergeReserveArmyBackIntoMain();
+					this.MergeReserveDisplayBackIntoMain();
 					
 					if(approved)
 					{
@@ -162,18 +167,15 @@ define(
 					else
 					{
 						this.enterSmallPhase(gameui.STATE_MAIN_DEFAULT);
+						
+						//reset the planned move
+						this.UndoAllTileMoves();
 					}
-					
-					this.MergeReserveArmyBackIntoMain();
-					this.MergeReserveDisplayBackIntoMain();
 				}
 				else
 				{
 					console.log("WARNING: page::EndMoveMode() but not in move phase");
 				}
-				
-				//reset the planned move
-				this.UndoAllTileMoves();
 				
 				this.UnselectProvince();
 			},

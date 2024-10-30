@@ -42,11 +42,12 @@ trait army
 		//new system: only one army per province
 		$new_army_id = $this->getProvinceIdFromName($starting_province_name);
 		
-		//getUniqueValueFromDB( string $sql )
-		$newarmy = $this->getUniqueValueFromDB("SELECT * FROM armies WHERE army_id='$new_army_id'");
+		$newarmy = $this->getCollectionFromDb("SELECT * FROM armies WHERE army_id='$new_army_id'");
 		$db_insert = false;
 		if($newarmy)
 		{
+			$newarmy = $newarmy[$new_army_id];
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($newarmy, true)));
 			$newarmy["prov_name"] = $newarmy["province_id"];
 			$newarmy["tiles"] = [];
 		}

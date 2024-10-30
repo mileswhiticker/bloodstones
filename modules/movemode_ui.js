@@ -138,7 +138,7 @@ define(
 			
 			HandleMovemodeArmyClicked : function(clicked_army)
 			{
-				console.log("page::HandleMovemodeArmyClicked(" + clicked_army.id_string + ")");
+				//console.log("page::HandleMovemodeArmyClicked(" + clicked_army.id_string + ")");
 				//this function is no longer used
 				//is this our army?
 				if(clicked_army.player_id == this.getCurrentPlayer())

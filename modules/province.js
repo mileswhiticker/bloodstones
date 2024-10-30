@@ -710,13 +710,13 @@ define(
 			{
 				if(!this.selected_province_reserve_army)
 				{
-					console.log("page::GetReservePlayerArmyOrCreate() creating new reserve army");
+					//console.log("page::GetReservePlayerArmyOrCreate() creating new reserve army");
 					var temp_army_info = {army_id: this.getTempArmyId(), player_id: this.player_id, prov_name: this.GetSelectedProvinceName(), tiles: []};
 					this.selected_province_reserve_army = this.CreateArmy(temp_army_info, null);
 				}
 				else
 				{
-					console.log("page::GetReservePlayerArmyOrCreate() returning old reserve army");
+					//console.log("page::GetReservePlayerArmyOrCreate() returning old reserve army");
 				}
 				return this.selected_province_reserve_army;
 			},

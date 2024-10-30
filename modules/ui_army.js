@@ -501,10 +501,7 @@ define(
 				{
 					tile_ids = [];
 				}
-				if(source_army.id_string != "province_other_units")
-				{
-					//console.log("page::TransferArmyTilesByStack(" + source_army.id_string + "," + target_army.id_string + ",[" + tile_ids.toString() + "]," + selection_flag + "," + do_ui_update + ")");
-				}
+				//console.log("page::TransferArmyTilesByStack(" + source_army.id_string + "," + target_army.id_string + ",[" + tile_ids.toString() + "]," + selection_flag + "," + do_ui_update + ")");
 				//console.log("tile_ids:");
 				//console.log(tile_ids);
 				

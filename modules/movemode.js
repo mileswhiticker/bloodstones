@@ -168,7 +168,7 @@ define(
 				
 				//merge the tiles from the old army into the new army
 				//console.log("transferring from " + moving_army_stack.id_string + " to " + destination_army.id_string);
-				this.TransferArmyTiles(moving_army_stack.id_num, destination_army.id_num, moving_army_stack.getSelectedTileIds(), this.SELECT_ARMY_NONE, false);
+				this.TransferArmyTilesByStack(moving_army_stack, destination_army, moving_army_stack.getSelectedTileIds(), this.SELECT_ARMY_NONE, false);
 				destination_army.selectAll();
 				
 				//change province selection to the target province
@@ -238,6 +238,7 @@ define(
 			
 			TryUndoLastTileMove : function()
 			{
+				//todo
 			},
 			
 			/*isProvinceQueuedMove(target_province_info, moving_army)

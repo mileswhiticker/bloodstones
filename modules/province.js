@@ -630,10 +630,10 @@ define(
 				//console.log("page::GetMainPlayerArmyInProvinceOrNull(" + province_name + ", " + player_id + ")" );
 				//console.log(this.all_armies);
 				//console.log(this.armies_by_id_string);
-					
+				
 				//new method
 				var prov_id = this.GetProvinceIdFromName(province_name);
-				var army_id_string = this.GetArmyIdString(prov_id);
+				var army_id_string = this.GetArmyIdString(prov_id, player_id);
 				if(this.armies_by_id_string[army_id_string] != undefined)
 				{
 					//console.log("returning " + army_id_string);

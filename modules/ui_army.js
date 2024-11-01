@@ -217,7 +217,7 @@ define(
 					{
 						if(this.temp_move_army_leave_behind.prov_name == old_selected_army.prov_name)
 						{
-							this.TransferArmyTiles(this.temp_move_army_leave_behind.id_num, this.selected_army.id_num, [], this.SELECT_ARMY_NONE);
+							this.TransferArmyTilesByStack(this.temp_move_army_leave_behind, this.selected_army, [], this.SELECT_ARMY_NONE);
 							//this.selected_army.selectItem(cur_tile_id);
 							
 							if(this.temp_move_army_leave_behind.IsStackEmpty())
@@ -274,36 +274,43 @@ define(
 				}
 			},
 			
-			GetArmyIdString : function(army_id_num)
+			GetArmyIdString : function(army_id_num, player_id)
 			{
-				return "blstarmystack" + army_id_num;
+				return "blstarmystack_" + army_id_num + "_" + player_id;
 			},
 			
-			GetArmyIdNumFromString : function(army_id_num)
+			GetArmyIdNumFromString : function(army_id_string)
 			{
-				var id_num = army_id_num.substring(13);
-				return Number(id_num);
+				const string_elements = army_id_string.split("_");
+				//var id_num = army_id_num.substring(13);
+				var army_id_num = string_elements[2];
+				return Number(army_id_num);
 			},
 			
-			GetArmyById : function(id_num)
+			GetArmyById : function(id_num, player_id)
 			{
 				//console.log("page::GetArmyById(" + id_num + ")");
-				if(id_num == null)
+				if(id_num == null || id_num == undefined)
 				{
-					console.log("WARNING: GetArmyById() but id_num is null");
+					console.log("WARNING! page::GetArmyById(" + id_num + "," + player_id + ") arg 1 is invalid, should not be null or undefined");
 					return undefined;
 				}
-				if(id_num == undefined)
+				if(player_id == null || player_id == undefined)
 				{
-					console.log("WARNING: GetArmyById() but id_num is undefined");
+					console.log("WARNING! page::GetArmyById(" + id_num + "," + player_id + ") arg 2 is invalid, should not be null or undefined");
 					return undefined;
 				}
-				var army_id_string = this.GetArmyIdString(id_num);
+				var army_id_string = this.GetArmyIdString(id_num, player_id);
+				return this.GetArmyByIdString(army_id_string);
+			},
+			
+			GetArmyByIdString : function(army_id_string)
+			{
 				var army = this.armies_by_id_string[army_id_string];
-				if(army == undefined)
+				if(army == undefined || army == null)
 				{
 					//this is sometimes intended behaviour to not find an existing army
-					console.log("WARNING: GetArmyById() could not find army with id_num: " + id_num);
+					console.log("WARNING: GetArmyByIdString() could not find army with army_id_string: " + army_id_string);
 				}
 				return army;
 			},
@@ -328,62 +335,80 @@ define(
 				return newArmy;
 			},
 			
-			DestroyArmyByIdNum : function(army_id_num)
+			DestroyArmy : function(army_id_num, player_id)
 			{
-				if(army_id_num == undefined)
+				if(army_id_num == undefined || army_id_num == null || player_id == undefined || player_id == null)
 				{
+					console.log("ERROR: obsolete DestroyArmy(" + army_id_num + ", " + player_id + ") with null or undefined arguments");
+					var force_error = null;
+					force_error.dummyvar = "error";
+					return null;
+				}
+				else
+				{
+					console.log("WARNING! obsolete DestroyArmy(" + army_id_num + ", " + player_id + ")");
+					return this.DestroyArmyByIdNum(army_id_num, player_id);
+				}
+			},
+			
+			DestroyArmyByIdNum : function(army_id_num, player_id)
+			{
+				if(army_id_num == undefined || army_id_num == null || player_id == undefined || player_id == null)
+				{
+					console.log("ERROR: DestroyArmyByIdNum(" + army_id_num + ", " + player_id + ") with null or undefined arguments");
+					
+					//give me a call stack damnit
+					var force_error = null;
+					force_error.dummyvar = "error";
 					return;
 				}
-				//console.log("page::DestroyArmyByIdNum(" + army_id_num + ")");
-				return this.DestroyArmy(army_id_num);
+				//console.log("page::DestroyArmyByIdNum(" + army_id_num + "," + player_id + ")");
+				var army_id_string = this.GetArmyIdString(army_id_num, player_id);
+				return this.DestroyArmyByStack(army_id_num);
 			},
 			
-			DestroyArmy : function(army_id_num)
+			DestroyArmyByStack : function(source_army)
 			{
-					//clean it up
-					//console.log("page::DestroyArmy(" + army_id_num + ")");
-					var source_army = this.GetArmyById(army_id_num);
-					if(source_army == undefined)
+				//console.log("page::DestroyArmyByStack(" + source_army.id_string + ")");
+				
+				//old code
+				/*if(this.selected_army == source_army)
+				{
+					this.UnselectArmyStack();
+				}*/
+				
+				var source_army_id_string = source_army.id_string;
+				
+				//remove it from the province
+				var cur_province = this.provinces_by_name[source_army.prov_name];
+				cur_province.zone.removeFromZone(source_army_id_string, false);
+				
+				//untrack this
+				delete this.armies_by_id_string[source_army_id_string];
+				
+				//untrack this
+				for(var i=0; i<this.all_armies.length; i++)
+				{
+					var check_army = this.all_armies[i];
+					if(check_army.string == source_army_id_string)
 					{
-						//create an empty army stack with everything except no tiles
-						console.log("ERROR: could not find source army to destroy: \"" + army_id_num + "\"");
-						return;
+						this.all_armies.splice(i,1);
+						break;
 					}
-					if(this.selected_army == source_army)
-					{
-						this.UnselectArmyStack();
-					}
-					var source_army_id_string = this.GetArmyIdString(army_id_num);
-					
-					//loop over provinces and find the old province zone
-					var cur_province = this.provinces_by_name[source_army.prov_name];
-					cur_province.zone.removeFromZone(source_army_id_string, false);
-					
-					//untrack this
-					delete this.armies_by_id_string[source_army_id_string];
-					
-					//untrack this
-					for(var i=0; i<this.all_armies.length; i++)
-					{
-						var check_army = this.all_armies[i];
-						if(check_army.id_num == army_id_num)
-						{
-							this.all_armies.splice(i,1);
-						}
-					}
-					
-					//todo: clean up any extra circular references inside TileStack.js for proper garbage collection
-					//
-					
-					dojo.destroy(source_army.container_div);
-					
-					//let the army handle any other custom cleanup it needs to do
-					source_army.destroy_self();
+				}
+				
+				//todo: clean up any extra circular references inside TileStack.js for proper garbage collection
+				//
+				
+				dojo.destroy(source_army.container_div);
+				
+				//let the army handle any other custom cleanup it needs to do
+				source_army.destroy_self();
 			},
 			
-			MoveArmy : function(army_obj, dest_province_name, do_jump = false, ghost_move = false)
+			MoveArmy : function(moving_army, dest_province_name, do_jump = false, ghost_move = false)
 			{
-				var moving_army = null;
+				/*var army_obj;
 				var army_id_string = "unknown_army";
 				
 				//did we pass in just the id number for the army?
@@ -415,7 +440,8 @@ define(
 				{
 					console.log("page.MoveArmy(" + army_obj + "," + dest_province_name + ") unknown army_obj type: " + army_obj.toString());
 					return;
-				}
+				}*/
+				var army_id_string = moving_army.id_string;
 				//console.log("MoveArmy(" + army_id_string + "," + dest_province_name + ")");
 				
 				//old method: slide it out directly to the target province
@@ -474,6 +500,7 @@ define(
 			
 			TransferArmyTiles : function(source_army_id, target_army_id, tile_ids, selection_flag = this.SELECT_ARMY_NONE, do_ui_update = true)
 			{
+				console.log("ERROR! Using obsolete TransferArmyTiles()");
 				//grab this useful info about the source army stack
 				var source_army = this.GetArmyById(source_army_id);
 				if(source_army == undefined)
@@ -578,7 +605,7 @@ define(
 							if(source_army.id_num != undefined)
 							{
 								//console.log("source army is empty after transfer, destroying...");
-								this.DestroyArmyByIdNum(source_army.id_num);
+								this.DestroyArmyByStack(source_army);
 							}
 							else
 							{
@@ -677,6 +704,7 @@ define(
 				}
 			},
 			
+			/*
 			SelectedArmySplitAnimation : function(sliding_tile_id, target_army_id)
 			{
 				//start a visual effect of the tile sliding to its destination
@@ -723,7 +751,9 @@ define(
 				
 				coreFx.combine([fadeAnim, slideAnim]).play();
 			},
+			*/
 			
+			/*
 			ServerArmyMove : function(moving_army, provinces_route)
 			{
 				//console.log("page::ServerArmyMove()");
@@ -767,7 +797,9 @@ define(
 					);
 				}
 			},
+			*/
 			
+			/*
 			ServerArmySplit : function(splitting_army, splitting_tile_ids, select_new_army = false)
 			{
 				//console.log("page::ServerArmyTransfer()");
@@ -804,7 +836,8 @@ define(
 					);
 				}
 			},
-			
+			*/
+			/*
 			ServerArmyMerge : function(army_source, army_target, tile_ids_to_merge)
 			{
 				//console.log("page::ServerArmyMerge(" + army_source.id_string + "," + army_target.id_string + "," + tile_ids_to_merge.length + ")");
@@ -817,16 +850,14 @@ define(
 					var army_id_target = army_target.id_string.replace(/[^0-9]/g,"");
 					
 					//if this is an empty or null list, then standard behaviour is to merge everything from source -> target
-					/*if(!tile_ids_to_merge || tile_ids_to_merge == undefined || tile_ids_to_merge.length == 0)
+					//if(!tile_ids_to_merge || tile_ids_to_merge == undefined || tile_ids_to_merge.length == 0)
 					{
-						tile_ids_to_merge = army_source.getSelectedTileIds();
-					}*/
+						//tile_ids_to_merge = army_source.getSelectedTileIds();
+					}
 					var tile_list_JSON = JSON.stringify(tile_ids_to_merge);
-					/*
-					$source_army_id = self::getArg("source_army_id", AT_int, true);
-					$target_army_id = self::getArg("target_army_id", AT_int, true);
-					$tile_ids_JSON_stringified = self::getArg("splitting_tiles", AT_json, true);
-					*/
+					//$source_army_id = self::getArg("source_army_id", AT_int, true);
+					//$target_army_id = self::getArg("target_army_id", AT_int, true);
+					//$tile_ids_JSON_stringified = self::getArg("splitting_tiles", AT_json, true);
 					
 					//ajax call to pass the request back to php
 					window.gameui.ajaxcall( "/bloodstones/bloodstones/action_tryArmyStackMerge.html", {
@@ -848,7 +879,7 @@ define(
 					);
 				}
 			},
-			
+			*/
 			DoesActivePlayerOwnArmy : function(army_stack)
 			{
 				var activePlayerId = this.getActivePlayerId();

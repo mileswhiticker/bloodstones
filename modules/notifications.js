@@ -335,7 +335,7 @@ define(
 				*/
 				
 				//find the army
-				var moving_army = this.GetArmyById(notif.args.army_id_num);
+				var moving_army = this.GetArmyById(notif.args.army_id_num, notif.args.player_id);
 				//console.log(moving_army);
 				
 				//do the move
@@ -471,8 +471,7 @@ define(
 				//window.gameui.SelectedArmySplitAnimation(notif.args.tile_ids[0], source_army.id_num);
 				
 				//now transfer the tiles across
-				//window.gameui.TransferArmyTiles(notif.args.source_army_id, notif.args.target_army_id, notif.args.tile_ids, notif.args.selection_flag);
-				window.gameui.TransferArmyTiles(source_army.id_num, target_army.id_num, notif.args.tile_ids, notif.args.selection_flag);
+				window.gameui.TransferArmyTilesByStack(source_army, target_army, notif.args.tile_ids, notif.args.selection_flag);
 			},
 			
 			notif_changePhase : function(notif) {

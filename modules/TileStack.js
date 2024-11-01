@@ -199,8 +199,8 @@ define(
 				};
 				
 				this.id_num = army_info.army_id;
-				this.id_string = page.GetArmyIdString(army_info.army_id);
 				this.player_id = army_info.player_id;
+				this.id_string = page.GetArmyIdString(army_info.army_id, this.player_id);
 				this.create(page, host_div_id);
 				//this.container_div.dataset.blstplayerid = army_info.player_id;
 				

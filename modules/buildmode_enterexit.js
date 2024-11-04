@@ -135,7 +135,7 @@ define(
 					//finally clean up the planned army
 					//if the build was a successul, then the army will simply be recreated
 					//todo: wouldn't it be graphically nicer to just keep the army and fade it in?
-					this.DestroyArmy(cur_army.id_num);
+					this.DestroyArmyByIdNum(cur_army, this.player_id);
 				}
 				this.queued_build_armies_by_province = [];
 				

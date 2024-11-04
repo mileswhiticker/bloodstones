@@ -103,9 +103,10 @@ trait action_build
 			{
 				$pips_spent = $this->DiscardTilesFromHand($paid_tile_infos, $current_player_id);
 				$this->incStat($pips_spent, "pips_built", $current_player_id);
-				
-				$this->notifyPlayerHandChanged($current_player_id);
 			}
+			
+			//update the clients that some tiles were spent
+			$this->notifyPlayerHandChanged($current_player_id);
 			
 			$units_built_string = "nothing";
 			$tiles_built = count($built_tile_names);

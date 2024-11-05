@@ -93,6 +93,13 @@ define(
 				}
 				
 				//console.log(target_province_info.move_info);
+				
+				if(!target_province_info.move_info)
+				{
+					this.showMessage(this.GetProvinceDistFailString(), 'error');
+					return false;
+				}
+				
 				if(target_province_info.move_info.army_impassable)
 				{
 					this.showMessage(this.GetProvinceEntryFailString(), 'error');
@@ -643,6 +650,7 @@ define(
 				this.selected_province_reserve_army = null;
 			},
 			
+			/*
 			MergeReserveDisplayBackIntoMain : function()
 			{
 				//console.log("page::MergeReserveDisplayBackIntoMain()");
@@ -658,6 +666,7 @@ define(
 					console.log("WARNING page::MergeReserveDisplayBackIntoMain() this.other_units_display_stack is null");
 				}
 			},
+			*/
 			
 			ClearReserveDisplay : function()
 			{

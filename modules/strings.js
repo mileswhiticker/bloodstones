@@ -646,6 +646,11 @@ define(
 			{
 				return _('That army cannot enter there');
 			},
+			
+			GetProvinceDistFailString : function()
+			{
+				return _('Move the army through closer areas first');
+			},
 		});
 		
 		return instance;

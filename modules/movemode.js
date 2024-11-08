@@ -618,7 +618,7 @@ define(
 			
 			HandleClickArmySelectedTileMovemode : function(clicked_tile_id)
 			{
-				console.log("page::HandleClickArmySelectedTile(" + clicked_tile_id + ")");
+				//console.log("page::HandleClickArmySelectedTile(" + clicked_tile_id + ")");
 				
 				//toggle item selection
 				var tile_is_selected = this.selected_army_display_stack.isSelected(clicked_tile_id);
@@ -669,7 +669,7 @@ define(
 			
 			MergeReserveArmyBackIntoMain : function()
 			{
-				console.log("page::MergeReserveArmyBackIntoMain()");
+				//console.log("page::MergeReserveArmyBackIntoMain()");
 				//first, find the reserve army in this province
 				if(!this.selected_province_reserve_army)
 				{

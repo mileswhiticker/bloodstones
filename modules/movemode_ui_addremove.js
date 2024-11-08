@@ -43,6 +43,15 @@ define(
 					return;
 				}
 				
+				if(moving_army.IsStackEmpty())
+				{
+					//this seems to occur periodically. it's most likely intended behaviour, but i cant quite figure out all the logic chains that would trigger it
+					//so my instinct is that either there is unintended behaviour or i could potentially add some optimisations by removing redunadnt UI calls
+					//i will leave it to silently end early for now because it isnt technically a bug
+					//console.log("WARNING! page::AddMoveModeUI() selected province name: " + this.GetSelectedProvinceName() + " moving_army: " + moving_army.id_string + " but moving army is empty");
+					return;
+				}
+				
 				//check the adjacent province links and add move cost overlays
 				//basic army movement is 1 province at a time
 				

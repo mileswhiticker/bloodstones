@@ -76,7 +76,7 @@ define(
 					}
 					return;
 				}
-				console.log("page::UnselectProvince()");
+				//console.log("page::UnselectProvince()");
 				
 				this.UnsetUIProvinceSelection();
 				

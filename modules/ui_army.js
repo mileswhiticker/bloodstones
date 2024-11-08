@@ -126,6 +126,13 @@ define(
 				return "province_other_units";
 			},
 			
+			GetArmyTileIdFromDivId : function(tile_div_id)
+			{
+				//console.log("page::GetArmyTileIdFromDivId(" + tile_div_id + ")");
+				var string_elements = tile_div_id.split("_");
+				return string_elements[4];
+			},
+			
 			/*GetSelectedTileIdString : function(tile_id)
 			{
 				//this is unused but im leaving it here just in case
@@ -645,9 +652,7 @@ define(
 					if(clicked_army.IsBuilding())
 					{
 						var div_id = event.target.id;
-						var army_string_index = div_id.search("_");
-						var tile_id_index = army_string_index + 6;
-						let tile_id = div_id.substring(tile_id_index);
+						var tile_id = this.GetArmyTileIdFromDivId(div_id);
 						this.TryCancelTileBuild(clicked_army, tile_id);
 					}
 				}
@@ -679,6 +684,7 @@ define(
 					return;
 					
 					//old army selection code
+					/*
 					//do we already have an army selected?
 					if(window.gameui.selected_army == null)
 					{
@@ -701,6 +707,7 @@ define(
 							this.SelectArmyStack(clicked_army);
 						}
 					}
+					*/
 				}
 			},
 			

@@ -110,7 +110,7 @@ define(
 			
 			TryCancelTileBuild : function(army_build_stack, tile_id)
 			{
-				//console.log("page::TryCancelTileBuild(army_build_stack, " + tile_id + ")");
+				//console.log("page::TryCancelTileBuild(" + army_build_stack.id_string + ", " + tile_id + ")");
 				
 				//find this specific tile
 				var tile_info = army_build_stack.tiles[tile_id];
@@ -144,10 +144,10 @@ define(
 				{
 					//console.log("destroying temp army");
 					//do we need to unselect this army?
-					if(this.selected_army == army_build_stack)
+					/*if(this.selected_army == army_build_stack)
 					{
 						this.UnselectArmyStack();
-					}
+					}*/
 					
 					//untrack this province queued build
 					delete this.queued_builds[army_build_stack.prov_name];
@@ -155,7 +155,7 @@ define(
 					delete build_action_prov;
 					
 					//clean up the army
-					this.DestroyArmy(army_build_stack.id_num);
+					this.DestroyArmyByStack(army_build_stack);
 					
 					//if we are in chaos horde mode, they can now choose a new province to deploy their starting horde in
 					if(this.gamedatas.gamestate.name == "freeBuild_chaosHorde")

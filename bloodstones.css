@@ -481,13 +481,18 @@
 
 #army_selection_stack
 {
-	top: 63px;
+	top: 245px;
 }
 
+#province_other_units_title
+{
+	top: 425px;
+	position: absolute;
+}
 #province_other_units
 {
 	position: absolute;
-	top: 420px;
+	top: 465px;
 	width: 300px;
 	height: 300px;
 }

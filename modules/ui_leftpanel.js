@@ -29,6 +29,8 @@ define(
 				
 				this.other_units_display_stack = new modules.TileStack();
 				this.other_units_display_stack.createAsOtherUnits(this, "leftpanel", this.player_id);
+				
+				var other_units_title_div = dojo.place("<h1 class=\"ui_stack_title\" id=\"province_other_units_title\"></h1>", "leftpanel");
 			},
 			
 			CreatePlayerHand : function(hand_player_id)

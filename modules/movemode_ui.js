@@ -223,6 +223,34 @@ define(
 			
 			OnProvinceSelectMovemodeMapOverlay : function(province_name)
 			{
+				//console.log("page::OnProvinceSelectMovemodeMapOverlay(" + province_name + ")");
+				
+				//is there player army units in this province?
+				var main_player_army = this.GetMainPlayerArmyInProvinceOrNull(province_name, this.player_id);
+				if(main_player_army)
+				{
+					//loop over all items (tiles) in this army and find any castles
+					var castle_tile_ids = [];
+					for(var i in main_player_army.items)
+					{
+						var item = main_player_army.items[i];
+						
+						//is this one a castle?
+						if(this.IsTileTypeCastle(item.type))
+						{
+							//remember it for later
+							castle_tile_ids.push(item.id);
+						}
+					}
+					
+					//loop over all castles we found, and automatically unselect them from moving
+					for(var i in castle_tile_ids)
+					{
+						var cur_tile_id = castle_tile_ids[i];
+						this.HandleClickArmySelectedTileMovemode(cur_tile_id);
+					}
+				}
+				
 				//console.log("page::OnProvinceSelectMovemodeMapOverlay()");
 				this.UpdateCurrentOverlayMode();
 			},
@@ -234,7 +262,7 @@ define(
 			},
 			
 		});
-			
+		
 		return instance;
 	}
 );

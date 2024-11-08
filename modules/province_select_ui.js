@@ -34,6 +34,10 @@ define(
 				//add a hint telling the player they can select an army there
 				//this.CreateArmySelectPanelTitle();
 				dojo.place("<p class=\"ui_stack_title selected_stack_element\">" + this.GetUnselectedArmyHintString() + "</p>", "selection_container");
+				
+				//clear out the other units panel 
+				//todo: why is this different from "selection_container" above?
+				this.ClearReserveDisplay();
 			},
 			
 			SetUIProvinceSelection : function(province_name)
@@ -58,25 +62,45 @@ define(
 				
 				//create a text title at the top of the panel
 				var title_div = dojo.place("<h1 class=\"ui_stack_title\"></h1>", selection_container);
+				
+				//name and type of province to display here
+				var prov_id = this.GetProvinceIdFromName(province_name);
+				var province_text = dojo.place("<div class=\"ui_selected_text\">" + this.GetProvinceNameUIString(prov_id) + "</div>", selection_container);
+				
 				if(main_army_stack)
 				{
 					//we have an army here so make this "our" province now
 					title_div.innerHTML = this.GetProvinceSelectionPlayerTitleString(action_mode);
+					
+					//calculated battle strength if attacked here
+					var translated = dojo.string.substitute( _("If attacked here, these ${num} tiles will have a +${strength} bonus in combat"), {
+						num: main_army_stack.items.length,
+						strength: main_army_stack.GetArmyDefensiveBonus()
+						} );
+					var strength_text = dojo.place("<div class=\"ui_selected_text\" id=\"main_army_strength\">" + translated + "</div>", selection_container);
+					
+					//useful hint for the player
+					if(main_army_stack.player_id == this.getCurrentPlayer())
+					{
+						var hint_text = _("All units below will move. Click on units here to deselect them and leave them in place.");
+						var hint_div = dojo.place("<div class=\"ui_selected_text\">" + hint_text + "</div>", selection_container);
+					}
+					
 				}
-				else if(all_army_stacks.length > 0 || false)
+				/*else if(all_army_stacks.length > 0 || false)
 				{
 					//only display player units in the main selection panel for now
 					title_div.innerHTML = this.GetProvinceSelectionEnemyTitleString(action_mode);
 					main_army_stack = this.GetFirstEnemyArmyInProvinceOrNull(province_name, this.player_id);
-				}
+				}*/
 				else
 				{
 					title_div.innerHTML = this.GetProvinceSelectionEmptyTitleString(action_mode);
 				}
 				
-				//province info to display here
-				var prov_id = this.GetProvinceIdFromName(province_name);
-				var province_text = dojo.place("<div class=\"ui_selected_text\">" + this.GetProvinceNameUIString(prov_id) + "</div>", selection_container);
+				//todo: where are other units supposed to be?
+				var other_units_title_div = dojo.byId("province_other_units_title");
+				other_units_title_div.innerHTML = _("Other units");
 				
 				//create tiles for the player tiles
 				if(main_army_stack)
@@ -98,6 +122,9 @@ define(
 			
 			UnsetUIProvinceSelection : function()
 			{
+				var other_units_title_div = dojo.byId("province_other_units_title");
+				other_units_title_div.innerHTML = "";
+				
 				//some necessary cleanup here
 				dojo.destroy(this.GetArmySelectionStackDivId());
 				this.selected_army_display_stack = null;

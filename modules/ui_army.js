@@ -322,6 +322,26 @@ define(
 				return army;
 			},
 			
+			CreateCastlesArmy : function(army_info, from_div_id)
+			{
+				//console.log("page::CreateCastlesArmy(" + army_info.army_id_string + ", " + from_div_id + ")");
+				//console.log(army_info);
+				
+				//create the object
+				var newArmy = new modules.TileStack();
+				//todo: factionid is only needed here for spawning the test armies, it will get removed soon
+				newArmy.createAsArmyCastle(this, "centrepanel", army_info, from_div_id);	//node id formerly "gamemap"
+				
+				//set it to the desired collision layer
+				//dojo.style(newArmy.container_div, 'zIndex', this.GameLayerArmy());
+				
+				//store it
+				this.armies_by_id_string[newArmy.id_string] = newArmy;
+				this.all_armies[this.all_armies.length] = newArmy;
+				
+				return newArmy;
+			},
+			
 			CreateArmy : function(army_info, from_div_id)	//army_id, starting_province_id, owner_player_id
 			{
 				//console.log("page::CreateArmy()");

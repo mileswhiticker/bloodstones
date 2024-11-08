@@ -692,7 +692,7 @@ define(
 				//console.log(main_stack);
 				
 				//move all tiles back on the map
-				this.TransferArmyTilesByStack(this.selected_province_reserve_army, main_stack, [], this.SELECT_TARGET_TILES);
+				this.TransferArmyTilesByStack(this.selected_province_reserve_army, main_stack, [], this.SELECT_TARGET_TILES, false);
 				
 				//clear out the reserve army
 				this.selected_province_reserve_army = null;

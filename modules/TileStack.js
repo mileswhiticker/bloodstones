@@ -12,7 +12,6 @@ const STACK_UNDEFINED = 0;
 const STACK_ARMY = 1;
 const STACK_PLAYERHAND = 2;
 const STACK_OTHERUNITS = 12;
-const STACK_CITADEL = 3;
 const STACK_VILLAGE = 4;
 const STACK_PAYMENT = 5;
 const STACK_BATTLE_DISPLAY = 6;
@@ -22,7 +21,8 @@ const STACK_BATTLE_TILES = 8;
 const STACK_BATTLE_TILES_TEMP = 9;
 const STACK_BATTLE_TILES_REJECT = 10;
 const STACK_ARMY_SELECTED = 11;
-const STACK_ARMY_CITADEL = 11;
+const STACK_ARMY_CITADEL = 12;
+const STACK_ARMY_CASTLE = 13;
 
 define(
 	[
@@ -180,6 +180,23 @@ define(
 				var retval = this.createAsArmy(page, host_div_id, army_info, from_div_id);
 				this.stack_type = STACK_ARMY_CITADEL;
 				return retval;
+			},
+			
+			IsArmyCitadel : function()
+			{
+				return (this.stack_type == STACK_ARMY_CITADEL);
+			},
+			
+			createAsArmyCastle: function(page, host_div_id, army_info, from_div_id)
+			{
+				var retval = this.createAsArmy(page, host_div_id, army_info, from_div_id);
+				this.stack_type = STACK_ARMY_CASTLE;
+				return retval;
+			},
+			
+			IsArmyCastle : function()
+			{
+				return (this.stack_type == STACK_ARMY_CASTLE);
 			},
 			
 			createAsArmy: function(page, host_div_id, army_info, from_div_id)
@@ -1149,6 +1166,20 @@ define(
 					var tile_info = this.tiles[i];
 					console.log(tile_info);
 					if(window.gameui.IsTileTypeCitadel(tile_info.type_arg))
+					{
+						return true;
+					}
+				}
+				return false;
+			},
+			
+			IsCastlePresent : function()
+			{
+				for(var i in this.tiles)
+				{
+					var tile_info = this.tiles[i];
+					console.log(tile_info);
+					if(window.gameui.IsTileTypeCastle(tile_info.type_arg))
 					{
 						return true;
 					}

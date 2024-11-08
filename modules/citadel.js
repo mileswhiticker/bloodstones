@@ -69,6 +69,21 @@ define(
 				player.citadel_stack.createAsArmyCitadel(this, "centrepanel", temp_army_info);
 			},
 			
+			GetCitadelStackInProvinceOrNull : function(province_name)
+			{
+				for(var player_id in this.gamedatas.players)
+				{
+					var player = this.gamedatas.players[player_id];
+					var player_citadel_stack = player.citadel_stack;
+					if(player_citadel_stack && player_citadel_stack.prov_name == province_name)
+					{
+						//the rules say there should be a max of 1 citadel per province, so just return the first one we find
+						return player_citadel_stack;
+					}
+				}
+				return null;
+			},
+			
 			ServerPlaceCitadel : function(province_name)
 			{
 				//console.log("page::ServerPlaceCitadel()");

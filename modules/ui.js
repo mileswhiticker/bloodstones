@@ -733,7 +733,7 @@ define(
 			
 			ClearCanvas : function()
 			{
-				//console.log("page::RemoveMoveModeUI()");
+				//console.log("page::ClearCanvas()");
 				var canvas = dojo.byId("province_overlay_canvas");
 				var context = canvas.getContext("2d");
 				

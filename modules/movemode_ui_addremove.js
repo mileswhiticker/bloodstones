@@ -34,7 +34,6 @@ define(
 					//console.log("ERROR! page::AddMoveModeUI() selected province name: " + this.GetSelectedProvinceName() + " unable to find main army in province");
 					return;
 				}
-				//console.log("page::AddMoveModeUI() selected province name: " + this.GetSelectedProvinceName() + " moving army: " + moving_army.id_string);
 				
 				if(!this.DoesActivePlayerOwnArmy(moving_army))
 				{
@@ -51,6 +50,8 @@ define(
 					//console.log("WARNING! page::AddMoveModeUI() selected province name: " + this.GetSelectedProvinceName() + " moving_army: " + moving_army.id_string + " but moving army is empty");
 					return;
 				}
+				
+				//console.log("page::AddMoveModeUI() selected province name: " + this.GetSelectedProvinceName() + " moving army: " + moving_army.id_string);
 				
 				//check the adjacent province links and add move cost overlays
 				//basic army movement is 1 province at a time

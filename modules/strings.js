@@ -135,7 +135,16 @@ define(
 						return _("Your units");
 					}
 				}
-				
+			},
+			
+			GetWrongOwnerMoveString : function(action_mode)
+			{
+				return _("You can't move that unit because you don't own it");
+			},
+			
+			GetCantMoveString : function(action_mode)
+			{
+				return _("You can't move that unit because it is unable to move");
 			},
 			
 			GetProvinceSelectionEnemyTitleString : function(action_mode)

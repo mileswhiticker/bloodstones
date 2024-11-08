@@ -292,22 +292,28 @@ class bloodstones extends Table
 		//get info on the armies on the board
 		//todo: this seems more intricate than it needs to be. i wonder if there's a simpler way to do this? 
 		$armies = $this->GetAllArmies();
-		foreach($armies as $army_id => &$army)
+		$armies_by_id_string = [];
+		foreach($armies as $army_id_string => &$army)
 		{
 			//first, get the tile deck for this player's army
 			$army_player_deck = $this->player_decks[$army["player_id"]];
 			
 			//now grab the tiles in this army
-			$army["tiles"] = $army_player_deck->getCardsInLocation('army', $army_id);
+			$army["tiles"] = $army_player_deck->getCardsInLocation('army', $army["army_id"]);
 			
 			//link the army id
-			$armies[$army_id] = $army;
+			$armies[$army_id_string] = $army;
 			
-			//correct this... the old convention of "id" was for a string but the new one has "id" as a number and "name" as a string containing the numerical id
+			//army_id_num now matches the province id num
+			//and each player only has 1 standard army per province
+			//use this constructed string from GetArmyIdString() to prevent id collisions
+			$army_string_id = $this->GetArmyIdString($army);
+			$armies_by_id_string[$army_string_id] = $army;
 		}
 		
 		//save the final creation
 		$result['armies'] = $armies;
+		$result['armies_by_id_string'] = $armies_by_id_string;
 		
 		//is a battle in progress?
 		$attacking_player_id = $this->getGameStateValue("attacking_player_id");
@@ -954,8 +960,8 @@ class bloodstones extends Table
 		//some helpful info about the retreating army
 		$battling_province_name = $this->getProvinceName($battling_province_id);
 		$retreating_army = $this->GetMainPlayerArmyInProvinceFromProvName($losing_player, $battling_province_name);
-		$retreating_army_id = $retreating_army["army_id"];
-		$args['retreating_army_id'] = $retreating_army_id;
+		$retreating_army_id_string = $retreating_army["army_id_string"];
+		$args['retreating_army_id_string'] = $retreating_army_id_string;
 		
 		return $args;
 	}

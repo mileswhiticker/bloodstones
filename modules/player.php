@@ -938,8 +938,8 @@ trait player_utils
 		if(count($new_army["tiles"]) == 0)
 		{
 			//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($new_army,true)));
-			$new_army_id = $new_army["army_id"];
-			$this->DeleteArmy($new_army_id);
+			$army_id_string = $new_army["army_id_string"];
+			$this->DeleteArmyByIdString($army_id_string);
 			self::notifyAllPlayers("debug", "", array('debugmessage' => "Warning: no more tiles in player deck to spawn"));
 		}
 		else

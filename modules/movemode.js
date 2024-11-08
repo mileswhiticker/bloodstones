@@ -116,11 +116,34 @@ define(
 				//new system: there are no "armies" or moves in progress, only tiles
 				//armies are still used as a helpful abstraction eg stacks and to minimise rewrites
 				this.AddActionCostAmount(target_province_info.move_info.total_move_cost);
-				this.QueueArmyMove(moving_army, target_province_name);
 				
-				//finally, do some cleanup
-				this.ClearReserveDisplay();
+				//individually record the tile movements so it can be sent to the server at the end
+				var moving_items = moving_army.getSelectedItems();
+				//console.log(moving_items);
+				var starting_prov_name = moving_army.prov_name;
+				for(var i=0; i<moving_items.length; i++)
+				{
+					var cur_item = moving_items[i];
+					this.QueueTileMove(cur_item.id, starting_prov_name, target_province_name);
+				}
+				
+				//is there a pre-existing army in the target province?
+				//now we just transfer tiles to a new stack instead of moving the existing one
+				var destination_army = this.GetMainPlayerArmyInProvinceOrCreate(target_province_name, moving_army.player_id);
+				
+				//merge the tiles from the old army into the new army
+				//console.log("transferring from " + moving_army.id_string + " to " + destination_army.id_string);
+				this.TransferArmyTilesByStack(moving_army, destination_army, moving_army.getSelectedTileIds(), this.SELECT_ARMY_NONE, false);
+				destination_army.selectAll();
+				
+				//do some cleanup here before we change province selection
 				this.MergeReserveArmyBackIntoMain();
+				
+				//change province selection to the target province
+				this.ForceSelectProvince(target_province_name);
+				
+				//finally clean up the left panel
+				this.ClearReserveDisplay();
 				
 				//old system 
 				/*
@@ -152,36 +175,6 @@ define(
 				this.RefreshMoveModeUI();
 				*/
 				return true;
-			},
-			
-			QueueArmyMove : function(moving_army_stack, move_province_name)
-			{
-				//console.log("page::QueueArmyMove(" + moving_army_stack.id_string + "," + move_province_name + ")");
-				//this function doesnt care about legality
-				
-				//individually record the tile movements so it can be sent to the server at the end
-				var moving_items = moving_army_stack.getSelectedItems();
-				//console.log(moving_items);
-				var starting_prov_name = moving_army_stack.prov_name;
-				for(var i=0; i<moving_items.length; i++)
-				{
-					var cur_item = moving_items[i];
-					this.QueueTileMove(cur_item.id, starting_prov_name, move_province_name);
-				}
-				
-				//is there a pre-existing army in the target province?
-				//now we just transfer tiles to a new stack instead of moving the existing one
-				var destination_army = this.GetMainPlayerArmyInProvinceOrCreate(move_province_name, moving_army_stack.player_id);
-				
-				//merge the tiles from the old army into the new army
-				//console.log("transferring from " + moving_army_stack.id_string + " to " + destination_army.id_string);
-				this.TransferArmyTilesByStack(moving_army_stack, destination_army, moving_army_stack.getSelectedTileIds(), this.SELECT_ARMY_NONE, false);
-				destination_army.selectAll();
-				
-				//change province selection to the target province
-				this.ForceSelectProvince(move_province_name);
-				
-				//console.log("finished QueueArmyMove()");
 			},
 			
 			QueueTileMove : function(moving_tile_id, start_prov_name, end_prov_name)
@@ -545,10 +538,28 @@ define(
 			HandleClickArmyOtherTileMovemode : function(clicked_tile_id)
 			{
 				//console.log("page::HandleClickArmyOtherTileMovemode(" + clicked_tile_id + ")");
+				
 				//some useful info
+				var reserve_army = this.GetReservePlayerArmyOrCreate();
+				
+				//check if we can merge this back in 
+				if(!reserve_army.getItemById(clicked_tile_id))
+				{
+					this.showMessage(_("Unable to select that tile for moving"), 'error');
+					return;
+				}
+				
+				//check if this tile is movable by the player
+				var move_check_fail_string = this.CanCurrentPlayerMoveArmyTile(reserve_army, clicked_tile_id)
+				if(move_check_fail_string)
+				{
+					this.showMessage(move_check_fail_string, 'error');
+					return;
+				}
+				
+				//some more useful info
 				var main_army = this.selected_province_main_army;
 				var main_army_display = this.selected_army_display_stack;
-				var reserve_army = this.GetReservePlayerArmyOrCreate();
 				var other_units_display = this.other_units_display_stack;
 				
 				var reserve_army_empty = false;
@@ -575,6 +586,15 @@ define(
 					this.selected_province_reserve_army = null;
 				}
 				
+				//calculated battle strength if attacked here
+				var translated = dojo.string.substitute( _("If attacked here, these ${num} tiles will have a +${strength} bonus in combat"), {
+					num: main_army.items.length,
+					strength: main_army.GetArmyDefensiveBonus()
+					} );
+				//var strength_text = dojo.place("<div class=\"ui_selected_text\" id=\"main_army_strength\">" + translated + "</div>", selection_container);
+				var main_army_strength = dojo.byId("main_army_strength");
+				main_army_strength.innerHTML = translated;
+				
 				//select the tile on the map
 				main_army.selectItem(clicked_tile_id);
 				
@@ -582,9 +602,23 @@ define(
 				this.RefreshMoveModeUI();
 			},
 			
+			CanCurrentPlayerMoveArmyTile : function(army_stack, tile_id)
+			{
+				if(army_stack.player_id != this.player_id)
+				{
+					return this.GetWrongOwnerMoveString();
+				}
+				var item_type = army_stack.getItemTypeById(tile_id);
+				if(this.IsTileTypeCitadel(item_type) || this.IsTileTypeCastle(item_type))
+				{
+					return this.GetCantMoveString();
+				}
+				return null;
+			},
+			
 			HandleClickArmySelectedTileMovemode : function(clicked_tile_id)
 			{
-				//console.log("page::HandleClickArmySelectedTile(" + clicked_tile_id + ")");
+				console.log("page::HandleClickArmySelectedTile(" + clicked_tile_id + ")");
 				
 				//toggle item selection
 				var tile_is_selected = this.selected_army_display_stack.isSelected(clicked_tile_id);
@@ -620,13 +654,22 @@ define(
 					var reserve_army = this.GetReservePlayerArmyOrCreate();
 					this.TransferArmyTilesByStack(main_army, reserve_army, [clicked_tile_id], this.SELECT_ARMY_NONE);
 					
+					//calculated battle strength if attacked here
+					var translated = dojo.string.substitute( _("If attacked here, these ${num} tiles will have a +${strength} bonus in combat"), {
+						num: main_army.items.length,
+						strength: main_army.GetArmyDefensiveBonus()
+						} );
+					//var strength_text = dojo.place("<div class=\"ui_selected_text\" id=\"main_army_strength\">" + translated + "</div>", selection_container);
+					var main_army_strength = dojo.byId("main_army_strength");
+					main_army_strength.innerHTML = translated;
+					
 					this.RefreshMoveModeUI();
 				}
 			},
 			
 			MergeReserveArmyBackIntoMain : function()
 			{
-				//console.log("page::MergeReserveArmyBackIntoMain()");
+				console.log("page::MergeReserveArmyBackIntoMain()");
 				//first, find the reserve army in this province
 				if(!this.selected_province_reserve_army)
 				{
@@ -635,6 +678,11 @@ define(
 					return;
 				}
 				//console.log(this.selected_province_reserve_army);
+				if(!this.selected_province_reserve_army.prov_name)
+				{
+					console.log("ERROR! page::MergeReserveArmyBackIntoMain() but his.selected_province_reserve_army.prov_name is null");
+					return;
+				}
 				
 				//which province is it in?
 				var reserve_province_name = this.selected_province_reserve_army.prov_name;
@@ -682,7 +730,6 @@ define(
 					console.log("WARNING page::ClearReserveDisplay() this.other_units_display_stack is null");
 				}
 			},
-			
 		});
 		
 		return instance;

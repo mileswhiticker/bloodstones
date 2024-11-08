@@ -129,9 +129,10 @@ ALTER TABLE `player` ADD `captured_citadels` TINYINT NOT NULL DEFAULT 0;
 
 CREATE TABLE IF NOT EXISTS `armies` (
   `army_id` int(10) unsigned NOT NULL,
+  `army_id_string` varchar(32) NOT NULL,
   `province_id` varchar(16) NOT NULL,
   `player_id` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`army_id`)
+  PRIMARY KEY (`army_id_string`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
 --9999 is a really high number

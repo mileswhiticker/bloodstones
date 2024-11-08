@@ -12,41 +12,50 @@ trait army
 			$units_string = "[" . implode(",",$starting_unit_ids) . "]";
 		}
 		$newarmy = $this->getUniqueValueFromDB("SELECT * FROM armies WHERE army_id='$new_army_id'");
+		
+		//?????
 		if($newarmy)
 		{
-			self::notifyAllPlayers("debug", "", array('debugmessage' => "Warning! server::createArmy($spawn_province_name, $player_id, $units_string) army does not exist"));
+			self::notifyAllPlayers("debug", "", array('debugmessage' => "Warning! server::createArmy($spawn_province_name, $player_id, $units_string) army exists"));
 		}
 		else
 		{
-			self::notifyAllPlayers("debug", "", array('debugmessage' => "Warning! server::createArmy($spawn_province_name, $player_id, $units_string) army exists"));
+			self::notifyAllPlayers("debug", "", array('debugmessage' => "Notice! server::createArmy($spawn_province_name, $player_id, $units_string) army does not exist"));
 		}
 		
 		return $this->MoveTilesToProvinceName($spawn_province_name, $player_id, $starting_unit_ids, $spawn_test_units);
 	}
 	
-	public function MoveTilesToProvinceName($starting_province_name, $player_id, $starting_unit_ids, $spawn_test_units = false)
+	public function MoveTilesToProvinceName($prov_name, $player_id, $unit_ids, $spawn_test_units = false)
 	{
 		//the process im using here has multiple redundant steps, but it's the easiest and safest way for me to change how tiles are handled
 		//this is part of my october 2024 rewrite to start phasing out army stacks and just store all tiles per province
 		
 		$units_string = "";
-		if($starting_unit_ids != null)
+		if($unit_ids != null)
 		{
-			$units_string = "[" . implode(",",$starting_unit_ids) . "]";
+			$units_string = "[" . implode(",",$unit_ids) . "]";
 		}
-		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::MoveTilesToProvinceName($starting_province_name,$player_id,$units_string)"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::MoveTilesToProvinceName($prov_name,$player_id,$units_string)"));
 		
 		//old system: arbitrary number of army stacks anywhere we want 
 		//$new_army_id = (int)self::getGameStateValue("next_army_id");
 		
 		//new system: only one army per province
-		$new_army_id = $this->getProvinceIdFromName($starting_province_name);
+		//first, construct a unique army army id string using the province id and the player id
+		$province_id_num = $this->getProvinceIdFromName($prov_name);
+		$new_army_id = $province_id_num;
+		$army_info = ["army_id" => $new_army_id, "player_id" => $player_id, "prov_name" => $prov_name, "tiles"=>array()];
+		$army_id_string = $this->GetArmyIdString($army_info);
 		
-		$newarmy = $this->getCollectionFromDb("SELECT * FROM armies WHERE army_id='$new_army_id'");
-		$db_insert = false;
+		//see if there is an existing army for this player in this province
+		//$newarmy = $this->getCollectionFromDb("SELECT * FROM armies WHERE army_id='$new_army_id'");
+		//$newarmy = $this->getCollectionFromDb("SELECT * FROM armies WHERE army_id_string='$army_id_string'");
+		$newarmy = $this->GetArmyFromIdString($army_id_string);
 		if($newarmy)
 		{
-			$newarmy = $newarmy[$new_army_id];
+			//there is an army here, but we have to update some of its settings due to old database design
+			$newarmy = $newarmy[$army_id_string];
 			//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($newarmy, true)));
 			$newarmy["prov_name"] = $newarmy["province_id"];
 			$newarmy["tiles"] = [];
@@ -54,29 +63,41 @@ trait army
 		else
 		{
 			//create it as an associative array
-			$newarmy = array("army_id"=>$new_army_id, "prov_name"=>"$starting_province_name", "player_id"=>$player_id, "tiles"=>array());
-			$db_insert = true;
+			$newarmy = ["army_id" => $new_army_id, "player_id" => $player_id, "prov_name" => $prov_name, "tiles"=>array()];
+			
+			//insert the newly created army into the database
+			//$sql = "INSERT INTO armies (army_id, province_id, player_id) VALUES ";
+			$sql = "INSERT INTO armies (army_id, army_id_string, province_id, player_id) VALUES ";
+			$values[] = "(
+				$new_army_id,
+				'$army_id_string',
+				'$prov_name',
+				$player_id
+				)";
+			
+			$sql .= implode(',', $values);
+			self::DbQuery( $sql );
 		}
 		
 		//does this new army start with some pre-existing tiles?
 		$starting_tiles = [];
-		if(is_array($starting_unit_ids) && count($starting_unit_ids) > 0)
+		if(is_array($unit_ids) && count($unit_ids) > 0)
 		{
 			//grab the appropriate tile deck
 			$player_deck = $this->player_decks[$player_id];
 			
 			//move the list of card ids over to the new army
 			//if they are already in another army, this will automatically update them
-			$player_deck->moveCards($starting_unit_ids, 'army', $new_army_id);
+			$player_deck->moveCards($unit_ids, 'army', $new_army_id);
 			try
 			{
-				$starting_tiles = $player_deck->getCards($starting_unit_ids);
+				$starting_tiles = $player_deck->getCards($unit_ids);
 			}
 			catch(Exception $e)
 			{
-				self::notifyAllPlayers("debug", "", array('debugmessage' => "Exception caught in call to getCards() inside server::createArmy(), the problem was most likely \$starting_unit_ids"));
+				self::notifyAllPlayers("debug", "", array('debugmessage' => "Exception caught in call to getCards() inside server::createArmy(), the problem was most likely \$unit_ids"));
 				self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($e, true)));
-				self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($starting_unit_ids, true)));
+				self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($unit_ids, true)));
 			}
 		}
 		else if($spawn_test_units == true)
@@ -102,20 +123,6 @@ trait army
 		else
 		{
 			$newarmy["tiles"] = array_merge($newarmy["tiles"], $starting_tiles);
-		}
-		
-		//insert the newly created army into the database
-		if($db_insert)
-		{
-			$sql = "INSERT INTO armies (army_id, province_id, player_id) VALUES ";
-			$values[] = "(
-				$new_army_id,
-				'$starting_province_name',
-				$player_id
-				)";
-			
-			$sql .= implode(',', $values);
-			self::DbQuery( $sql );
 		}
 		
 		//iterate the army id counter
@@ -144,6 +151,17 @@ trait army
 	
     function tryArmyStackTransfer($source_army_id, $target_army_id, $tile_ids = null, $selection_flag = self::SELECT_ARMY_TARGET, $target_province_override = null, $temp_army_id_num = null)
 	{
+		$tile_ids_string = "";
+		if(!is_null($tile_ids))
+		{
+			$tile_ids_string = implode(",",$tile_ids);
+		}
+		$error_msg = "ERROR! obsolete server::tryArmyStackTransfer($source_army_id, $target_army_id, $tile_ids_string,$target_province_override, $temp_army_id_num)";
+		throw new BgaSystemException($error_msg);
+	}
+	
+    function tryArmyStackTransferNew($source_army_id, $target_army_id, $tile_ids = null, $selection_flag = self::SELECT_ARMY_TARGET, $target_province_override = null, $temp_army_id_num = null)
+	{
 		//this is bugged and randomly interfering with other client UIs so force it to not select anything for now
 		$selection_flag = self::SELECT_ARMY_NONE;
 		
@@ -154,10 +172,23 @@ trait army
 		{
 			$tile_ids_string = implode(",",$tile_ids);
 		}
-		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::tryArmyStackTransfer($source_army_id,$target_army_id,$tile_ids_string,$target_province_override,$temp_army_id_num)"));
+		self::notifyAllPlayers("debug", "", array('debugmessage' => "ERROR! obsolete server::tryArmyStackTransfer($source_army_id, $target_army_id, $tile_ids_string,$target_province_override, $temp_army_id_num)"));
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($tile_ids,true)));
-		//
+		
+		//old method of getting army
 		$source_army = $this->GetArmy($source_army_id);
+		
+		//new method of getting army
+		/*
+		function GetArmyIdString($army)
+		{
+			$army_id_num = $army["army_id"];
+			$player_id = $army["player_id"];
+			$army_id_string = $army_id_num . "_" . $player_id;
+			return $army_id_string;
+		}
+		*/
+		
 		$target_army = null;
 		if($target_army_id == null)
 		{
@@ -214,8 +245,32 @@ trait army
 	
 	function GetArmyIdNumFromString($army_id_string)
 	{
+		//new format, X is province id num, Z is player id num
+		//XX_ZZZZZZ
+		$string_elements = explode("_", $army_id_string);
+		return $string_elements[0];
+		
+		//old format
 		//return "blstarmystack" + army_id_num;
-		return substr("$army_id_string",13);
+		//return substr("$army_id_string",13);
+	}
+	
+	function GetArmyIdString($army)
+	{
+		$army_id_num = $army["army_id"];
+		$player_id = $army["player_id"];
+		return $this->GetArmyIdStringFromElements($army_id_num, $player_id);
+		//old method
+		//"" . $army_id . "_" . $army["player_id"];
+		//return "blstarmystack" + army_id_num + "_" + player_id;
+		//return substr("$army_id_string",13);
+	}
+	
+	function GetArmyIdStringFromElements($army_id_num, $player_id)
+	{
+		//$army_id_num here is equivalent to province id num
+		$army_id_string = "blstarmystack_" . $army_id_num . "_" . $player_id;
+		return $army_id_string;
 	}
 	
 	function isGiantPresent($army)
@@ -263,14 +318,21 @@ trait army
 		return false;
 	}
 	
-	function GetArmy($army_id)
+	function GetArmyFromId($army_id)
 	{
-		return self::getObjectFromDB("SELECT army_id, player_id, province_id prov_name FROM armies WHERE army_id=$army_id", false);
+		//this will (sometimes) throw an error because it's using the old system
+		//todo: phase it out
+		return self::getObjectFromDB("SELECT army_id_string, army_id, player_id, province_id prov_name FROM armies WHERE army_id=$army_id", false);
+	}
+	
+	function GetArmyFromIdString($army_id_string)
+	{
+		return self::getObjectFromDB("SELECT army_id_string, army_id, player_id, province_id prov_name FROM armies WHERE army_id_string='$army_id_string'", false);
 	}
 	
 	function GetAllArmies()
 	{
-		return self::getCollectionFromDb("SELECT army_id, player_id, province_id prov_name FROM armies", false);
+		return self::getCollectionFromDb("SELECT army_id_string, army_id, player_id, province_id prov_name FROM armies", false);
 	}
 	
 	function GetArmiesInProvinceFromProvId($prov_id)
@@ -282,7 +344,7 @@ trait army
 	
 	function GetArmiesInProvinceFromProvName($prov_name)
 	{
-		return self::getCollectionFromDb("SELECT army_id, player_id, province_id prov_name FROM armies WHERE province_id='$prov_name'", false);
+		return self::getCollectionFromDb("SELECT army_id_string, army_id, player_id, province_id prov_name FROM armies WHERE province_id='$prov_name'", false);
 	}
 	
 	function GetPlayerArmiesInProvinceFromProvId($player_id, $prov_id)
@@ -294,7 +356,7 @@ trait army
 	
 	function GetPlayerArmiesInProvinceFromProvName($player_id, $prov_name)
 	{
-		return self::getCollectionFromDb("SELECT army_id, player_id, province_id prov_name FROM armies WHERE player_id='$player_id' AND province_id='$prov_name'", false);
+		return self::getCollectionFromDb("SELECT army_id_string, army_id, player_id, province_id prov_name FROM armies WHERE player_id='$player_id' AND province_id='$prov_name'", false);
 	}
 	
 	function GetMainPlayerArmyInProvinceFromProvId($player_id, $prov_id)
@@ -312,7 +374,10 @@ trait army
 		
 		//there is exactly 1 army per province and it follows a predictable naming convention
 		$province_id = $this->getProvinceIdFromName($province_name);
-		$main_army = $this->GetArmy($province_id);
+		
+		$army_id_string = $this->GetArmyIdStringFromElements($province_id, $player_id);
+		
+		$main_army = $this->GetArmyFromIdString($army_id_string);
 		if(!$main_army)
 		{
 			$main_army = $this->createArmy($province_name, $player_id, []);
@@ -339,12 +404,19 @@ trait army
 	
 	function GetPlayerArmies($player_id)
 	{
-		return self::getCollectionFromDb("SELECT army_id, player_id, province_id prov_name FROM armies WHERE player_id='$player_id'", false);
+		return self::getCollectionFromDb("SELECT army_id_string, army_id, player_id, province_id prov_name FROM armies WHERE player_id='$player_id'", false);
 	}
 	
-	function DeleteArmy($army_id)
+	function DeleteArmyById($army_id)
 	{
-		self:$this->DbQuery("DELETE FROM armies WHERE army_id='$army_id';");
+		//formerly DeleteArmy($army_id)
+		//self:$this->DbQuery("DELETE FROM armies WHERE army_id='$army_id';");
+		throw new BgaSystemException("ERROR! obsolete server::DeleteArmyById($army_id)");
+	}
+	
+	function DeleteArmyByIdString($army_id_string)
+	{
+		self:$this->DbQuery("DELETE FROM armies WHERE army_id_string='$army_id_string';");
 	}
 	
 	function GetPendingCaptureArmiesAll()

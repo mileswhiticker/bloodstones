@@ -112,7 +112,7 @@ define(
 			
 			CreateBattleWindow : function(prov_name, pending_battle_info)
 			{
-				//console.log("page::CreateBattleWindow("  +prov_name + ", " + pending_battle_info + ")");
+				//console.log("page::CreateBattleWindow(" + prov_name + ", " + "{pending_battle_info}" + ")");
 				//console.log(pending_battle_info);
 				
 				this.preview_battle_province_name = prov_name;
@@ -177,7 +177,7 @@ define(
 				for(var army_id in armies)
 				{
 					var army_info = armies[army_id];
-					var army_id_string = this.GetArmyIdString(army_info.army_id);
+					var army_id_string = this.GetArmyIdString(army_info.army_id, army_info.player_id);
 					var army = this.armies_by_id_string[army_id_string];
 					
 					if(army.player_id == this.preview_attacking_player_id)

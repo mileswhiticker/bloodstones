@@ -100,7 +100,7 @@ define(
 				// Note: notif.args contains the arguments specified during you "notifyAllPlayers" / "notifyPlayer" PHP call
 				
 				// TODO: play the card in the user interface.
-			},    
+			},
 			
 			*/
 			
@@ -108,12 +108,13 @@ define(
 			{
 				//console.log("page::notif_playerTileMoves()");
 				//console.log(notif.args);
+			
+				//update any possible pending battles
+				this.gamedatas.pending_battles = notif.args.pending_battles_update;
+				
 				if(notif.args.player_id == this.player_id)
 				{
 					//console.log("updating self client");
-					
-					//update any possible pending battles
-					this.gamedatas.pending_battles = notif.args.pending_battles_update;
 					
 					//update the ui
 					if(this.isCurrentPlayerResetMode())
@@ -127,6 +128,23 @@ define(
 					
 					//i dont think this is needed
 					//this.UpdateCurrentOverlayMode();
+					
+					//this is a hack but lets use it for now
+					if(notif.args.move_main_player)
+					{
+						for(var tile_id in notif.args.tile_moves)
+						{
+							//console.log("tile_id:" + tile_id);
+							
+							var tile_move = notif.args.tile_moves[tile_id];
+							//console.log("tile_move:");
+							//console.log(tile_move);
+							
+							var end_army = this.GetMainPlayerArmyInProvinceOrCreate(tile_move.end_prov_name, notif.args.player_id);
+							var start_army = this.GetMainPlayerArmyInProvinceOrCreate(tile_move.start_prov_name, notif.args.player_id);
+							this.TransferArmyTilesByStack(start_army, end_army, [tile_move.tile_id], this.SELECT_ARMY_NONE, false);
+						}
+					}
 				}
 				else
 				{
@@ -521,11 +539,12 @@ define(
 			
 			notif_tileSacrifice : function(notif)
 			{
+				//console.log("page::notif_tileSacrifice()");
+				//console.log(notif.args)
 				this.DestroyBattleWindow();
 				
-				//self::notifyAllPlayers("tileSacrifice", "", array('sacrifice_tile_id' => $sacrifice_tile_id, 'army_id' => $tile_info['location_arg']));
-				var sacrifice_army = this.GetArmyById(notif.args.sacrifice_army_id);
-				//RemoveTileFromStack : function(tile_info_id, target_div_id = undefined)
+				var sacrifice_army = this.GetArmyByIdString(notif.args.sacrifice_army_id_string);
+				
 				//todo: some kind of ui feedback
 				sacrifice_army.RemoveTileFromStack(notif.args.sacrifice_tile_id);
 				

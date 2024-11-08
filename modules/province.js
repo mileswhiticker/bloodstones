@@ -437,10 +437,11 @@ define(
 					}
 					default:
 					{
-						console.log("WARNING: Can't get move cost for unknown province type \"" + province_type + "\" and type_arg:" + type_arg);
+						console.log("WARNING (1): Can't get move cost for unknown province type \"" + province_type + "\" and type_arg:" + type_arg);
 						break;
 					}
 				}
+				console.log("WARNING (2): Can't get default move cost for province type \"" + province_type + "\" and type_arg:" + type_arg);
 				return 1;
 			},
 			
@@ -522,6 +523,22 @@ define(
 			AreProvincesLinked : function(province_start_info, province_end_info)
 			{
 				//console.log("page::AreProvincesLinked(" + province_start_info.name + "," + province_end_info.name + ")");
+				if(province_start_info == undefined && province_end_info == undefined)
+				{
+					console.log("ERROR! page::AreProvincesLinked(" + province_start_info + "," + province_end_info + ")");
+					return false;
+				}
+				else if(province_start_info == undefined)
+				{
+					console.log("ERROR! page::AreProvincesLinked(" + province_start_info + "," + province_end_info.name + ")");
+					return false;
+				}
+				else if(province_end_info == undefined)
+				{
+					console.log("ERROR! page::AreProvincesLinked(" + province_start_info.name + "," + province_end_info + ")");
+					return false;
+				}
+				
 				//console.log(province_start_info);
 				//console.log(province_end_info);
 				for(var index in province_start_info.linked_prov_ids)
@@ -643,6 +660,7 @@ define(
 				return null;
 				
 				//old method
+				/*
 				//console.log("page::GetMainPlayerArmyInProvinceOrNull(" + province_name + "," + player_id + ")");
 				var found_armies = this.GetFriendlyArmiesInProvince(province_name, player_id);
 				
@@ -692,11 +710,11 @@ define(
 					}
 					
 					//check if there is any citadel in the army
-					/*if(army_stack.IsCitadelPresent())
+					//if(army_stack.IsCitadelPresent())
 					{
-						console.log("citadel present");
-						continue;
-					}*/
+						//console.log("citadel present");
+						//continue;
+					}
 					
 					//console.log("check3")
 					//return army_stack;
@@ -704,10 +722,65 @@ define(
 				
 				//console.log("check4")
 				return null;
+				*/
+			},
+			
+			GetOtherUnitStacksInProvince : function(province_name, main_player_id)
+			{
+				//console.log("page::GetOtherUnitStacksInProvince(" + province_name + ", " + main_player_id + ")");
+				var other_armies = [];
+				
+				//do not include: main player army in this province belonging to main_player_id
+				//note: main_player_id will usually be the current player, however it could be null (eg spectators)
+				//note: ??
+				
+				//include:
+				//all citadels and castles
+				//any "unselected" tiles from the main player
+				//all enemy units
+				
+				//all citadels go in the "other" section 
+				var citadel_stack = this.GetCitadelStackInProvinceOrNull(province_name);
+				if(citadel_stack)
+				{
+					other_armies.push(citadel_stack);
+				}
+				
+				//now loop over all armies
+				for(var i in this.all_armies)
+				{
+					var army_stack = this.all_armies[i];
+					if(army_stack.prov_name == province_name)
+					{
+						if(army_stack.IsArmyCastle())
+						{
+							//all castles go in the "other" section
+							other_armies.push(army_stack);
+						}
+						else if(army_stack.player_id != main_player_id)
+						{
+							//all enemy units go in the "other" section
+							other_armies.push(army_stack);
+						}
+					}
+				}
+				
+				//note: at some point i will also have to calculate the defensive combat bonuses for enemy armies here. citadels will mess that up
+				//console.log(other_armies);
+				return other_armies;
 			},
 			
 			GetReservePlayerArmyOrCreate : function()
 			{
+				if(!this.GetSelectedProvinceName())
+				{
+					console.log("ERROR! page::GetReservePlayerArmyOrCreate() but GetSelectedProvinceName() is null");
+					//force an error to get a call stack
+					var dummyerror = null;
+					dummyerror.trigger = true;
+					return;
+				}
+				
 				if(!this.selected_province_reserve_army)
 				{
 					//console.log("page::GetReservePlayerArmyOrCreate() creating new reserve army");
@@ -718,6 +791,7 @@ define(
 				{
 					//console.log("page::GetReservePlayerArmyOrCreate() returning old reserve army");
 				}
+				//console.log("page::GetReservePlayerArmyOrCreate() this.selected_province_reserve_army is in " + this.selected_province_reserve_army.prov_name);
 				return this.selected_province_reserve_army;
 			},
 			
@@ -732,26 +806,6 @@ define(
 				{
 					var split_step = army_action_steps[i];
 				}
-			},
-			
-			GetEnemyArmiesInProvince : function(province_name, player_id)
-			{
-				var found_armies = [];
-				for(var i in this.all_armies)
-				{
-					var army_stack = this.all_armies[i];
-					//console.log(army_stack);
-					if(army_stack.prov_name == province_name)
-					{
-						//console.log("right province name");
-						if(army_stack.player_id != player_id)
-						{
-							//console.log("right player id, adding");
-							found_armies.push(army_stack);
-						}
-					}
-				}
-				return found_armies;
 			},
 			
 			GetFriendlyArmiesInProvince : function(province_name, player_id, check_first = false)
@@ -789,6 +843,17 @@ define(
 				}
 				//console.log(found_armies);
 				return found_armies;
+			},
+			
+			GetOrCreateCastleStackInProvince : function(province_name)
+			{
+				var found_armies = [];
+				for(var i in this.all_armies)
+				{
+					if(army_stack.prov_name == province_name)
+					{
+					}
+				}
 			},
 			
 			GetEnemyArmiesInProvince : function(province_name, player_id, check_first = false)

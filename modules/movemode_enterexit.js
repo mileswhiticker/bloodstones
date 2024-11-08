@@ -46,7 +46,15 @@ define(
 					//this.RefreshProvinceSelection();
 					if(old_selected_province_name)
 					{
-						this.SelectProvince(old_selected_province_name);
+						//only reselect the province if we have movable units there
+						var main_player_army = this.GetMainPlayerArmyInProvinceOrNull(old_selected_province_name, this.player_id);
+						
+						//here i assume that if main_player_army exists that means it must have movable units in it
+						//i think this is a safe assumption
+						if(main_player_army)
+						{
+							this.SelectProvince(old_selected_province_name);
+						}
 					}
 				}
 			},
@@ -148,7 +156,7 @@ define(
 					this.RemoveMoveModeUI();
 					
 					this.MergeReserveArmyBackIntoMain();
-					this.MergeReserveDisplayBackIntoMain();
+					//this.MergeReserveDisplayBackIntoMain();
 					
 					if(approved)
 					{
@@ -178,7 +186,24 @@ define(
 					console.log("WARNING: page::EndMoveMode() but not in move phase");
 				}
 				
-				this.UnselectProvince();
+				//do we currently have a province selected? how should we handle it?
+				var old_selected_province_name = this.GetSelectedProvinceName();
+				if(old_selected_province_name)
+				{
+					//only reselect the province if we have movable units there
+					var main_player_army = this.GetMainPlayerArmyInProvinceOrNull(old_selected_province_name, this.player_id);
+					
+					//here i assume that if main_player_army exists that means it must have movable units in it
+					//i think this is a safe assumption
+					if(main_player_army)
+					{
+						this.RefreshProvinceSelection();
+					}
+					else
+					{
+						this.UnselectProvince();
+					}
+				}
 			},
 			
 		});

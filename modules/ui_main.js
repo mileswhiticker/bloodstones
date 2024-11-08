@@ -139,9 +139,9 @@ define(
 				
 				//console.log(gamedatas.armies);
 				//instead of handling selection here, simply have the player reselect an army if they refresh the window
-				for(var army_id in gamedatas.armies)
+				for(var army_id_string in gamedatas.armies_by_id_string)
 				{
-					var army_info = gamedatas.armies[army_id];
+					var army_info = gamedatas.armies_by_id_string[army_id_string];
 					var army_stack = this.CreateArmy(army_info);
 				}
 			},

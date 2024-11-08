@@ -239,9 +239,9 @@ define(
 				this.defending_player_id = args.args.defending_player_id;
 				this.retreat_prov_options = args.args.retreat_prov_options;
 				
-				var retreating_army = this.GetArmyById(args.args.retreating_army_id);
+				var retreating_army = this.GetArmyByIdString(args.args.retreating_army_id_string);
 				console.log(retreating_army);
-				this.RefreshSelectArmyStack(retreating_army);
+				//this.RefreshSelectArmyStack(retreating_army);
 				
 				if(this.isCurrentPlayerActive())
 				{

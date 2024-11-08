@@ -28,6 +28,9 @@ trait action_move
 		//this is used to update the server database (via Deck)
 		$tile_moves_server = [];
 		
+		//this is used to check for cleaning up old armies
+		$starting_provinces = [];
+		
 		//this is used to construct the player log message
 		$player_deck = $this->player_decks[$current_player_id];
 		$tile_moves_strings = [];
@@ -85,6 +88,7 @@ trait action_move
 			
 			$tile_moves_server[$end_prov_name][] = $tile_id;
 			$tile_moves_strings[$end_prov_name][] = $this->getTileNameFromIdDeck($tile_id, $player_deck);
+			$starting_provinces[$start_prov_name] = 1;
 			
 			//$num = count($tile_moves_server[$end_prov_name]);
 			//self::notifyAllPlayers("debug", "", array('debugmessage' => "\$tile_moves_server[$end_prov_name] now has $num tiles"));
@@ -107,6 +111,23 @@ trait action_move
 		foreach($tile_moves_server as $move_province_name => $moving_tile_ids)
 		{
 			$this->MoveTilesToProvinceName($move_province_name, $current_player_id, $moving_tile_ids);
+		}
+		
+		//clear out the old army in this province if its empty
+		foreach($starting_provinces as $start_prov_name => $dummyvar)
+		{
+			$start_prov_id = $this->getProvinceIdFromName($start_prov_name);
+			$remaining_tiles = $this->GetPlayerTilesInProvince($start_prov_id, $current_player_id);
+			$army_id_string = $this->GetArmyIdStringFromElements($start_prov_id, $current_player_id);
+			if(count($remaining_tiles) == 0)
+			{
+				//self::notifyAllPlayers("debug", "", array('debugmessage' => "after move, i will not delete empty army $army_id_string"));
+				$this->DeleteArmyByIdString($army_id_string);
+			}
+			else
+			{
+				//self::notifyAllPlayers("debug", "", array('debugmessage' => "after move, i checked $army_id_string but found it isnt empty so i wont delete it"));
+			}
 		}
 		
 		// process the tile payment

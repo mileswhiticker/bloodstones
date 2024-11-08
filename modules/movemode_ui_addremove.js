@@ -30,7 +30,8 @@ define(
 				var moving_army = this.selected_province_main_army;
 				if(moving_army == null)
 				{
-					console.log("ERROR! page::AddMoveModeUI() selected province name: " + this.GetSelectedProvinceName() + " unable to find main army in province");
+					//this is intended behaviour eg if there is no army in a province
+					//console.log("ERROR! page::AddMoveModeUI() selected province name: " + this.GetSelectedProvinceName() + " unable to find main army in province");
 					return;
 				}
 				//console.log("page::AddMoveModeUI() selected province name: " + this.GetSelectedProvinceName() + " moving army: " + moving_army.id_string);

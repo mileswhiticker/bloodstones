@@ -32,7 +32,7 @@ trait action_build
 			//each province will have 1 new army
 			$built_armies = [];
 			$built_armies_existing = [];
-			$built_tile_names = [];
+			$built_prov_strings = [];
 			foreach($action_info as $prov_name => $build_action_prov)
 			{
 				//note: new_tile_infos here needs to actually be new tile infos and not an array of tile ids
@@ -84,10 +84,17 @@ trait action_build
 				$built_armies[$army_info["army_id"]] = $army_info;
 				
 				//now grab their info for the log
+				$built_tile_names = [];
 				foreach($built_tile_infos as $built_tile_id => $built_tile_info)
 				{
 					$built_tile_names[] = $this->getTileNameFromType($built_tile_info["type_arg"]);
 				}
+				$built_tile_names_string = implode(", ",$built_tile_names);
+
+				$prov_id = $this->getProvinceIdFromName($prov_name);
+				$province_ui_name = $this->GetProvinceNameUIString($prov_id);
+				
+				$built_prov_strings[] = "$built_tile_names_string -> $province_ui_name";
 			}
 			
 			//eventually there should be checks here to see if the player has paid enough
@@ -109,23 +116,20 @@ trait action_build
 			$this->notifyPlayerHandChanged($current_player_id);
 			
 			$units_built_string = "nothing";
-			$tiles_built = count($built_tile_names);
+			$tiles_built = count($built_prov_strings);
 			if($tiles_built > 0)
 			{
-				$units_built_string = implode(", ", $built_tile_names);
+				//todo: mark for translation this string
+				$units_built_string = "$current_player_name builds: " . implode(". ", $built_prov_strings);
 			}
 			$this->incStat($tiles_built, "tiles_built", $current_player_id);
-			$prov_id = $this->getProvinceIdFromName($prov_name);
-			$province_ui_name = $this->GetProvinceNameUIString($prov_id);
-			self::notifyAllPlayers('playerBuild', clienttranslate('${player_name} builds ${units_built_string} in ${province_ui_name}'), 
+			
+			self::notifyAllPlayers('playerBuild', $units_built_string, 
 				array(
-					'units_built_string' => $units_built_string,
-					'player_name' => $current_player_name,
 					'player_id' => $current_player_id,
 					'pending_battles_update' => $this->GetPendingBattleProvincesAll(),
 					'built_armies' => $built_armies,
-					'built_armies_existing' => $built_armies_existing,
-					'province_ui_name' => $province_ui_name
+					'built_armies_existing' => $built_armies_existing
 				));
 			
 			//special handling for freebuild mode

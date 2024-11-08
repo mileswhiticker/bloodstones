@@ -287,18 +287,20 @@ trait retreat_withdraw
 	function tryWithdraw($retreat_prov_name)
 	{
 		self::checkAction('action_withdraw');
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::tryWithdraw($retreat_prov_name)"));
 		
 		$this->HandleRetreatWithdraw($retreat_prov_name);
 		
-		//what is the defender faction name?
+		//get information about the defender
+		//note: a withdraw happens at the start of battle and can only ever be done by a defender
 		$defending_player_id = $this->getGameStateValue("defending_player_id");
-		$defender_faction_name = $this->getPlayerFactionName($defending_player_id);
+		$defending_player_name = $this->getPlayerNameById($defending_player_id);
 		
 		//tell all the players what happened
 		$prov_id = $this->getProvinceIdFromName($retreat_prov_name);
 		$province_ui_name = $this->GetProvinceNameUIString($prov_id);
-		$this->notifyAllPlayers('logPlayerMessage', clienttranslate('${defender_faction_name} have withdrawn from battle to ${province_ui_name}'), [
-			'defender_faction_name' => $defender_faction_name,
+		$this->notifyAllPlayers('logPlayerMessage', clienttranslate('${defending_player_name} has withdrawn from battle to ${province_ui_name}'), [
+			'defending_player_name' => $defending_player_name,
 			'province_ui_name' => $province_ui_name
 		]);
 		
@@ -308,7 +310,7 @@ trait retreat_withdraw
 	
 	function HandleRetreatWithdraw($retreat_prov_name)
 	{
-		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::HandleRetreatWithdraw($retreat_prov_name)"));
+		self::notifyAllPlayers("debug", "", array('debugmessage' => "server::HandleRetreatWithdraw($retreat_prov_name)"));
 		
 		//get some info about the provinces
 		$battling_province_id = $this->getGameStateValue("battling_province_id");
@@ -333,8 +335,9 @@ trait retreat_withdraw
 		
 		//get some info about the retreating army... there should only be 1 army here
 		//you can add LIMIT 1 to the sql call to make it simply select the first row... but it's probably better to throw an exception if there is bad behaviour here so i can find and fix it
+		
 		$retreating_army = $this->GetMainPlayerArmyInProvinceFromProvName($retreat_player_id, $battle_prov_name);
-		$retreating_army_id = $retreating_army["army_id"];
+		$retreating_army_id = $battling_province_id;
 		$retreating_deck = $this->player_decks[$retreat_player_id];
 		$retreating_tiles = $retreating_deck->getCardsInLocation("army", $retreating_army_id);
 		
@@ -352,6 +355,9 @@ trait retreat_withdraw
 		$killed_tiles = [];
 		$killed_tile_ids = [];
 		$killed_tile_names = [];
+		$retreating_tile_ids = [];
+		$retreating_tile_names = [];
+		$tile_moves_client = [];
 		foreach($retreating_tiles as $tile_info)
 		{
 			$tile_type = intval($tile_info['type_arg']);
@@ -381,8 +387,8 @@ trait retreat_withdraw
 				$killed_tile_ids[] = $tile_info['id'];
 				$killed_tile_names[] = $this->getTileNameFromType($tile_info['type_arg']);
 				
-				//self::notifyAllPlayers("debug", "", array('debugmessage' => "killed tile_info:"));
-				//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($tile_info, true)));
+				self::notifyAllPlayers("debug", "", array('debugmessage' => "killed tile_info:"));
+				self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($tile_info, true)));
 				
 				if($this->isTileTypeCitadel($tile_type))
 				{
@@ -390,23 +396,81 @@ trait retreat_withdraw
 					$this->PlayerCaptureCitadel($winning_player_id, $retreat_player_id);
 				}
 			}
+			else
+			{
+				$retreating_tile_ids[] = $tile_info['id'];
+				$retreating_tile_names[] = $this->getTileNameFromType($tile_info['type_arg']);
+				/*
+				$tile_move = ['tile_id' => $tile_id, 'start_prov_name' => $start_prov_name, 'end_prov_name' => $end_prov_name];
+				$tile_moves_client[$tile_id] = $tile_move;
+				*/
+				$tile_id = $tile_info['id'];
+				$tile_move = ['tile_id' => $tile_id, 'start_prov_name' => $battle_prov_name, 'end_prov_name' => $retreat_prov_name];
+				$tile_moves_client[$tile_id] = $tile_move;
+				
+				self::notifyAllPlayers("debug", "", array('debugmessage' => "retreating tile_info:"));
+				self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($tile_info, true)));
+			}
 		}
 		$killed_tiles_string = implode(", ", $killed_tile_names);
+		$retreating_tiles_string = implode(", ", $retreating_tile_names);
 		
 		//move the killed tiles back into the discard pile
 		$retreating_deck->moveCards($killed_tile_ids, "discard");
 		
 		//tell the players if some units died during the retreat/withdraw
-		$num_tiles_killed = count($killed_tiles);
-		$player_name = $this->getPlayerNameById($retreat_player_id);
-		if($num_tiles_killed > 0)
+		$current_player_name = $this->getCurrentPlayerName();
+		$province_ui_name = $this->GetProvinceNameUIString($retreat_prov_id);
+		
+		//if there are survivors, move them into the new province
+		//$retreating_tiles = $retreating_deck->getCardsInLocation("army", $retreating_army_id);
+		$retreat_count = count($retreating_tile_ids);
+		$killed_count = count($killed_tiles);
+		self::notifyAllPlayers("debug", "", array('debugmessage' => "number of retreating_tile_ids:$retreat_count number of killed_count:$killed_count"));
+		
+		if(count($retreating_tile_ids) > 0)
+		{
+			$this->MoveTilesToProvinceName($retreat_prov_name, $retreat_player_id, $retreating_tile_ids);
+			
+			//update the player client
+			self::notifyAllPlayers('playerTileMoves', clienttranslate('${player_name} has retreated tiles ${retreating_tiles_string} to ${province_ui_name}'), array(
+				'player_id' => $retreat_player_id,
+				'player_name' => $current_player_name,
+				'retreating_tiles_string' => $retreating_tiles_string,
+				'tile_moves' => $tile_moves_client,
+				'province_ui_name' => $province_ui_name,
+				'move_main_player' => true,
+				'pending_battles_update' => $this->GetPendingBattleProvincesAll(),
+			));
+			
+			//old method of updating client
+			/*
+			//tell the players where the army moved to
+			self::notifyAllPlayers('playerArmyMove', '', array(
+				'army_id_num' => $retreating_army_id,
+				'pending_battles_update' => $this->GetPendingBattleProvincesAll(),
+				'dest_province_id' => $retreat_prov_name
+			));
+			*/
+		}
+		else
+		{
+			self::notifyAllPlayers("debug", "", array('debugmessage' => "deleting all losing army tiles as none were able to retreat"));
+			//delete it from our database
+			//function GetArmyIdStringFromElements($army_id_num, $player_id)
+			$army_id_string = $this->GetArmyIdStringFromElements($battling_province_id, $retreat_player_id);//$new_army["army_id_string"];
+			$this->DeleteArmyByIdString($army_id_string);
+			//$this->DeleteArmy($retreating_army_id);
+		}
+		
+		//did any tiles get killed by terrain?
+		if(count($killed_tiles) > 0)
 		{
 			//increase the statistic
 			$this->incStat($num_tiles_killed, "terrain_losses", $retreat_player_id);
 			
 			//tell the players
-			$province_ui_name = $this->GetProvinceNameUIString($retreat_prov_id);
-			self::notifyAllPlayers('playerArmyRetreat', clienttranslate('${player_name} loses ${killed_tiles_string} while retreating to ${province_ui_name}'), 
+			self::notifyAllPlayers('playerArmyRetreat', clienttranslate('${player_name} loses ${killed_tiles_string} while retreating.'), 
 				array(
 					'killed_tiles_string' => $killed_tiles_string,
 					'player_name' => $player_name,
@@ -417,24 +481,12 @@ trait retreat_withdraw
 				));
 		}
 		
-		//if there are survivors, move them into the new province
-		$retreating_tiles = $retreating_deck->getCardsInLocation("army", $retreating_army_id);
-		if(count($retreating_tiles) > 0)
+		//clear out the old army if its empty
+		$remaining_tiles = $this->GetPlayerTilesInProvince($battling_province_id, $retreat_player_id);
+		if(count($remaining_tiles) == 0)
 		{
-			$sql_update = "UPDATE armies SET province_id='$retreat_prov_name' WHERE army_id='$retreating_army_id';";
-			self::DbQuery($sql_update);
-			
-			//tell the players where the army moved to
-			self::notifyAllPlayers('playerArmyMove', '', array(
-				'army_id_num' => $retreating_army_id,
-				'pending_battles_update' => $this->GetPendingBattleProvincesAll(),
-				'dest_province_id' => $retreat_prov_name
-			));
-		}
-		else
-		{
-			//delete it from our database
-			$this->DeleteArmy($retreating_army_id);
+			$army_id_string = $this->GetArmyIdStringFromElements($battling_province_id, $retreat_player_id);//$new_army["army_id_string"];
+			$this->DeleteArmyByIdString($army_id_string);
 		}
 	}
 }

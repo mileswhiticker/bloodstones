@@ -186,14 +186,14 @@ trait battle
 		if(!$active_player_present)
 		{
 			//throw new BgaSystemException("Only the active player is allowed to start battles.");
-			self::notifyAllPlayers("debug", "", array('debugmessage' => "ERROR: Only the active player is allowed to start battles."));
+			self::notifyAllPlayers("debug", "", array('debugmessage' => "ERROR: server::tryStartBattle($battling_province_name) the active player is not present"));
 			return;
 		}
 		
 		if(!$other_player_present)
 		{
 			//throw new BgaSystemException("There are no enemy players to fight in $battling_province_name");
-			self::notifyAllPlayers("debug", "", array('debugmessage' => "ERROR: There are no enemy players to fight in $battling_province_name"));
+			self::notifyAllPlayers("debug", "", array('debugmessage' => "ERROR: server::tryStartBattle($battling_province_name) there is no other (non-active) player present to fight"));
 			return;
 		}
 		
@@ -309,7 +309,7 @@ trait battle
 		$armies_by_province = [];
 		
 		//first, sort all the armies by province
-		foreach($unchecked_armies as $cur_army_id => $cur_army)
+		foreach($unchecked_armies as $army_id_string => $cur_army)
 		{
 			$cur_prov_name = $cur_army["prov_name"];
 			$armies_by_province[$cur_prov_name][] = $cur_army;
@@ -341,6 +341,7 @@ trait battle
 				}
 			}
 			
+			$battle_with_target_player_string = $battle_with_target_player ? "true" : "false";
 			if($battle_with_target_player && $defending_player_id != 0)
 			{
 				//there is a valid battle here
@@ -779,16 +780,19 @@ trait battle
 		$defending_player_id = $this->getGameStateValue("defending_player_id");
 		$active_player_id = $this->getActivePlayerId();
 		$losing_player_deck = null;
+		$losing_player_id;
 		$losing_player_name;
 		if($active_player_id == $attacking_player_id)
 		{
 			$losing_player_deck = $this->player_decks[$attacking_player_id];
 			$losing_player_name = $this->getPlayerNameById($attacking_player_id);
+			$losing_player_id = $attacking_player_id;
 		}
 		else if($active_player_id == $defending_player_id)
 		{
 			$losing_player_deck = $this->player_decks[$defending_player_id];
 			$losing_player_name = $this->getPlayerNameById($defending_player_id);
+			$losing_player_id = $defending_player_id;
 		}
 		else
 		{
@@ -804,11 +808,12 @@ trait battle
 		
 		//update all the client UIs
 		$sacrifice_army_id = $tile_info['location_arg'];
+		$sacrifice_army_id_string = $this->GetArmyIdStringFromElements($sacrifice_army_id, $losing_player_id);
 		self::notifyAllPlayers("tileSacrifice", clienttranslate('${player_name} has sacrificed ${tile_name} while retreating'), array(
 			'player_name' => $losing_player_name,
 			'tile_name' => $this->getTileNameFromType($tile_info["type_arg"]),
 			'sacrifice_tile_id' => $sacrifice_tile_id,
-			'sacrifice_army_id' => $sacrifice_army_id
+			'sacrifice_army_id_string' => $sacrifice_army_id_string
 			));
 		
 		//if this is a citadel, special handle it
@@ -910,7 +915,9 @@ trait battle
 				if($tilesleft == 0)
 				{
 					//self::notifyAllPlayers("debug", "", array('debugmessage' => "deleting empty army $army_id"));
-					$this->DeleteArmy($army_id);
+					$army_id_string = $this->GetArmyIdStringFromElements($army_id, $attacking_player_id);
+					$this->DeleteArmyByIdString($army_id_string);
+					//$this->DeleteArmy($army_id);
 				}
 				else
 				{
@@ -929,7 +936,9 @@ trait battle
 		$army_tiles = $losing_player_deck->getCardsInLocation('army', $sacrifice_army_id);
 		if(count($army_tiles) == 0)
 		{
-			$this->DeleteArmy($sacrifice_army_id);
+			$army_id_string = $this->GetArmyIdStringFromElements($sacrifice_army_id, $losing_player_id);
+			$this->DeleteArmyByIdString($army_id_string);
+			//$this->DeleteArmy($sacrifice_army_id);
 			
 			//there are no armies to retreat, so go straight to cleanup
 			$this->gamestate->nextState('battleCleanup');

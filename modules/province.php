@@ -371,4 +371,11 @@ trait province
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::GetProvinceNameUIString($prov_id)"));
 		return "Area $prov_id (" . $this->GetProvinceTypeName($prov_id) . ")";
 	}
+	
+	function GetPlayerTilesInProvince($prov_id, $player_id)
+	{
+		//todo (this is needed for the new army system...)
+		self::notifyAllPlayers("debug", "", array('debugmessage' => "ALERT! UNFINISHED CODE server::GetPlayerTilesInProvince($prov_id, $player_id)"));
+		return [];
+	}
 }

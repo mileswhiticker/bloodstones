@@ -47,32 +47,33 @@ define(
 					{
 						window.gameui.EndCitadelState(province_name);
 					}
-					else if(window.gameui.isCurrentPlayerRetreatState())
+					else if(window.gameui.isCurrentPlayerRetreatState() || window.gameui.isCurrentPlayerWithdrawState())
 					{
 						//is this a valid retreat province?
+						var success = false;
 						for(var index in window.gameui.retreat_prov_options)
 						{
 							var retreat_option = window.gameui.retreat_prov_options[index];
 							if(retreat_option.name == province_name)
 							{
 								//found it
-								window.gameui.ServerRetreat(province_name);
-								return;
+								//tell the server
+								if(window.gameui.isCurrentPlayerRetreatState())
+								{
+									window.gameui.ServerRetreat(province_name);
+								}
+								else
+								{
+									window.gameui.ServerWithdraw(province_name);
+								}
+								success = true;
+								break;
 							}
 						}
-					}
-					else if(window.gameui.isCurrentPlayerWithdrawState())
-					{
-						//is this a valid retreat province?
-						for(var index in window.gameui.retreat_prov_options)
+						
+						if(!success)
 						{
-							var retreat_option = window.gameui.retreat_prov_options[index];
-							if(retreat_option.name == province_name)
-							{
-								//found it
-								window.gameui.ServerWithdraw(province_name);
-								return;
-							}
+							console.log("WARNING! Desired with/retreat province was not in the options list");
 						}
 					}
 					else if(window.gameui.isCurrentPlayerVillagesState())

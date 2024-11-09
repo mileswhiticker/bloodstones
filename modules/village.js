@@ -68,7 +68,7 @@ define(
 			
 			TryQueueVillageBuild : function(prov_info)
 			{
-				//console.log("page::QueueVillageBuild()");
+				//console.log("page::TryQueueVillageBuild(" + prov_info.name + ")");
 				//console.log(prov_info);
 				
 				//is this valid terrain?
@@ -202,6 +202,8 @@ define(
 			
 			TryCancelVillageBuild : function(temp_village_stack)
 			{
+				//console.log("page::TryCancelVillageBuild(" + temp_village_stack.prov_name + ")");
+				//console.log(temp_village_stack);
 				//safety check for player events
 				if(!this.isCurrentPlayerVillagesState())
 				{
@@ -327,6 +329,7 @@ define(
 			
 			RemoveVillageFromStack : function(village_stack)
 			{
+				//console.log("page::RemoveVillageFromStack(" + village_stack.army_id_string + ")");
 				//todo: oh god ive got to finish writing this and fix this issue here
 			},
 			

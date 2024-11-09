@@ -25,7 +25,8 @@ define(
 				event.stopPropagation();
 				
 				var province_area_element = $(event.target.id);
-				var province_name = province_area_element.dataset.province_id;
+				//var province_name = province_area_element.dataset.province_id;	//dataset is cool but string split is simpler and safer
+				var province_name = this.GetProvIdStringFromAreaIdString(event.target.id);
 				//const province_info = this.provinces_by_name[province_name];
 				
 				/*var province_info = window.gameui.provinces_by_name[province_name];

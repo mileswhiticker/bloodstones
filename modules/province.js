@@ -970,7 +970,13 @@ define(
 			GetProvinceNameUIString : function(prov_id)
 			{
 				return "Area " + prov_id + " (" + this.GetProvinceType(prov_id) + ")";
-			}
+			},
+			
+			GetProvIdStringFromAreaIdString : function(area_id_string)
+			{
+				var string_elements = area_id_string.split("_");
+				return string_elements[1];
+			},
 		});
 			
 		return instance;

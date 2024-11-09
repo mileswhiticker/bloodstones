@@ -11,18 +11,18 @@
 const STACK_UNDEFINED = 0;
 const STACK_ARMY = 1;
 const STACK_PLAYERHAND = 2;
-const STACK_OTHERUNITS = 12;
+const STACK_OTHERUNITS = 3;
 const STACK_VILLAGE = 4;
 const STACK_PAYMENT = 5;
 const STACK_BATTLE_DISPLAY = 6;
-const STACK_BATTLE_DISPLAY_ATTACKER = 6;
-const STACK_BATTLE_DISPLAY_DEFENDER = 7;
-const STACK_BATTLE_TILES = 8;
-const STACK_BATTLE_TILES_TEMP = 9;
-const STACK_BATTLE_TILES_REJECT = 10;
-const STACK_ARMY_SELECTED = 11;
-const STACK_ARMY_CITADEL = 12;
-const STACK_ARMY_CASTLE = 13;
+const STACK_BATTLE_DISPLAY_ATTACKER = 7;
+const STACK_BATTLE_DISPLAY_DEFENDER = 8;
+const STACK_BATTLE_TILES = 9;
+const STACK_BATTLE_TILES_TEMP = 10;
+const STACK_BATTLE_TILES_REJECT = 11;
+const STACK_ARMY_SELECTED = 12;
+const STACK_ARMY_CITADEL = 13;
+const STACK_ARMY_CASTLE = 14;
 
 define(
 	[
@@ -1543,7 +1543,21 @@ define(
 				{
 					case STACK_ARMY:
 					{
-						//army stack
+						//army stack (normal)
+						//pass it on to ebg.page to handle army selection
+						this.page.onClickArmyStack(event, this);
+						break;
+					}
+					case STACK_ARMY_CASTLE:
+					{
+						//army stack (with castles)
+						//pass it on to ebg.page to handle army selection
+						this.page.onClickArmyStack(event, this);
+						break;
+					}
+					case STACK_ARMY_CITADEL:
+					{
+						//army stack (with citadels)
 						//pass it on to ebg.page to handle army selection
 						this.page.onClickArmyStack(event, this);
 						break;

@@ -408,7 +408,7 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			this.all_armies = [];
 			this.armies_by_id_string = [];
 			this.selected_army = null;
-			this.castle_stacks_by_provinceplayer = {};
+			this.castle_stacks_by_provinceplayer = {};	//see GetCastleIndexString() in ui_army.js
 			
 			this.ghost_moving_army = null;
 			this.current_move_cost = 0;

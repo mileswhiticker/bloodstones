@@ -286,6 +286,12 @@ define(
 				return "blstarmystack_" + army_id_num + "_" + player_id;
 			},
 			
+			GetCastleIndexString : function(prov_name, player_id)
+			{
+				//only used for indexing in this.castle_stacks_by_provinceplayer 
+				return prov_name + "_" + player_id;
+			},
+			
 			GetArmyIdNumFromString : function(army_id_string)
 			{
 				const string_elements = army_id_string.split("_");
@@ -322,30 +328,79 @@ define(
 				return army;
 			},
 			
-			CreateCastlesArmy : function(army_info, from_div_id)
-			{
-				//console.log("page::CreateCastlesArmy(" + army_info.army_id_string + ", " + from_div_id + ")");
-				//console.log(army_info);
-				
-				//create the object
-				var newArmy = new modules.TileStack();
-				//todo: factionid is only needed here for spawning the test armies, it will get removed soon
-				newArmy.createAsArmyCastle(this, "centrepanel", army_info, from_div_id);	//node id formerly "gamemap"
-				
-				//set it to the desired collision layer
-				//dojo.style(newArmy.container_div, 'zIndex', this.GameLayerArmy());
-				
-				//store it
-				this.armies_by_id_string[newArmy.id_string] = newArmy;
-				this.all_armies[this.all_armies.length] = newArmy;
-				
-				return newArmy;
-			},
-			
 			CreateArmy : function(army_info, from_div_id)	//army_id, starting_province_id, owner_player_id
 			{
 				//console.log("page::CreateArmy()");
 				//console.log(army_info);
+				
+				//split off any castles to make into a separate army stack in this province
+				var castle_tile_infos = [];
+				for(var tile_id in army_info.tiles)
+				{
+					var tile_info = army_info.tiles[tile_id];
+					if(this.IsTileTypeCastle(tile_info.type_arg))
+					{
+						//console.log("found castle tile_info:");
+						//console.log(tile_info);
+						//remember this one for later
+						castle_tile_infos[tile_id] = tile_info;
+					}
+				}
+				
+				//now remove them from the main army list of tiles
+				var spawn_castle_tiles = false;
+				for(var tile_id in castle_tile_infos)
+				{
+					//console.log("found castle tile_id: " + tile_id);
+					spawn_castle_tiles = true;
+					delete army_info.tiles[tile_id];
+				}
+				
+				//now we shall create the castle army
+				if(spawn_castle_tiles)
+				{
+					//is there a castle army stack already in this province?
+					var castle_army_stack = this.GetPlayerCastleStackInProvinceOrNull(army_info.prov_name, army_info.player_id);
+					if(castle_army_stack)
+					{
+						//console.log("spawning new castle tiles in existing castle army stack: " + castle_army_stack.army_id_string);
+						castle_army_stack.SpawnTilesInStack(castle_tile_infos);
+					}
+					else
+					{
+						//console.log("creating new castles army out of " + army_info.prov_name);
+						var castle_army_info = {};
+						
+						//create a shallow copy of the army_info
+						//as army_info is just a database export of basic datatypes, this is future proofing it for any changes i want to make to the db
+						for(var property in army_info)
+						{
+							castle_army_info[property] = army_info[property];
+						}
+						
+						//get the castle tile infos
+						castle_army_info['tiles'] = castle_tile_infos;
+						
+						//create a temp id so it doesnt clash with the regular army
+						castle_army_info['army_id'] = this.getTempArmyId();
+						castle_army_info['army_id_string'] = this.GetArmyIdString(castle_army_info['army_id'], castle_army_info['player_id']);
+						
+						//create the army object
+						castle_army_stack = new modules.TileStack();
+						castle_army_stack.createAsArmyCastle(this, "centrepanel", castle_army_info, from_div_id);
+						
+						//set it to the desired collision layer
+						//dojo.style(newArmy.container_div, 'zIndex', this.GameLayerArmy());
+						
+						//store it
+						this.armies_by_id_string[castle_army_stack.id_string] = castle_army_stack;
+						this.all_armies[this.all_armies.length] = castle_army_stack;
+						
+						var castle_index_string = this.GetCastleIndexString(army_info.prov_name, army_info.player_id);
+						this.castle_stacks_by_provinceplayer[castle_index_string] = castle_army_stack;
+						
+					}
+				}
 				
 				//create the object
 				var newArmy = new modules.TileStack();

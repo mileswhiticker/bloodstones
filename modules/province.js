@@ -770,6 +770,20 @@ define(
 				return other_armies;
 			},
 			
+			GetPlayerCastleStackInProvinceOrNull : function(prov_name, player_id)
+			{
+				//grab it from the list
+				var castle_index_string = this.GetCastleIndexString(prov_name, player_id);
+				var castle_army_stack = this.castle_stacks_by_provinceplayer[castle_index_string];
+				
+				//this is to make sure we dont return undefined
+				if(castle_army_stack)
+				{
+					return castle_army_stack;
+				}
+				return null;
+			},
+			
 			GetReservePlayerArmyOrCreate : function()
 			{
 				if(!this.GetSelectedProvinceName())

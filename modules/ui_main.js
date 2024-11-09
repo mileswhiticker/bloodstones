@@ -146,54 +146,8 @@ define(
 					//console.log("army_info:");
 					//console.log(army_info);
 					
-					//split off any castles to make into a separate army stack in this province
-					var castle_tile_infos = [];
-					for(var tile_id in army_info.tiles)
-					{
-						var tile_info = army_info.tiles[tile_id];
-						if(this.IsTileTypeCastle(tile_info.type_arg))
-						{
-							//console.log("found castle tile_info:");
-							//console.log(tile_info);
-							//remember this one for later
-							castle_tile_infos[tile_id] = tile_info;
-						}
-					}
-					
-					//now remove them from the main army list of tiles
-					var create_castle_army = false;
-					for(var tile_id in castle_tile_infos)
-					{
-						//console.log("found castle tile_id: " + tile_id);
-						create_castle_army = true;
-						delete army_info.tiles[tile_id];
-					}
-					
-					//now we shall create the castle army
-					if(create_castle_army)
-					{
-						//console.log("creating castles army out of " + army_info.prov_name);
-						var castle_army_info = {};
-						
-						//create a shallow copy of the army_info
-						//as army_info is just a database export of basic datatypes, this is future proofing it for any changes i want to make to the db
-						for(var property in army_info)
-						{
-							castle_army_info[property] = army_info[property];
-						}
-						
-						//get the castle tile infos
-						castle_army_info['tiles'] = castle_tile_infos;
-						
-						//create a temp id so it doesnt clash with the regular army
-						castle_army_info['army_id'] = this.getTempArmyId();
-						castle_army_info['army_id_string'] = this.GetArmyIdString(castle_army_info['army_id'], castle_army_info['player_id']);
-						
-						//create the army
-						var castle_army_stack = this.CreateCastlesArmy(castle_army_info);
-					}
-					
 					//create the remaining units into a regular army
+					//note: this will automatically separate castles into a separate stack
 					var army_stack = this.CreateArmy(army_info);
 				}
 			},

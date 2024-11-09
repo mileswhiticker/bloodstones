@@ -115,18 +115,21 @@ trait action_build
 			//update the clients that some tiles were spent
 			$this->notifyPlayerHandChanged($current_player_id);
 			
-			$units_built_string = "nothing";
+			//update the stats recording
 			$tiles_built = count($built_prov_strings);
-			if($tiles_built > 0)
-			{
-				//todo: mark for translation this string
-				$units_built_string = "$current_player_name builds: " . implode(". ", $built_prov_strings);
-			}
 			$this->incStat($tiles_built, "tiles_built", $current_player_id);
 			
-			self::notifyAllPlayers('playerBuild', $units_built_string, 
+			//tell the player clients
+			$units_built_string = "nothing";
+			if($tiles_built > 0)
+			{
+				$units_built_string = implode(". ", $built_prov_strings);
+			}
+			self::notifyAllPlayers('playerBuild', clienttranslate('${player_name} builds: ${units_built_string}'), 
 				array(
+					'player_name' => $current_player_name,
 					'player_id' => $current_player_id,
+					'units_built_string' => $units_built_string,
 					'pending_battles_update' => $this->GetPendingBattleProvincesAll(),
 					'built_armies' => $built_armies,
 					'built_armies_existing' => $built_armies_existing

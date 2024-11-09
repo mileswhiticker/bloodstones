@@ -289,10 +289,10 @@ define(
 				this.backgroundSize = "100% 100%";
 				this.setSelectionMode(3);
 				this.applyMapTransformable();
+				dojo.style(this.container_div, 'zIndex', window.gameui.GameLayerArmy());
 				/*
 				this.apparenceBorderWidth = window.gameui.army_selection_border_width;		//note: the default stock handling expects this to be string value eg "5px" but i think ive overwridden it everywhere here
 				dojo.style(this.container_div, 'margin', this.apparenceBorderWidth + "px");
-				dojo.style(this.container_div, 'zIndex', window.gameui.GameLayerArmy());
 				
 				//a custom element to hide behind the tiles and show if the stack is selected
 				this.selected_div = dojo.place("<div class=\'selected_army_bg\'></div>",this.container_div.id,"first");

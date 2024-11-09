@@ -556,7 +556,6 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			
 			//finished villages
 			this.villagestacks_all = [];
-			this.villagestacks_by_province = [];
 			this.villagestacks_by_idstring = [];
 			
 			/* Place citadel state */

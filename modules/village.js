@@ -302,26 +302,16 @@ define(
 				//there should only be 1 stack per province for built villages
 				//note: unbuilt villages will all spread out and have their own stack as a clear visual hint to the player
 				//after being built they will all collapse together into the one stack
-				var villagestack = this.villagestacks_by_province[province_name];
 				
-				//check if there is an existing villagestack
-				if(!this.villagestacks_by_province[province_name])
-				{
-					//console.log("creating new village stack...");
-					
-					//create the stack object... the id here is unused (fingers crossed)
-					//formerly used this.getTempArmyId() now using the tile id from the Deck object
-					var village_info = {player_id: owner_player_id, province_name: province_name, tiles: {}, id_num: village_info.id};
-					var villagestack = new modules.TileStack();
-					villagestack.createAsVillage(this, "centrepanel", village_info);	//node id formerly "gamemap"
-					this.villagestacks_by_province[province_name] = villagestack;
-					this.villagestacks_all.push(villagestack);
-					this.villagestacks_by_idstring[villagestack.id_string] = villagestack;
-				}
-				else
-				{
-					//console.log("adding to existing village stack...");
-				}
+				//console.log("creating new village stack...");
+				
+				//create the stack object... the id here is unused (fingers crossed)
+				//formerly used this.getTempArmyId() now using the tile id from the Deck object
+				var village_info = {player_id: owner_player_id, province_name: province_name, tiles: {}, id_num: village_info.id};
+				var villagestack = new modules.TileStack();
+				villagestack.createAsVillage(this, "centrepanel", village_info);	//node id formerly "gamemap"
+				this.villagestacks_all.push(villagestack);
+				this.villagestacks_by_idstring[villagestack.id_string] = villagestack;
 				
 				//add 1 village tile to the stack using the player's faction
 				villagestack.addVillage(this.getPlayerFactionId(owner_player_id));

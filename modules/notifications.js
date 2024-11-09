@@ -396,10 +396,21 @@ define(
 			{
 				//console.log("page::notif_playerBuild()");
 				
+				var do_ui_refresh = false;
 				for(var army_id in notif.args.built_armies)
 				{
 					var new_army_info = notif.args.built_armies[army_id];
 					var army_stack = window.gameui.CreateArmy(new_army_info);
+					
+					if(new_army_info.prov_name == this.GetSelectedProvinceName())
+					{
+						do_ui_refresh = true;
+					}
+				}
+				
+				if(do_ui_refresh)
+				{
+					this.RefreshProvinceSelection();
 				}
 				
 				//update any new pending battles

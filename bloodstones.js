@@ -436,6 +436,8 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			this.army_tile_scale_max = 2;
 			this.all_army_zones = [];
 			
+			this.provinces_by_name = {};
+			
 			//camera coords here are in world space
 			//note: anchor for world coords here is bottom right, so +x goes left and +y goes right
 			

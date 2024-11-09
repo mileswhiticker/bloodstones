@@ -80,8 +80,6 @@ define(
 					}
 				];
 				
-				this.provinces_by_name = [];
-				
 				this.all_province_types = ["Plains","Forest","Hills","Mountains","Sea","Desert"];
 				
 				//for client side info about factions

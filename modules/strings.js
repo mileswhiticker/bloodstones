@@ -165,6 +165,16 @@ define(
 				return _("For more details, select one or more tiles in your hand, or any army on the board.");
 			},
 			
+			GetCaptureFailMissingArmyString : function()
+			{
+				return _("You must have an army in that province to capture that village");
+			},
+			
+			GetCaptureFailTargetSelfString : function()
+			{
+				return _("You cannot capture your own villages");
+			},
+			
 			GetTileDropPayString : function(action_mode)
 			{
 				switch(action_mode)

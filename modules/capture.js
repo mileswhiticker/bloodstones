@@ -70,7 +70,7 @@ define(
 						var possible_capture_info = this.possible_capture_infos[i];
 						var possible_capture_name = this.GetProvinceNameFromId(possible_capture_info.province_id);
 						//console.log("checking " + possible_capture_name);
-						if(possible_capture_name == villagestack.province_id)
+						if(possible_capture_name == villagestack.prov_name)
 						{
 							//found it
 							//console.log("found it");
@@ -78,11 +78,11 @@ define(
 						}
 					}
 					
-					this.showMessage(_("You must have an army in that province to capture that village"), "info");
+					this.showMessage(this.GetCaptureFailMissingArmyString(), "info");
 				}
 				else if(send_warnings)
 				{
-					this.showMessage(_("You cannot capture your own villages"), "info");
+					this.showMessage(this.GetCaptureFailTargetSelfString(), "info");
 				}
 				
 				//by default, return false

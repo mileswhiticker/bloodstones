@@ -314,42 +314,37 @@ define(
 				this.villagestacks_by_idstring[villagestack.id_string] = villagestack;
 				
 				//add 1 village tile to the stack using the player's faction
+				//we're not stacking multiple villages together any more, each village should be it's own stack
 				villagestack.addVillage(this.getPlayerFactionId(owner_player_id));
 			},
 			
-			RemoveVillageFromStack : function(village_stack)
+			DestroyVillageStackByIdString : function(village_idstring)
 			{
-				//console.log("page::RemoveVillageFromStack(" + village_stack.army_id_string + ")");
-				//todo: oh god ive got to finish writing this and fix this issue here
-			},
-			
-			DestroyVillageStackById : function(village_id)
-			{
-				//console.log("page::DestroyVillageStackById(" + village_id + ")");
-				var villageStackIndex = this.villagestacks_all.findIndex((element) => element.id_num == village_id);
-				if(villageStackIndex >= 0)
+				console.log("page::DestroyVillageStackByIdString(" + village_idstring + ")");
+				var village_stack = this.villagestacks_by_idstring[village_idstring];
+				
+				//untrack it
+				delete this.villagestacks_by_idstring[village_idstring];
+				
+				//untrack it from this list
+				for(var i in this.villagestacks_all)
 				{
-					//console.log("found the villagestack at villageStackIndex:" + villageStackIndex);
-					
-					//get the stack
-					var village_stack = this.villagestacks_all[villageStackIndex];
-					
-					//untrack it
-					this.villagestacks_all.splice(villageStackIndex, 1);
-					
-					//remove it from province zone
-					var cur_province = this.provinces_by_name[village_stack.province_id];
-					cur_province.zone.removeFromZone(village_stack.id_string, false);
-					
-					//todo: any circular references inside the tilestack to clean up?
-					dojo.destroy(village_stack.container_div);
-					village_stack.destroy();
+					var check_village = this.villagestacks_all[i];
+					if(check_village.id_string == village_idstring)
+					{
+						//untrack it
+						this.villagestacks_all.splice(i, 1);
+						break;
+					}
 				}
-				else
-				{
-					console.log("ERROR: page::notif_playerCaptureSuccess() looking for captured_village_id:" + captured_village_id + " but found villageStackIndex: " + villageStackIndex);
-					console.log(this.villagestacks_all)
-				}
+				
+				//remove it from province zone
+				var cur_province = this.provinces_by_name[village_stack.prov_name];
+				cur_province.zone.removeFromZone(village_stack.id_string, false);
+				
+				//now clean up the stack itself
+				dojo.destroy(village_stack.container_div);
+				village_stack.destroy();
 			},
 			
 			GetPlayerVillagesAvailable(player_id)

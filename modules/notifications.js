@@ -222,7 +222,7 @@ define(
 			notif_playerCaptureSuccess : function(notif)
 			{
 				//console.log("page::notif_playerCaptureSuccess()");
-				//console.log(notif);
+				//console.log(notif.args);
 				var capture_player_id = notif.args.capture_player_id;
 				//console.log("capture_player_id: " + capture_player_id);
 				
@@ -238,7 +238,8 @@ define(
 				for(var index in notif.args.captured_village_ids)
 				{
 					var captured_village_id = notif.args.captured_village_ids[index];
-					this.DestroyVillageStackById(captured_village_id);
+					var captured_village_idstring = this.GetVillageNameFromId(captured_village_id);
+					this.DestroyVillageStackByIdString(captured_village_idstring);
 					new_captured_villages++;
 				}
 				this.AddVillagesCaptured(capture_player_id, new_captured_villages);

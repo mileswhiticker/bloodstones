@@ -262,6 +262,7 @@ define(
 				dojo.addClass(faction_name,'playercard_faction_name');
 				playercard_title.appendChild(faction_name,true);
 				
+				/*
 				//player regroup counter
 				let player_regroups_text = dojo.place("<div></div>", playercard_elements_grid);
 				player_regroups_text.id = this.GetPlayercardRegroupsDivId(player_id);
@@ -411,6 +412,7 @@ define(
 					dojo.addClass(player_capvil_text, 'display_none');
 					dojo.addClass(player_capvil_icon, 'display_none');
 				}
+				*/
 				
 				//player name
 				let player_name = document.createElement("div");
@@ -424,7 +426,7 @@ define(
 				if(this.player_id == player_id)
 				{
 					//special handling for current player 
-					
+					/*
 					//make the village icon draggable
 					player_villages_icon.draggable = true;
 					player_villages_icon.ondragstart = window.gameui.callback_HandTileDragStart;
@@ -443,6 +445,7 @@ define(
 					dojo.connect(end_turn_button, "click", dojo.hitch(this, this.ServerSkipAction));
 					
 					this.DisableButton("end_turn_button");
+					*/
 					
 					//the current player's tiles in hand
 					let current_player_hand = this.CreatePlayerHand(player_id);
@@ -571,8 +574,8 @@ define(
 				console.log(player);
 				player.villages_captured = Number(player.villages_captured);
 				player.villages_captured += num_new_villages;
-				var player_captured_villages = dojo.byId(this.GetVillagesCapturedTextNodeId(player_id));
-				player_captured_villages.innerHTML = player.villages_captured;
+				var player_captured_villages_node = dojo.byId(this.GetVillagesCapturedTextNodeId(player_id));
+				player_captured_villages_node.firstChild.nodeValue = player.villages_captured;
 			},
 			
 			GetCitadelsCapturedContainerId : function(player_id)
@@ -669,12 +672,12 @@ define(
 			{
 				console.log("page::AddCitadelsCaptured(" + player_id + "," + captured_faction + ")");
 				//todo: this function
-				/*var player = this.gamedatas.players[player_id];
+				var player = this.gamedatas.players[player_id];
 				console.log(player);
-				player.villages_captured = Number(player.villages_captured);
-				player.villages_captured += num_new_villages;
-				var player_captured_villages = dojo.byId(this.GetVillagesCapturedTextNodeId(player_id));
-				player_captured_villages.innerHTML = player.villages_captured;*/
+				player.captured_citadels = Number(player.captured_citadels);
+				player.captured_citadels += 1;
+				var player_captured_citadels = dojo.byId(this.GetCitadelsCapturedTextNodeId(player_id));
+				player_captured_citadels.firstChild.nodeValue = player.captured_citadels;
 			},
 			
 			SetPlayerRegroups : function(player_id, new_regroups, ui_update = true)

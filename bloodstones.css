@@ -650,6 +650,8 @@
 .grid11
 {
 	grid-column-start: 1;
+	grid-column-end: span 2;
+	display: flex;
 	grid-row-start: 1;
 }
 

@@ -746,6 +746,20 @@ define(
 					other_armies.push(citadel_stack);
 				}
 				
+				//get any villages present
+				for(var i=0; i<this.villagestacks_all.length; i++)
+				{
+					var cur_village_stack = this.villagestacks_all[i];
+					//console.log("checking " + cur_village_stack.prov_name);
+					//console.log(cur_village_stack);
+					if(cur_village_stack.prov_name == province_name)
+					{
+						other_armies.push(cur_village_stack);
+						//console.log("adding village stack:");
+						//console.log(cur_village_stack);
+					}
+				}
+				
 				//now loop over all armies
 				for(var i in this.all_armies)
 				{

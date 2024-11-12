@@ -375,7 +375,12 @@ trait province
 	function GetPlayerTilesInProvince($prov_id, $player_id)
 	{
 		//todo (this is needed for the new army system...)
-		self::notifyAllPlayers("debug", "", array('debugmessage' => "ALERT! UNFINISHED CODE server::GetPlayerTilesInProvince($prov_id, $player_id)"));
-		return [];
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::GetPlayerTilesInProvince($prov_id, $player_id)"));
+		
+		$player_deck = $this->player_decks[$player_id];
+		$army_id = $prov_id;	//technically it's treated as army_id in the database but that's a holdover from the old system
+		$remaining_tiles = $player_deck->getCardsInLocation("army", $army_id);
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($remaining_tiles,true)));
+		return $remaining_tiles;
 	}
 }

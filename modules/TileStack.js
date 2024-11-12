@@ -119,7 +119,7 @@ define(
 				this.max_unit_type = this.max_faction_id * this.image_items_per_row;
 				this.battle_tiles_offset = gameui.TILE_DICE_MIN;		//the position in the sprite sheet
 				//this.citadel_type_offset = this.battle_tiles_offset + 6;	//the position in the sprite sheet
-				this.village_tiles_offset = this.battle_tiles_offset + 13 * 2;	//in separate images but should be part of the sprite sheet. this type number pretends they are another bottom row
+				this.village_tiles_offset = this.image_items_per_row * 8;	//in separate images but should be part of the sprite sheet. this type number pretends they are another bottom row
 				if(!initialised_statics)
 				{
 					initialised_statics = true;
@@ -149,7 +149,8 @@ define(
 						{
 							var tile_type = this.village_tiles_offset + cur_faction_id;
 							//console.log("DEBUG tile_type:" + tile_type);
-							this.addItemType(tile_type, 0, g_gamethemeurl + 'img/village' + cur_faction_id + '.png');
+							//this.addItemType(tile_type, 0, g_gamethemeurl + 'img/village' + cur_faction_id + '.png');
+							this.addItemType(tile_type, tile_type, g_gamethemeurl + 'img/spritesheet.png', tile_type);
 						}
 					}
 					
@@ -282,11 +283,11 @@ define(
 				this.horizontal_overlap = 25;
 				//this.items_per_line = 20;
 				this.item_margin = 0;
-				this.item_width = 50;
+				this.item_width = 99;
 				this.item_height = 50;
-				this.container_div.style.width = "50px";
+				this.container_div.style.width = "99px";
 				//this.container_div.style.height = "50px";		//this is automatically overriden
-				this.backgroundSize = "100% 100%";
+				//this.backgroundSize = "100% 100%";
 				this.setSelectionMode(3);
 				this.applyMapTransformable();
 				dojo.style(this.container_div, 'zIndex', window.gameui.GameLayerArmy());
@@ -328,7 +329,14 @@ define(
 			{
 				var village_type = Number(this.village_tiles_offset) + Number(new_faction_id);
 				//console.log("page::addVillage(" + new_faction_id + ") this.village_tiles_offset:" + this.village_tiles_offset + " | village_type:" + village_type);
-				this.addToStock(village_type);
+				//this.addToStock(village_type);
+				var prov_id_num = gameui.GetProvinceIdFromName(this.prov_name);
+				//this should avoid collisions with tile id numbers... 
+				//note that temp army id numbers are negative to avoid clashing with positive army id
+				//im handling this in a silly way on the server. it's using a whole different Deck object but they could probably just be merged
+				var temp_id = 100 + gameui.getTempArmyId() * -1;	
+				var village_tile_info = {id: temp_id, type_arg: village_type};
+				this.SpawnTileInStack(village_tile_info);
 			},
 			
 			GenericInitialiseUI : function(page, host_div_id, player_id, tilestack_type)

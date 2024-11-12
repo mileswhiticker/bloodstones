@@ -337,7 +337,7 @@ function (dojo, declare, lang, fx, on, domAttr) {
 			
 			//length of a row on the sprite sheet as measured in number of tiles
 			this.SPRITESHEET_ROW_TILES = 14;
-			this.SPRITESHEET_ROWS = 8;
+			this.SPRITESHEET_ROWS = 9;
 			
 			this.TILE_UNIT_MIN = 0;
 			

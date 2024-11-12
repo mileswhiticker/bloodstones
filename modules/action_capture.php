@@ -42,6 +42,7 @@ trait action_capture
 		//legality check: are the designated provinces valid for capture?
 		//wip (seemns to be working?)
 		$pending_capture_infos = $this->GetPendingCaptureArmies($active_player_id);
+		$captured_province_ui_names = [];
 		foreach($village_tile_ids as $village_id)
 		{
 			//self::notifyAllPlayers("debug", "", array('debugmessage' => "checking village_id: $village_id"));
@@ -62,6 +63,10 @@ trait action_capture
 			$village_info = $this->villages_deck->getCard($village_id);
 			//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($village_info, true)));
 			//int($village_info['location_arg'])
+			
+			//get a nicely formatted name for the player log
+			$village_prov_id = $village_info['location_arg'];
+			$province_ui_names[] = $this->GetProvinceNameUIString($village_prov_id);
 			
 			//loop over each pending capture province to see if this one is valid
 			foreach($pending_capture_infos as $capture_info)
@@ -94,6 +99,7 @@ trait action_capture
 			$this->incStat($num_planned_captures, "villages_captured", $active_player_id);
 			//self::notifyAllPlayers("debug", "", array('debugmessage' => "capture is legal"));
 		}
+		$province_ui_names_formatted = implode(", ", $province_ui_names);
 		
 		//for testing return early here
 		//return $retval;
@@ -108,11 +114,12 @@ trait action_capture
 		
 		//tell the players
 		$active_player_name = $this->getActivePlayerName();
-		self::notifyAllPlayers('playerCaptureSuccess', clienttranslate('${active_player_name} has captured ${num_planned_captures} village(s)'), array(
-			'active_player_name' => $active_player_name,
+		self::notifyAllPlayers('playerCaptureSuccess', clienttranslate('${player_name} has captured ${num_planned_captures} village(s) in: ${province_ui_names}'), array(
+			'player_name' => $active_player_name,
 			'num_planned_captures' => $num_planned_captures,
 			'capture_player_id' => $active_player_id,
-			'captured_village_ids' => $village_tile_ids
+			'captured_village_ids' => $village_tile_ids,
+			'province_ui_names' => $province_ui_names_formatted
 		));
 		
 		//next, process the tile payment

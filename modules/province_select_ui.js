@@ -67,6 +67,7 @@ define(
 				var prov_id = this.GetProvinceIdFromName(province_name);
 				var province_text = dojo.place("<div class=\"ui_selected_text\">" + this.GetProvinceNameUIString(prov_id) + "</div>", selection_container);
 				
+				var army_display_top = 0;
 				if(main_army_stack)
 				{
 					//we have an army here so make this "our" province now
@@ -80,12 +81,19 @@ define(
 					var strength_text = dojo.place("<div class=\"ui_selected_text\" id=\"main_army_strength\">" + translated + "</div>", selection_container);
 					
 					//useful hint for the player
-					if(main_army_stack.player_id == this.getCurrentPlayer())
+					if(main_army_stack.player_id == this.getCurrentPlayer() && action_mode == this.STATE_MAIN_MOVE)
 					{
 						var hint_text = _("All units below will move. Click on units here to deselect them and leave them in place.");
 						var hint_div = dojo.place("<div class=\"ui_selected_text\">" + hint_text + "</div>", selection_container);
+						
+						var marginBox = dojo.marginBox(hint_div);
+						army_display_top = marginBox.t + marginBox.h;
 					}
-					
+					else
+					{
+						var marginBox = dojo.marginBox(strength_text);
+						army_display_top = marginBox.t + marginBox.h;
+					}
 				}
 				/*else if(all_army_stacks.length > 0 || false)
 				{
@@ -117,6 +125,7 @@ define(
 					
 					this.selected_army_display_stack = new modules.TileStack();
 					this.selected_army_display_stack.createAsArmySelection(this, "selection_container", main_army_stack);
+					dojo.style(this.selected_army_display_stack.container_div, 'top', army_display_top + "px");
 				}
 			},
 			

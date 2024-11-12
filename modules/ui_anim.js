@@ -20,7 +20,8 @@ define(
 			
 			StartAnimatedCanvas : function(render_function)
 			{
-				console.log("page::StartAnimatedCanvas() render_function:" + render_function);
+				//something is broken here and in the other anim code, but its low priority so im not gonna fix it now
+				//console.log("page::StartAnimatedCanvas() render_function:" + render_function);
 				//console.log("page::StartAnimatedCanvas()");
 				this.canvas_render_function = render_function;
 				this.previous_canvas_render_function = render_function
@@ -34,7 +35,7 @@ define(
 			
 			StopAnimatedCanvas : function()
 			{
-				console.log("page::StartAnimatedCanvas() this.canvas_render_function" + this.canvas_render_function);
+				//console.log("page::StartAnimatedCanvas() this.canvas_render_function" + this.canvas_render_function);
 				window.cancelAnimationFrame(this.canvas_anim_cancel_frame);
 				this.canvas_render_function = null;
 			},

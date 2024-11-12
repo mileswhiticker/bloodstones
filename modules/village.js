@@ -320,7 +320,7 @@ define(
 			
 			DestroyVillageStackByIdString : function(village_idstring)
 			{
-				console.log("page::DestroyVillageStackByIdString(" + village_idstring + ")");
+				//console.log("page::DestroyVillageStackByIdString(" + village_idstring + ")");
 				var village_stack = this.villagestacks_by_idstring[village_idstring];
 				
 				//untrack it

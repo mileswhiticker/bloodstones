@@ -571,7 +571,7 @@ define(
 			{
 				//console.log("page::AddVillagesCaptured(" + player_id + "," + num_new_villages + ")");
 				var player = this.gamedatas.players[player_id];
-				console.log(player);
+				//console.log(player);
 				player.villages_captured = Number(player.villages_captured);
 				player.villages_captured += num_new_villages;
 				var player_captured_villages_node = dojo.byId(this.GetVillagesCapturedTextNodeId(player_id));

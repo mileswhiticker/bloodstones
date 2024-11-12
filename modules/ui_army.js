@@ -230,7 +230,7 @@ define(
 							if(this.temp_move_army_leave_behind.IsStackEmpty())
 							{
 								//console.log("destroying temp army");
-								this.DestroyArmy(this.temp_move_army_leave_behind.id_num);
+								this.DestroyArmyByStack(this.temp_move_army_leave_behind);
 								this.temp_move_army_leave_behind = null;
 							}
 						}

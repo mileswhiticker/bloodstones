@@ -229,7 +229,7 @@ define(
 			
 			PayTile : function(tile_id)
 			{
-				//TileStack::SpawnTileInStack : function(tile_info, source_div_id = undefined, selected = 1)
+				//console.log("page::PayTile(" + tile_id + ")");
 				var refund_previous = false;
 				switch(this.payment_mode)
 				{
@@ -245,16 +245,25 @@ define(
 					{
 						refund_previous = true;
 					}
+					case gameui.STATE_MAIN_BATTLE:
+					{
+						refund_previous = true;
+					}
 				}
 				if(refund_previous)
 				{
 					//first, "bump" off the previous tile if there is one
+					var rejected = false;
 					while(this.current_player_paystack.items.length > 0)
 					{
 						var item = this.current_player_paystack.items[0];
 						var tile_info = this.current_player_paystack.GetTileInfo(item.id);
 						this.RefundPaystackTile(tile_info);
-						this.showMessage(_("You may only build up to 1 tile's worth of villages per turn"), "info");
+						rejected = true;
+					}
+					if(rejected)
+					{
+						this.showMessage(this.GetPayTileRejectedString(this.payment_mode), "info");
 					}
 				}
 				
@@ -298,7 +307,7 @@ define(
 						//i'm leaving this in for now but im pretty sure it's using a different system
 						//see battle_states.js
 						//this.trySwapBattleTile(tile_info);
-						console.log("ERROR: page::PayTile(" + tile_id + ") during gameui.STATE_MAIN_BATTLE, should be using ServerSwapTile() instead");
+						//console.log("ERROR: page::PayTile(" + tile_id + ") during gameui.STATE_MAIN_BATTLE, should be using ServerSwapTile() instead");
 						break;
 					}
 					default:

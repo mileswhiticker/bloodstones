@@ -26,7 +26,7 @@ trait retreat_withdraw
 	
 	function calculateWithdrawStatus()
 	{
-		self::notifyAllPlayers("debug", "", array('debugmessage' => "server::calculateWithdrawStatus()"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::calculateWithdrawStatus()"));
 		
 		//get some useful info we will need
 		$battling_province_id = $this->getGameStateValue("battling_province_id");
@@ -59,21 +59,21 @@ trait retreat_withdraw
 				//citadels
 				if($this->isTileTypeCitadel($tile_type))
 				{
-					self::notifyAllPlayers("debug", "", array('debugmessage' => "WITHDRAW_FAIL_CITADEL"));
+					//self::notifyAllPlayers("debug", "", array('debugmessage' => "WITHDRAW_FAIL_CITADEL"));
 					return WITHDRAW_FAIL_CITADEL;
 				}
 				
 				//castles
 				if($this->isTileTypeCastle($tile_type))
 				{
-					self::notifyAllPlayers("debug", "", array('debugmessage' => "WITHDRAW_FAIL_CASTLE"));
+					//self::notifyAllPlayers("debug", "", array('debugmessage' => "WITHDRAW_FAIL_CASTLE"));
 					return WITHDRAW_FAIL_CASTLE;
 				}
 				
 				//dragons
 				if($this->isTileTypeDragon($tile_type))
 				{
-					self::notifyAllPlayers("debug", "", array('debugmessage' => "WITHDRAW_SUCCESS_DRAGON"));
+					//self::notifyAllPlayers("debug", "", array('debugmessage' => "WITHDRAW_SUCCESS_DRAGON"));
 					return WITHDRAW_SUCCESS_DRAGON;
 				}
 				
@@ -119,7 +119,7 @@ trait retreat_withdraw
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "final check. num_defender_cavalry:$num_defender_cavalry, num_attacker_cavalry:$num_attacker_cavalry"));
 		if($num_defender_cavalry < $num_attacker_cavalry)
 		{
-			self::notifyAllPlayers("debug", "", array('debugmessage' => "WITHDRAW_FAIL_CAVALRY"));
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => "WITHDRAW_FAIL_CAVALRY"));
 			return WITHDRAW_FAIL_CAVALRY;
 		}
 		else if($num_attacker_cavalry > 0)
@@ -178,7 +178,7 @@ trait retreat_withdraw
 		}
 		
 		//by default allow it to happen
-		self::notifyAllPlayers("debug", "", array('debugmessage' => "WITHDRAW_SUCCESS"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "WITHDRAW_SUCCESS"));
 		return WITHDRAW_SUCCESS;
 	}
 	
@@ -299,8 +299,8 @@ trait retreat_withdraw
 		//tell all the players what happened
 		$prov_id = $this->getProvinceIdFromName($retreat_prov_name);
 		$province_ui_name = $this->GetProvinceNameUIString($prov_id);
-		$this->notifyAllPlayers('logPlayerMessage', clienttranslate('${defending_player_name} has withdrawn from battle to ${province_ui_name}'), [
-			'defending_player_name' => $defending_player_name,
+		$this->notifyAllPlayers('logPlayerMessage', clienttranslate('${player_name} has withdrawn from battle to ${province_ui_name}'), [
+			'player_name' => $defending_player_name,
 			'province_ui_name' => $province_ui_name
 		]);
 		

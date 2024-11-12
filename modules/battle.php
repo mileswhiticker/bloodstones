@@ -775,7 +775,7 @@ trait battle
 	
 	function sacrificeUnit($sacrifice_tile_id)
 	{
-		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::sacrificeUnit($sacrifice_tile_id) gettype:" . gettype($sacrifice_tile_id)));
+		self::notifyAllPlayers("debug", "", array('debugmessage' => "server::sacrificeUnit($sacrifice_tile_id) gettype:" . gettype($sacrifice_tile_id)));
 		$attacking_player_id = $this->getGameStateValue("attacking_player_id");
 		$defending_player_id = $this->getGameStateValue("defending_player_id");
 		$active_player_id = $this->getActivePlayerId();
@@ -802,6 +802,7 @@ trait battle
 		
 		//first get some info about this tile
 		$tile_info = $losing_player_deck->getCard($sacrifice_tile_id);
+		self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($tile_info, true)));
 		
 		//move it into the discard pile
 		$losing_player_deck->moveCard($sacrifice_tile_id, "discard");

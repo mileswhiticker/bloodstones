@@ -430,6 +430,7 @@ define(
 					}
 					case STACK_BATTLE_TILES_TEMP:
 					{
+						this.selectable = 1;
 						//fall through
 					}
 					case STACK_BATTLE_TILES_REJECT:

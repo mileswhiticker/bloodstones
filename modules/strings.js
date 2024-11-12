@@ -491,6 +491,33 @@ define(
 				}
 			},
 			
+			GetPayTileRejectedString : function(paymode)
+			{
+				switch(paymode)
+				{
+					case gameui.STATE_MAIN_CAPTURE:
+					{
+						//fall through
+					}
+					case gameui.STATE_CAPTURE:
+					{
+						_("You may only capture up to 1 tile's worth of villages per turn");
+					}
+					case gameui.STATE_BUILDVILLAGE:
+					{
+						_("You may only build up to 1 tile's worth of villages per turn");
+					}
+					case gameui.STATE_MAIN_BATTLE:
+					{
+						return _("You can only swap 1 battle tile at a time.");
+					}
+					default:
+					{
+						return "page::GetPayTileRejectedString(" + paymode + ") unknown paymode argument";
+					}
+				}
+			},
+			
 			GetSplitFailMoveString : function()
 			{
 				return _('You cannot split these armies after starting a move.');

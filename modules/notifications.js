@@ -551,11 +551,13 @@ define(
 			
 			notif_tileSacrifice : function(notif)
 			{
-				//console.log("page::notif_tileSacrifice()");
-				//console.log(notif.args)
+				console.log("page::notif_tileSacrifice()");
+				console.log(notif.args)
 				this.DestroyBattleWindow();
 				
 				var sacrifice_army = this.GetArmyByIdString(notif.args.sacrifice_army_id_string);
+				console.log("this.armies_by_id_string:");
+				console.log(this.armies_by_id_string);
 				
 				//todo: some kind of ui feedback
 				sacrifice_army.RemoveTileFromStack(notif.args.sacrifice_tile_id);
@@ -564,7 +566,7 @@ define(
 				if(sacrifice_army.IsStackEmpty())
 				{
 					//destroy the army because it has no tiles left
-					this.DestroyArmy(sacrifice_army.id_num);
+					this.DestroyArmyByStack(sacrifice_army);
 				}
 			},
 			
@@ -599,7 +601,7 @@ define(
 				if(retreating_army.IsStackEmpty())
 				{
 					//console.log("no tiles left, destroying army");
-					this.DestroyArmy(notif.args.retreating_army_id);
+					this.DestroyArmyByStack(retreating_army);
 				}
 				else
 				{

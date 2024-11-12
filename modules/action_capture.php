@@ -88,7 +88,9 @@ trait action_capture
 			}
 			if(!$success)
 			{
-				//self::notifyAllPlayers("debug", "", array('debugmessage' => "capture is not legal"));
+				self::notifyAllPlayers("debug", "", array('debugmessage' => "server::HandleCaptureAction() failed with code ACTION_FAIL_FRIENDLIES (9)"));
+				self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($pending_capture_infos, true)));
+				self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($village_tile_ids, true)));
 				$retval["failure_reason"] = self::ACTION_FAIL_FRIENDLIES;
 				return $retval;
 			}

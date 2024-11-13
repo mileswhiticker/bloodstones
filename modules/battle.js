@@ -61,6 +61,15 @@ define(
 				return false;
 			},
 			
+			isAnyBattlePending : function()
+			{
+				for(cur_province_id in this.gamedatas.pending_battles)
+				{
+					return true;
+				}
+				return false;
+			},
+			
 			getDefenderPlayerId : function(pending_battle_prov_name)
 			{
 				//note: the client just defers to what the server tells them so this function is redundant
@@ -69,6 +78,25 @@ define(
 				{
 					var defender_faction_id = -1;
 					var defender_player_id = -1;
+					
+					//new format for pending battles
+					var active_player_id = this.getActivePlayerId();
+					for(var cur_player_id in this.gamedatas.pending_battles)
+					{
+						if(cur_player_id == active_player_id)
+						{
+							continue;
+						}
+						var cur_faction_id = this.getPlayerFactionId(cur_player_id);
+						if(cur_faction_id > defender_faction_id)
+						{
+							defender_faction_id = cur_faction_id;
+							defender_player_id = check_army_info.player_id;
+						}
+					}
+					
+					//old format for pending_battles
+					/*
 					var armies = this.gamedatas.pending_battles[pending_battle_prov_name].armies;
 					for(var army_id in armies)
 					{
@@ -85,6 +113,7 @@ define(
 							defender_player_id = check_army_info.player_id;
 						}
 					}
+					*/
 					return defender_player_id;
 				}
 				return -1;

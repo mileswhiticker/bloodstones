@@ -20,7 +20,7 @@ define(
 			
 			EnterBattleMode : function()
 			{
-				if(this.gamedatas.pending_battles.length == 0)
+				if(!this.isAnyBattlePending())
 				{
 					this.showMessage(_('You have no battles pending.'), 'info');
 				}

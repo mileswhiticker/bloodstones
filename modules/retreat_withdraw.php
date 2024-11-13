@@ -310,7 +310,7 @@ trait retreat_withdraw
 	
 	function HandleRetreatWithdraw($retreat_prov_name)
 	{
-		self::notifyAllPlayers("debug", "", array('debugmessage' => "server::HandleRetreatWithdraw($retreat_prov_name)"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::HandleRetreatWithdraw($retreat_prov_name)"));
 		
 		//get some info about the provinces
 		$battling_province_id = $this->getGameStateValue("battling_province_id");

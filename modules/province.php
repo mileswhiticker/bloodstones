@@ -383,4 +383,23 @@ trait province
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($remaining_tiles,true)));
 		return $remaining_tiles;
 	}
+	
+	function GetPlayerTileInfosByProvince($player_id)
+	{
+		//get all tiles for this player and work out which provinces they have
+		$player_deck = $this->player_decks[$player_id];
+		$player_tiles = $player_deck->getCardsInLocation('army');
+		$tiles_by_province = [];
+		foreach($player_tiles as $tile_id => $tile_info)
+		{
+			//get the info for the client
+			$prov_id = $tile_info['location_arg'];
+			$prov_name = $this->getProvinceName($prov_id);
+			
+			//prepare the data structure for the client, indexed by prov_name
+			$tiles_by_province[$prov_name][] = $tile_info;
+		}
+		
+		return $tiles_by_province;
+	}
 }

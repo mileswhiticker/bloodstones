@@ -58,6 +58,10 @@ trait citadel
 		
 		$citadel_tile_info = $this->GetPlayerCitadelTile($player_id);
 		
+		$player_deck = $this->player_decks[$player_id];
+		$citadel_tile_id = $citadel_tile_info['id'];
+		$player_deck->moveCard($citadel_tile_id, 'army', $prov_id);
+		
 		//notify all the players
 		self::notifyAllPlayers('newCitadel', clienttranslate('${player_name} has placed their citadel in ${province_ui_name}.'), 
 			array(

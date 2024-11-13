@@ -330,6 +330,12 @@ class bloodstones extends Table
 			$battling_province_name = $this->getProvinceName($this->getGameStateValue("battling_province_id"));
 			$result['battling_province_name'] = $battling_province_name;
 		}
+		else
+		{
+			$result['attacking_player_id'] = -1;
+			$result['defending_player_id'] = -1;
+			$result['battling_province_name'] = null;
+		}
 		
 		//get any battles that are pending
 		$result['pending_battles'] = $this->GetPendingBattleProvincesAll($attacking_player_id);

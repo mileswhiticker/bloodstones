@@ -240,7 +240,7 @@ define(
 				this.retreat_prov_options = args.args.retreat_prov_options;
 				
 				var retreating_army = this.GetArmyByIdString(args.args.retreating_army_id_string);
-				console.log(retreating_army);
+				//console.log(retreating_army);
 				//this.RefreshSelectArmyStack(retreating_army);
 				
 				if(this.isCurrentPlayerActive())

@@ -62,46 +62,46 @@ define(
 					
 					// 2. all units in a province must fight 
 					
+					// 3. The active player is always the attacker. The defender is chosen from a priority order by faction id (ascending)
+					
 					//create a button to preview this battle before starting it
-					var armies = this.gamedatas.pending_battles[cur_province_id].armies;
-					for(var army_id in armies)
+					var defender_id;
+					for(battle_player_id in this.gamedatas.pending_battles[cur_province_id])
 					{
-						var battle_army_info = armies[army_id];
-						
-						//we want the enemy faction id here
-						if(battle_army_info.player_id != this.getActivePlayerId())
+						if(battle_player_id != this.player_id)
 						{
-							var enemy_faction_id = this.getPlayerFactionId(battle_army_info.player_id);
-							//console.log("creating start battle button for faction_id: " + enemy_faction_id);
-							
-							//create an outer div for the button
-							var outer_classes = "button_preview_battle_outer blanktile" + enemy_faction_id;
-							var outer_button_id = "button_preview_battle_" + cur_province_id;
-							var preview_battle_button = dojo.place("<div class=\"" + outer_classes + "\" id=\"" + outer_button_id + "\"></div>",container_node_id);
-							this.pending_battle_buttons.push(preview_battle_button);
-							
-							//calculate the position we will put this button
-							var world_x = battle_province_info.centre.x * this.svg_scale_factor - 90;
-							var world_y = battle_province_info.centre.y * this.svg_scale_factor - 20;
-							var coords_canvas = this.WorldToCanvasCoords(world_x, world_y);
-							
-							//place the button
-							preview_battle_button.style.left = coords_canvas.x + "px";
-							preview_battle_button.style.top = coords_canvas.y  + "px";
-							preview_battle_button.style.width = 40 * this.map_view_scale + "px";
-							preview_battle_button.style.height = 40 * this.map_view_scale + "px";
-							
-							//connect the onclick handler
-							dojo.connect(preview_battle_button, "click", dojo.hitch(this, this.onClickPreviewBattle));
-							
-							//create the inner image
-							var inner_button_id = "button_start_battle_inner_" + cur_province_id;
-							var preview_battle_button_inner = dojo.place("<div class=\"button_preview_battle_inner\" id=\"" + inner_button_id + "\"></div>",outer_button_id);
-							
-							//we are finished, we only need 1 button per province
+							defender_id = battle_player_id;
 							break;
 						}
 					}
+					//console.log("defender_id:" + defender_id);
+					
+					var enemy_faction_id = this.getPlayerFactionId(defender_id);
+					//console.log("creating start battle button for faction_id: " + enemy_faction_id);
+					
+					//create an outer div for the button
+					var outer_classes = "button_preview_battle_outer blanktile" + enemy_faction_id;
+					var outer_button_id = "button_preview_battle_" + cur_province_id;
+					var preview_battle_button = dojo.place("<div class=\"" + outer_classes + "\" id=\"" + outer_button_id + "\"></div>",container_node_id);
+					this.pending_battle_buttons.push(preview_battle_button);
+					
+					//calculate the position we will put this button
+					var world_x = battle_province_info.centre.x * this.svg_scale_factor - 90;
+					var world_y = battle_province_info.centre.y * this.svg_scale_factor - 20;
+					var coords_canvas = this.WorldToCanvasCoords(world_x, world_y);
+					
+					//place the button
+					preview_battle_button.style.left = coords_canvas.x + "px";
+					preview_battle_button.style.top = coords_canvas.y  + "px";
+					preview_battle_button.style.width = 40 * this.map_view_scale + "px";
+					preview_battle_button.style.height = 40 * this.map_view_scale + "px";
+					
+					//connect the onclick handler
+					dojo.connect(preview_battle_button, "click", dojo.hitch(this, this.onClickPreviewBattle));
+					
+					//create the inner image
+					var inner_button_id = "button_start_battle_inner_" + cur_province_id;
+					var preview_battle_button_inner = dojo.place("<div class=\"button_preview_battle_inner\" id=\"" + inner_button_id + "\"></div>",outer_button_id);
 				}
 			},
 			

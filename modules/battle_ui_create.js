@@ -63,10 +63,13 @@ define(
 					}
 					if(dojo.byId("battle_withdraw"))
 					{
+						dojo.destroy("battle_withdraw");
+						/*
 						//button to withdraw or cancel
 						var withdraw_battle_button = dojo.byId("battle_withdraw");
 						dojo.addClass("battle_withdraw", "blst_button_disabled");
 						withdraw_battle_button.innerHTML = _("Withdraw from battle");
+						*/
 					}
 					
 					//create the tilestacks to display the battle tiles
@@ -116,8 +119,27 @@ define(
 				//console.log(pending_battle_info);
 				
 				this.preview_battle_province_name = prov_name;
-				this.preview_attacking_player_id = pending_battle_info.attacking_player_id;
-				this.preview_defending_player_id = pending_battle_info.defending_player_id;
+				if(Number(this.gamedatas.attacking_player_id) > 0)
+				{
+					this.preview_attacking_player_id = this.gamedatas.attacking_player_id;
+					//console.log("setting preview_attacking_player_id to server chosen player " + this.preview_attacking_player_id);
+				}
+				else
+				{
+					this.preview_attacking_player_id = this.player_id;
+					//console.log("setting preview_attacking_player_id to current player " + this.preview_attacking_player_id);
+				}
+				//console.log("this.preview_attacking_player_id:" + this.preview_attacking_player_id);
+				for(var check_player_id in pending_battle_info)
+				{
+					if(check_player_id != this.preview_attacking_player_id)
+					{
+						this.preview_defending_player_id = check_player_id;
+						//console.log("setting preview_defending_player_id to auto detected: " + this.preview_defending_player_id);
+						break;
+					}
+				}
+				//console.log("this.preview_defending_player_id:" + this.preview_defending_player_id);
 				//this.preview_defending_player_id = this.getDefenderPlayerId(prov_name);
 				
 				//some useful code snippets
@@ -172,8 +194,23 @@ define(
 				this.battle_score_attacker = 0;
 				this.battle_score_defender = 0;
 				
-				//now add tiles to the display
-				var armies = pending_battle_info.armies;
+				//add units to the defender's display
+				var defender_tiles = pending_battle_info[this.preview_defending_player_id];
+				for(var i in defender_tiles)
+				{
+					var tile_info = defender_tiles[i];
+					this.army_display_defender.SpawnTileInStack(tile_info);
+				}
+				
+				//add units to the attacker's display
+				var attacker_tiles = pending_battle_info[this.preview_attacking_player_id];
+				for(var i in attacker_tiles)
+				{
+					var tile_info = attacker_tiles[i];
+					this.army_display_attacker.SpawnTileInStack(tile_info);
+				}
+				
+				/*var armies = pending_battle_info.armies;
 				for(var army_id in armies)
 				{
 					var army_info = armies[army_id];
@@ -204,7 +241,7 @@ define(
 						console.log("WARNING: Found third army in battle");
 						console.log(army);
 					}
-				}
+				}*/
 				
 				//when the battle starts, the paycontainer will go here
 				//for now just put a big block of text saying "Battle Preview"

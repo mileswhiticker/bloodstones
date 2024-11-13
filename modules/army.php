@@ -13,14 +13,14 @@ trait army
 		}
 		$newarmy = $this->getUniqueValueFromDB("SELECT * FROM armies WHERE army_id='$new_army_id'");
 		
-		//?????
+		//these sanity checks are redundant, both outcomes are potentially intended behaviour
 		if($newarmy)
 		{
-			self::notifyAllPlayers("debug", "", array('debugmessage' => "Warning! server::createArmy($spawn_province_name, $player_id, $units_string) army exists"));
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => "Warning! server::createArmy($spawn_province_name, $player_id, $units_string) army exists"));
 		}
 		else
 		{
-			self::notifyAllPlayers("debug", "", array('debugmessage' => "Notice! server::createArmy($spawn_province_name, $player_id, $units_string) army does not exist"));
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => "Notice! server::createArmy($spawn_province_name, $player_id, $units_string) army does not exist"));
 		}
 		
 		return $this->MoveTilesToProvinceName($spawn_province_name, $player_id, $starting_unit_ids, $spawn_test_units);
@@ -57,7 +57,6 @@ trait army
 			//there is an army here, but we have to update some of its settings due to old database design
 			$newarmy = $newarmy[$army_id_string];
 			//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($newarmy, true)));
-			$newarmy["prov_name"] = $newarmy["province_id"];
 			$newarmy["tiles"] = [];
 		}
 		else

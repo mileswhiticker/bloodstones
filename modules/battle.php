@@ -266,10 +266,8 @@ trait battle
 	function GetPendingBattleProvincesAll($target_player_id = -1)
 	{
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::GetPendingBattleProvincesAll($target_player_id)"));
-		$pending_battles = [];
 		if($target_player_id <= 0)
 		{
-			//self::notifyAllPlayers("debug", "", array('debugmessage' => "check1"));
 			$target_player_id = $this->getGameStateValue("attacking_player_id");
 		}
 		if($target_player_id <= 0)
@@ -279,31 +277,106 @@ trait battle
 		
 		if($target_player_id > 0)
 		{
-			//self::notifyAllPlayers("debug", "", array('debugmessage' => "check2"));
 			//battles can only be started by the player during their playerTurn
 			//note: the active player won't always be the battle instigator
-			$pending_battles = $this->GetPendingBattleProvincesPlayer($target_player_id);
-		}
-		else if($this->getStateName() == "playerTurn")
-		{
-			//self::notifyAllPlayers("debug", "", array('debugmessage' => "check3"));
-			//here we can just get the active player
-			$pending_battles = $this->GetPendingBattleProvincesPlayer(self::getActivePlayerId());
-		}
-		else
-		{
-			//self::notifyAllPlayers("debug", "", array('debugmessage' => "check4"));
-			//no valid way to figure out pending battles, so there can't be any pending battles
+			return $this->GetPendingBattleTilesPlayer($target_player_id);
 		}
 		
-		return $pending_battles;
+		return [];
+	}
+	
+	function getDefenderId($battle_province_name, $attacker_id)
+	{
+		$defending_player_id = 0;
+		$defender_faction_id = 99999999;
+		
+		//on the rare chance there are multiple factions in a province, then the current "defender" will always be the one with the lowest faction id that isnt the main player
+		//loop over armies in this province
+		$battling_armies = $this->GetArmiesInProvinceFromProvName($battle_province_name);
+		foreach($battling_armies as $check_army_id => $check_army)
+		{
+			$check_player_id = $check_army["player_id"];
+			if($check_player_id == $attacker_id)
+			{
+				continue;
+			}
+			
+			//get the faction id for this player
+			$check_faction_id = $this->getPlayerFactionId($check_player_id);
+			
+			//is it a higher priority to be defender?
+			if($check_faction_id < $defender_faction_id)
+			{
+				$defending_player_id = $check_player_id;
+				$defender_faction_id = $check_faction_id;
+			}
+		}
+		
+		return $defending_player_id;
+	}
+	
+	function GetPendingBattleTilesPlayer($target_player_id)
+	{
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::GetPendingBattleTilesPlayer($target_player_id)"));
+		
+		//lets assume the target_player_id is the attacker
+		//i think this is safe because we can also assume that only the active player can initiatie battles (eg attack)
+		$pending_battle_provinces = [];
+		
+		//get all tiles for this player on the map
+		$target_player_tiles_by_province = $this->GetPlayerTileInfosByProvince($target_player_id);
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "target_player_tiles_by_province:"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($target_player_tiles_by_province, true)));
+		
+		$target_player_provinces = array_keys($target_player_tiles_by_province);
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "target_player_provinces:"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($target_player_provinces, true)));
+		
+		//next we will iterate over all players and check for a pending battle 1 player at a time
+		$player_ids =  array_keys($this->loadPlayersBasicInfos());  
+		foreach($player_ids as $cur_player_id)
+		{
+			if($cur_player_id == $target_player_id)
+			{
+				continue;
+			}
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => "cur_player_id:$cur_player_id"));
+			
+			//get this player's tiles
+			$cur_player_tiles_by_province = $this->GetPlayerTileInfosByProvince($cur_player_id);
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => "cur_player_tiles_by_province:"));
+			//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($cur_player_tiles_by_province, true)));
+			
+			//iterate over all tiles and check for a collision
+			foreach($cur_player_tiles_by_province as $prov_name => $cur_player_tile_infos)
+			{
+				//self::notifyAllPlayers("debug", "", array('debugmessage' => "checking cur_player prov_name:$prov_name"));
+				if(in_array($prov_name, $target_player_provinces))
+				{
+					//self::notifyAllPlayers("debug", "", array('debugmessage' => "found"));
+					//we found a pending battle so lets record it
+					$target_player_tile_infos = $target_player_tiles_by_province[$prov_name];
+					$pending_battle_provinces[$prov_name][$target_player_id] = $target_player_tile_infos;
+					
+					$pending_battle_provinces[$prov_name][$cur_player_id] = $cur_player_tile_infos;
+				}
+				else
+				{
+					//self::notifyAllPlayers("debug", "", array('debugmessage' => "not found"));
+				}
+			}
+		}
+		
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($pending_battle_provinces, true)));
+		return $pending_battle_provinces;
 	}
 	
 	function GetPendingBattleProvincesPlayer($target_player_id)
 	{
-		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::GetPendingBattleProvincesPlayer($target_player_id)"));
+		//self::notifyAllPlayers("debug", "", array('debugmessage' => "WARNING! obsolete server::GetPendingBattleProvincesPlayer($target_player_id)"));
 		//note: this function is from the perspective of the player_id that is passed in
-		//make sure that player is actually a valid attacker! 
+		//make sure that player is actually a valid attacker!
+		
 		$unchecked_armies = $this->GetAllArmies();
 		$pending_battle_provinces = [];
 		$armies_by_province = [];
@@ -353,36 +426,6 @@ trait battle
 		}
 		
 		return $pending_battle_provinces;
-	}
-	
-	function getDefenderId($battle_province_name, $attacker_id)
-	{
-		$defending_player_id = 0;
-		$defender_faction_id = 99999999;
-		
-		//on the rare chance there are multiple factions in a province, then the current "defender" will always be the one with the lowest faction id that isnt the main player
-		//loop over armies in this province
-		$battling_armies = $this->GetArmiesInProvinceFromProvName($battle_province_name);
-		foreach($battling_armies as $check_army_id => $check_army)
-		{
-			$check_player_id = $check_army["player_id"];
-			if($check_player_id == $attacker_id)
-			{
-				continue;
-			}
-			
-			//get the faction id for this player
-			$check_faction_id = $this->getPlayerFactionId($check_player_id);
-			
-			//is it a higher priority to be defender?
-			if($check_faction_id < $defender_faction_id)
-			{
-				$defending_player_id = $check_player_id;
-				$defender_faction_id = $check_faction_id;
-			}
-		}
-		
-		return $defending_player_id;
 	}
 	
 	function getNextSwapPlayer($attacking_player_id, $defending_player_id)

@@ -553,7 +553,6 @@ define(
 			{
 				console.log("page::notif_tileSacrifice()");
 				console.log(notif.args)
-				this.DestroyBattleWindow();
 				
 				var sacrifice_army = this.GetArmyByIdString(notif.args.sacrifice_army_id_string);
 				console.log("this.armies_by_id_string:");

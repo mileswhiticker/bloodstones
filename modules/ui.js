@@ -293,6 +293,9 @@ define(
 					case 'chooseWithdraw':
 					{
 						this.retreat_prov_options = args.args.retreat_prov_options;
+						this.gamedatas.attacking_player_id = args.args.attacking_player_id;
+						this.gamedatas.defending_player_id = args.args.defending_player_id;
+						
 						this.UIStateChooseWithdraw(args);
 						if(this.isCurrentPlayerActive())
 						{
@@ -418,6 +421,13 @@ define(
 					{
 						this.DestroyBottomPanel();
 						break;
+					}
+					
+					case('battleEnd'):
+					{
+						this.battle_tilestack_defender.RemoveAllTilesFromStack();
+						this.battle_tilestack_attacker.RemoveAllTilesFromStack();
+						this.DestroyBattleWindow();
 					}
 				}
 				

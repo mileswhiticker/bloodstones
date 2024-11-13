@@ -62,7 +62,7 @@ trait action_build
 					try
 					{
 						$starting_tiles = $player_deck->getCards($tile_ids);
-						$army_info["tiles"] = $player_deck->getCardsInLocation('army', $army_id);
+						$army_info["tiles"] = $starting_tiles;//$player_deck->getCardsInLocation('army', $army_id);
 					}
 					catch(Exception $e)
 					{

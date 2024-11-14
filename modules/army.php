@@ -55,7 +55,7 @@ trait army
 		if($newarmy)
 		{
 			//there is an army here, but we have to update some of its settings due to old database design
-			$newarmy = $newarmy[$army_id_string];
+			//$newarmy = $newarmy[$army_id_string];
 			//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($newarmy, true)));
 			$newarmy["tiles"] = [];
 		}

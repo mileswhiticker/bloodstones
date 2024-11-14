@@ -43,48 +43,12 @@ trait player_utils
 		return $prov_id;
 	}
 	
-	function GetPlayerCitadelTileInfo($player_id)
-	{
-		$tile_info = null;
-		try
-		{
-			//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::GetPlayerCitadelTileInfo($player_id)"));
-			$faction_id = $this->GetPlayerFaction($player_id);
-			$faction_deck = $this->faction_decks[$faction_id];
-			$citadel_type = ($faction_id + 1) * self::UNIT_CITADEL;
-			$tiles = $faction_deck->getCardsOfType('unit', $citadel_type);
-			$citadel_tile_info;
-			$citadel_tile_id = 0;
-			foreach ($tiles as $tile_id => $tile_info)
-			{
-				if($citadel_tile_id != 0)
-				{
-					//sanity check
-					throw new BgaUserException( self::_("GetPlayerCitadelTileInfo($player_id) multiple citadel tiles for this player's faction ($faction_id)") );
-				}
-				$citadel_tile_id = $tile_id;
-				$citadel_tile_info = $tile_info;
-			}
-			
-			//self::notifyAllPlayers("debug", "", array('debugmessage' => "citadel_tile_id:$citadel_tile_id"));
-			//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($tiles, true)));
-			//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($tile_info, true)));
-			
-			return $citadel_tile_info;
-		}
-		catch (Exception $e)
-		{
-			self::notifyAllPlayers("debug", "", array('debugmessage' => var_export($e, true)));
-		}
-		return null;
-	}
-	
 	function PlayerCaptureCitadel($attacking_player_id, $defending_player_id)
 	{
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => "server::PlayerCaptureCitadel($attacking_player_id, $defending_player_id)"));
 		
 		//grab some useful info
-		$citadel_tile_info = $this->GetPlayerCitadelTileInfo($defending_player_id);
+		$citadel_tile_info = $this->GetPlayerCitadelTile($defending_player_id);
 		$citadel_tile_id = $citadel_tile_info['id'];
 		$citadel_army_id = $citadel_tile_info['location_arg'];
 		//$citadel_player_deck = $this->player_decks[$defending_player_id];
@@ -839,7 +803,6 @@ trait player_utils
 		self::notifyAllPlayers("debug", "", array('debugmessage' => "server::playerDebugAction()"));
 		//note: this triggers a call to the args() function so i dont need to put anything else here
 		
-		//$this->GetPlayerCitadelTileInfo(self::getActivePlayerId());
 		//$this->args_playermain();
 		//self::notifyAllPlayers("debug", "", array('debugmessage' => var_export(,true)));
 		

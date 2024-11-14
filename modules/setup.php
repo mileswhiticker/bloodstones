@@ -113,10 +113,15 @@ trait setup
 					if($this->isTileTypeCitadel($basetypeid))
 					{
 						$new_tiles['nbr'] = 1;
+						$new_tiles['type'] = 'citadel';
 						$tiles_citadel[] = $new_tiles;
 					}
 					else
 					{
+						if($this->isTileTypeCastle($basetypeid))
+						{
+							$new_tiles['type'] = 'castle';
+						}
 						$tiles_units[] = $new_tiles;
 					}
 				}

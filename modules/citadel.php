@@ -92,7 +92,7 @@ trait citadel
 		//this should be safe as long as it's called after tile decks are created
 		$faction_deck = $this->faction_decks[$factionid];
 		$citadel_tile_type = self::UNIT_CITADEL + self::SPRITESHEET_ROW_TILES * $factionid;
-		$citadel_tile = $faction_deck->getCardsOfType('unit', $citadel_tile_type);
+		$citadel_tile = $faction_deck->getCardsOfType('citadel', $citadel_tile_type);
 		$citadel_tile = array_pop($citadel_tile);
 		
 		return $citadel_tile;
